@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Shell } from './components/Shell'
+import { LanguageProvider } from './context/LanguageContext'
 import { PlayerProvider, usePlayer } from './context/PlayerContext'
 import { ThemeProvider } from './context/ThemeContext'
 import { useHashRoute } from './hooks/useHashRoute'
@@ -39,9 +40,11 @@ function BoothRouter() {
 export default function App() {
   return (
     <ThemeProvider>
-      <PlayerProvider>
-        <BoothRouter />
-      </PlayerProvider>
+      <LanguageProvider>
+        <PlayerProvider>
+          <BoothRouter />
+        </PlayerProvider>
+      </LanguageProvider>
     </ThemeProvider>
   )
 }

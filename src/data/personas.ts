@@ -1,3 +1,4 @@
+import type { Lang } from '../context/LanguageContext'
 import type { Persona, PersonaId } from '../types'
 
 export const NAII_URL = 'https://www.naii.co'
@@ -35,14 +36,57 @@ export const PERSONAS: Record<PersonaId, Persona> = {
   },
 }
 
-export function personaFromScore(score: number): Persona {
-  if (score >= 85) return PERSONAS['bridge-builder']
-  if (score >= 70) return PERSONAS['sovereign-guardian']
-  return PERSONAS['pragmatic-negotiator']
+export const PERSONAS_EN: Record<PersonaId, Persona> = {
+  'bridge-builder': {
+    id: 'bridge-builder',
+    title: 'The Techno-Bridge Builder',
+    range: '85–100',
+    tagline: 'Bridging global divides through technology without compromising national autonomy.',
+    description:
+      'Adept at safeguarding Indonesia’s strategic autonomy while engaging all poles with technology-driven solutions. You embody Independent & Active Diplomacy 2.0.',
+    courses: ['AI Leadership & Decision-Making for Executives', 'AI Ethics from an Indonesian Perspective'],
+    accent: '#AD2B17',
+  },
+  'sovereign-guardian': {
+    id: 'sovereign-guardian',
+    title: 'The Sovereign Guardian',
+    range: '70–84',
+    tagline: 'Steward of national sovereignty in the age of data and algorithms.',
+    description:
+      'Resolute in defending national interests, data governance, and technological autonomy amid geopolitical rivalry. Your core strength is unwavering principle.',
+    courses: ['AI Ethics from an Indonesian Perspective', 'AI in Academia for Students & Researchers'],
+    accent: '#B47B2A',
+  },
+  'pragmatic-negotiator': {
+    id: 'pragmatic-negotiator',
+    title: 'The Pragmatic Negotiator',
+    range: '< 70',
+    tagline: 'Focused on immediate stability — ready to level up with AI literacy.',
+    description:
+      'Prioritizes near-term stability and realistic outcomes. Sharpen your long-term technological strategy to become a future-ready diplomat.',
+    courses: ['Introduction to AI for Students & Youth', 'Data Storytelling and Visualization with AI'],
+    accent: '#0F766E',
+  },
+}
+
+export function getPersonas(lang: Lang = 'id'): Record<PersonaId, Persona> {
+  return lang === 'en' ? PERSONAS_EN : PERSONAS
+}
+
+export function personaFromScore(score: number, lang: Lang = 'id'): Persona {
+  const dict = getPersonas(lang)
+  if (score >= 85) return dict['bridge-builder']
+  if (score >= 70) return dict['sovereign-guardian']
+  return dict['pragmatic-negotiator']
 }
 
 /** Rekomendasi kursus setelah kuis, berdasarkan persentase skor. */
-export function coursesForQuiz(ratio: number): string[] {
+export function coursesForQuiz(ratio: number, lang: Lang = 'id'): string[] {
+  if (lang === 'en') {
+    if (ratio >= 0.8) return ['AI Leadership & Decision-Making for Executives', 'AI Ethics from an Indonesian Perspective']
+    if (ratio >= 0.5) return ['AI in Academia for Students & Researchers', 'AI for Job Seekers & Career Readiness']
+    return ['Introduction to AI for Students & Youth', 'AI Ethics from an Indonesian Perspective']
+  }
   if (ratio >= 0.8) return ['Kepemimpinan AI dan Pengambilan Keputusan untuk Eksekutif', 'Etika AI dari Perspektif Indonesia']
   if (ratio >= 0.5) return ['AI dalam Akademik untuk Pelajar dan Mahasiswa', 'AI untuk Pencari Kerja']
   return ['Pengenalan AI untuk Pelajar dan Generasi Muda', 'Etika AI dari Perspektif Indonesia']

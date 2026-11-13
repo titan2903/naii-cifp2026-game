@@ -13,9 +13,10 @@ import {
   Zap,
 } from 'lucide-react'
 import { NaiiStarMark } from '../components/NaiiBrand'
+import { useLanguage } from '../context/LanguageContext'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { backendMode, fetchTodayScores, sortScores, submitScore, subscribeScores } from '../lib/storage'
-import { currentSessionTag, formatSeconds, SESSION_TAGS } from '../lib/utils'
+import { currentSessionTag, formatSeconds, formatSessionTag, SESSION_TAGS } from '../lib/utils'
 import type { GameId, ScoreEntry } from '../types'
 
 type GameFilter = 'all' | GameId
@@ -31,6 +32,9 @@ const DEMO_PLAYERS: Array<{ name: string; inst: string; game: GameId; score: num
 ]
 
 export function LeaderboardScreen() {
+  const { lang } = useLanguage()
+  const en = lang === 'en'
+
   const [scores, setScores] = useState<ScoreEntry[]>([])
   const [gameFilter, setGameFilter] = useState<GameFilter>('all')
   const [sessionFilter, setSessionFilter] = useState<SessionFilter>('all')
@@ -122,7 +126,10 @@ export function LeaderboardScreen() {
             </span>
             <span className="chip">
               <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
-              SESI: <strong className="text-zinc-900 dark:text-white">{currentSessionTag()}</strong>
+              {en ? 'SESSION' : 'SESI'}:{' '}
+              <strong className="text-zinc-900 dark:text-white">
+                {formatSessionTag(currentSessionTag(), lang)}
+              </strong>
             </span>
             <span className="chip">
               MODE:{' '}
@@ -133,22 +140,31 @@ export function LeaderboardScreen() {
           </div>
 
           <h1 className="text-2xl font-extrabold tracking-tighter text-zinc-900 dark:text-white sm:text-4xl">
-            Papan Peringkat Delegasi Terbaik Hari Ini
+            {en ? 'Today’s Top Delegate Standings' : 'Papan Peringkat Delegasi Terbaik Hari Ini'}
           </h1>
           <p className="text-sm text-zinc-600 dark:text-zinc-300">
-            Tiga delegasi tertinggi pada setiap sesi break (Pagi, Siang, Sore) berhak meraih{' '}
-            <b>Grand Merchandise Resmi Nusantara AI Institute</b>.
+            {en ? (
+              <>
+                The top three delegates in each break session (Morning, Midday, Afternoon) earn{' '}
+                <b>Official Nusantara AI Institute Grand Merchandise</b>.
+              </>
+            ) : (
+              <>
+                Tiga delegasi tertinggi pada setiap sesi break (Pagi, Siang, Sore) berhak meraih{' '}
+                <b>Grand Merchandise Resmi Nusantara AI Institute</b>.
+              </>
+            )}
           </p>
         </div>
 
         <div className="flex flex-wrap gap-2">
           <button onClick={() => void reload()} className="btn-secondary !px-3.5 !py-2 text-xs">
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.75} />
-            Segarkan Data
+            {en ? 'Refresh Data' : 'Segarkan Data'}
           </button>
           <button onClick={toggleFullscreen} className="btn-secondary hidden !px-3.5 !py-2 text-xs sm:inline-flex">
             <Maximize2 className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />
-            Mode Layar TV Booth
+            {en ? 'Booth TV Fullscreen' : 'Mode Layar TV Booth'}
           </button>
         </div>
       </div>
@@ -156,11 +172,13 @@ export function LeaderboardScreen() {
       {/* FILTER CONTROLS (Single-Row Friendly on Smartphone) */}
       <div className="flex flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
         <div className="grid grid-cols-3 gap-1 rounded-2xl border border-zinc-200 bg-white/80 p-1 dark:border-white/10 dark:bg-white/[0.03] sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
-          {([
-            ['all', 'Semua', 'Semua Instrumen', Layers],
-            ['trivia', 'Trivia', 'Speed Trivia', Zap],
-            ['realvsai', 'Real/AI', 'Real vs AI', ShieldAlert],
-          ] as const).map(([id, shortLabel, fullLabel, Icon]) => (
+          {(
+            [
+              ['all', en ? 'All' : 'Semua', en ? 'All Instruments' : 'Semua Instrumen', Layers],
+              ['trivia', 'Trivia', 'Speed Trivia', Zap],
+              ['realvsai', 'Real/AI', 'Real vs AI', ShieldAlert],
+            ] as const
+          ).map(([id, shortLabel, fullLabel, Icon]) => (
             <button
               key={id}
               type="button"
@@ -179,21 +197,33 @@ export function LeaderboardScreen() {
         </div>
 
         <div className="grid grid-cols-4 gap-1.5 sm:flex sm:flex-wrap">
-          {(['all', ...SESSION_TAGS] as const).map((tag) => (
-            <button
-              key={tag}
-              type="button"
-              onClick={() => setSessionFilter(tag)}
-              className={`rounded-xl px-2 py-2 text-center font-mono text-[11px] font-semibold transition sm:px-3.5 sm:text-xs ${
-                sessionFilter === tag
-                  ? 'border border-[#AD2B17] bg-[#AD2B17]/10 text-[#AD2B17] dark:bg-[#AD2B17]/20 dark:text-white'
-                  : 'border border-zinc-200 bg-white/80 text-zinc-600 hover:bg-white dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-400 dark:hover:text-white'
-              }`}
-            >
-              <span className="sm:hidden">{tag === 'all' ? 'SEMUA' : tag.replace('Sesi ', '').toUpperCase()}</span>
-              <span className="hidden sm:inline">{tag === 'all' ? 'SEMUA SESI' : tag.toUpperCase()}</span>
-            </button>
-          ))}
+          {(['all', ...SESSION_TAGS] as const).map((tag) => {
+            const labelFull =
+              tag === 'all' ? (en ? 'ALL SESSIONS' : 'SEMUA SESI') : formatSessionTag(tag, lang).toUpperCase()
+            const labelShort =
+              tag === 'all'
+                ? en
+                  ? 'ALL'
+                  : 'SEMUA'
+                : formatSessionTag(tag, lang)
+                    .replace(/Break\s*/i, '')
+                    .toUpperCase()
+            return (
+              <button
+                key={tag}
+                type="button"
+                onClick={() => setSessionFilter(tag)}
+                className={`rounded-xl px-2 py-2 text-center font-mono text-[11px] font-semibold transition sm:px-3.5 sm:text-xs ${
+                  sessionFilter === tag
+                    ? 'border border-[#AD2B17] bg-[#AD2B17]/10 text-[#AD2B17] dark:bg-[#AD2B17]/20 dark:text-white'
+                    : 'border border-zinc-200 bg-white/80 text-zinc-600 hover:bg-white dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-400 dark:hover:text-white'
+                }`}
+              >
+                <span className="sm:hidden">{labelShort}</span>
+                <span className="hidden sm:inline">{labelFull}</span>
+              </button>
+            )
+          })}
         </div>
       </div>
 
@@ -213,18 +243,22 @@ export function LeaderboardScreen() {
             <Trophy className="h-7 w-7 text-[#AD2B17]" strokeWidth={1.75} />
           </div>
           <h2 className="mt-4 text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
-            Belum Ada Skor Tercatat pada Filter Sesi Ini
+            {en
+              ? 'No Scores Recorded Yet for This Session Filter'
+              : 'Belum Ada Skor Tercatat pada Filter Sesi Ini'}
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
-            Mainkan Speed Trivia atau Real vs AI untuk mencatatkan skor perdana di papan peringkat, atau muat simulasi
-            delegasi untuk pratinjau layar TV booth.
+            {en
+              ? 'Play Speed Trivia or Real vs AI to post the inaugural score on the leaderboard, or load demo delegate scores to preview the booth TV display.'
+              : 'Mainkan Speed Trivia atau Real vs AI untuk mencatatkan skor perdana di papan peringkat, atau muat simulasi delegasi untuk pratinjau layar TV booth.'}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a href={ROUTE_PATHS.trivia} className="btn-primary">
-              <Zap className="h-4 w-4" strokeWidth={1.75} /> Mainkan Speed Trivia
+              <Zap className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Play Speed Trivia' : 'Mainkan Speed Trivia'}
             </a>
             <button onClick={() => void seedDemoScores()} className="btn-secondary">
-              <Sparkles className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} /> Muat Simulasi Skor TV Booth
+              <Sparkles className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />{' '}
+              {en ? 'Load Booth TV Demo Scores' : 'Muat Simulasi Skor TV Booth'}
             </button>
           </div>
         </div>
@@ -242,10 +276,10 @@ export function LeaderboardScreen() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="inline-flex items-center gap-2 rounded-full bg-[#AD2B17] px-3.5 py-1 font-mono text-xs font-bold tracking-wider text-white">
                     <Crown className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
-                    PERINGKAT #01 // PEMIMPIN SESI
+                    {en ? 'RANK #01 // SESSION LEADER' : 'PERINGKAT #01 // PEMIMPIN SESI'}
                   </span>
                   <span className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                    {champion.session_tag}
+                    {formatSessionTag(champion.session_tag, lang)}
                   </span>
                 </div>
 
@@ -270,7 +304,7 @@ export function LeaderboardScreen() {
                       {champion.score}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      TOTAL POIN
+                      {en ? 'TOTAL POINTS' : 'TOTAL POIN'}
                     </p>
                   </div>
                   <div className="px-2">
@@ -278,15 +312,15 @@ export function LeaderboardScreen() {
                       {champion.correct_count}/{champion.total_questions}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      KETEPATAN
+                      {en ? 'ACCURACY' : 'KETEPATAN'}
                     </p>
                   </div>
                   <div className="px-2">
                     <p className="font-mono text-xl font-bold tabular-nums text-zinc-900 dark:text-white sm:text-2xl">
-                      {formatSeconds(champion.time_seconds)}
+                      {formatSeconds(champion.time_seconds, lang)}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
-                      DURASI
+                      {en ? 'DURATION' : 'DURASI'}
                     </p>
                   </div>
                 </div>
@@ -307,10 +341,11 @@ export function LeaderboardScreen() {
                     <div className="flex items-center justify-between gap-2">
                       <span className="inline-flex items-center gap-1.5 rounded-full border border-zinc-300 bg-zinc-100 px-3 py-1 font-mono text-xs font-bold text-zinc-800 dark:border-white/15 dark:bg-white/10 dark:text-white">
                         <Medal className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
-                        PERINGKAT #0{rank}
+                        {en ? `RANK #0${rank}` : `PERINGKAT #0${rank}`}
                       </span>
                       <span className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
-                        {entry.game === 'trivia' ? 'SPEED TRIVIA' : 'REAL VS AI'} · {entry.session_tag}
+                        {entry.game === 'trivia' ? 'SPEED TRIVIA' : 'REAL VS AI'} ·{' '}
+                        {formatSessionTag(entry.session_tag, lang)}
                       </span>
                     </div>
 
@@ -327,7 +362,7 @@ export function LeaderboardScreen() {
                           <span className="font-bold text-zinc-900 dark:text-white">
                             {entry.correct_count}/{entry.total_questions}
                           </span>{' '}
-                          · {formatSeconds(entry.time_seconds)}
+                          · {formatSeconds(entry.time_seconds, lang)}
                         </div>
                         <div>
                           <span className="text-2xl font-extrabold tabular-nums text-[#AD2B17] dark:text-[#C89D54]">
@@ -347,8 +382,12 @@ export function LeaderboardScreen() {
           {rest.length > 0 && (
             <div className="glass overflow-hidden">
               <div className="flex items-center justify-between border-b border-zinc-200/90 bg-zinc-50/80 px-5 py-3 font-mono text-[11px] font-semibold uppercase tracking-wider text-zinc-500 dark:border-white/10 dark:bg-black/40 dark:text-zinc-400">
-                <span>DAFTAR PERINGKAT DELEGASI (#04 – #{String(rest.length + 3).padStart(2, '0')})</span>
-                <span>KETEPATAN · WAKTU · SKOR</span>
+                <span>
+                  {en
+                    ? `DELEGATE STANDINGS (#04 – #${String(rest.length + 3).padStart(2, '0')})`
+                    : `DAFTAR PERINGKAT DELEGASI (#04 – #${String(rest.length + 3).padStart(2, '0')})`}
+                </span>
+                <span>{en ? 'ACCURACY · TIME · SCORE' : 'KETEPATAN · WAKTU · SKOR'}</span>
               </div>
               <div className="divide-y divide-zinc-200/70 dark:divide-white/[0.06]">
                 {rest.map((entry, idx) => {
@@ -371,7 +410,7 @@ export function LeaderboardScreen() {
                             <span className="text-zinc-700 dark:text-zinc-300">
                               {entry.game === 'trivia' ? 'Speed Trivia' : 'Real vs AI'}
                             </span>{' '}
-                            · {entry.session_tag}
+                            · {formatSessionTag(entry.session_tag, lang)}
                           </p>
                         </div>
                       </div>
@@ -381,7 +420,7 @@ export function LeaderboardScreen() {
                           <span className="font-semibold text-zinc-800 dark:text-zinc-200">
                             {entry.correct_count}/{entry.total_questions}
                           </span>{' '}
-                          · {formatSeconds(entry.time_seconds)}
+                          · {formatSeconds(entry.time_seconds, lang)}
                         </div>
                         <span className="w-16 text-lg font-extrabold tabular-nums text-[#AD2B17] dark:text-[#C89D54]">
                           {entry.score}

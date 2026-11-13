@@ -1,21 +1,26 @@
 import { ArrowUpRight, BookOpen } from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext'
 import { NAII_URL } from '../data/personas'
 import { NaiiStarMark } from './NaiiBrand'
 
 /** CTA konversi ke www.naii.co + rekomendasi kursus. */
 export function CourseCta({
   courses,
-  heading = 'Rekomendasi Kurikulum Gratis www.naii.co',
+  heading,
 }: {
   courses: string[]
   heading?: string
 }) {
+  const { lang } = useLanguage()
+  const en = lang === 'en'
+  const resolvedHeading = heading ?? (en ? 'Free Curriculum Recommendations at www.naii.co' : 'Rekomendasi Kurikulum Gratis www.naii.co')
+
   return (
     <div className="glass space-y-4 border-[#AD2B17]/30 p-6">
       <div className="flex items-center justify-between gap-2">
         <p className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
           <BookOpen className="h-4 w-4" strokeWidth={1.75} />
-          {heading}
+          {resolvedHeading}
         </p>
         <NaiiStarMark color="#AD2B17" className="h-5 w-5 shrink-0" />
       </div>
@@ -30,7 +35,7 @@ export function CourseCta({
       </ul>
 
       <a href={NAII_URL} target="_blank" rel="noreferrer" className="btn-primary w-full">
-        Akses 20+ Kursus Gratis di www.naii.co
+        {en ? 'Access 20+ Free Courses at www.naii.co' : 'Akses 20+ Kursus Gratis di www.naii.co'}
         <ArrowUpRight className="h-4 w-4" strokeWidth={1.75} />
       </a>
     </div>

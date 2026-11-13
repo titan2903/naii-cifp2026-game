@@ -32,7 +32,12 @@ export interface QuizItem {
   info: string
 }
 
-export type Bloc = 'Blok Barat' | 'Tiongkok & Mitra Timur' | 'Global South & ASEAN'
+export type Bloc =
+  | 'Blok Barat'
+  | 'Tiongkok & Mitra Timur'
+  | 'Global South & ASEAN'
+  | 'Western Bloc'
+  | 'China & Eastern Partners'
 export type Stance = 'positif' | 'netral' | 'waspada'
 
 export interface WorldReaction {

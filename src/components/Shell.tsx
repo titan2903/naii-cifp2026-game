@@ -1,18 +1,67 @@
 import type { ReactNode } from 'react'
-import { ArrowUpRight, Compass, Globe2, Moon, ShieldAlert, Sun, Trophy, UserRound, UserRoundX, Zap } from 'lucide-react'
+import {
+  ArrowUpRight,
+  Compass,
+  Globe2,
+  Languages,
+  Moon,
+  ShieldAlert,
+  Sun,
+  Trophy,
+  UserRound,
+  UserRoundX,
+  Zap,
+} from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { useTheme } from '../context/ThemeContext'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { backendMode } from '../lib/storage'
-import { currentSessionTag } from '../lib/utils'
+import { currentSessionTag, formatSessionTag } from '../lib/utils'
 import { NaiiLogo, NaiiStarMark } from './NaiiBrand'
 
-const NAV_ITEMS: Array<{ route: Route; label: string; mobileLabel: string; href: string; icon: typeof Compass }> = [
-  { route: 'home', label: 'Paviliun', mobileLabel: 'Beranda', href: ROUTE_PATHS.home, icon: Compass },
-  { route: 'simulator', label: 'Crisis Simulator', mobileLabel: 'Simulator', href: ROUTE_PATHS.simulator, icon: Globe2 },
-  { route: 'trivia', label: 'Speed Trivia', mobileLabel: 'Trivia', href: ROUTE_PATHS.trivia, icon: Zap },
-  { route: 'realvsai', label: 'Real vs AI', mobileLabel: 'Real/AI', href: ROUTE_PATHS.realvsai, icon: ShieldAlert },
-  { route: 'leaderboard', label: 'Leaderboard', mobileLabel: 'Peringkat', href: ROUTE_PATHS.leaderboard, icon: Trophy },
+const NAV_ITEMS: Array<{
+  route: Route
+  label: { id: string; en: string }
+  mobileLabel: { id: string; en: string }
+  href: string
+  icon: typeof Compass
+}> = [
+  {
+    route: 'home',
+    label: { id: 'Paviliun', en: 'Pavilion' },
+    mobileLabel: { id: 'Beranda', en: 'Home' },
+    href: ROUTE_PATHS.home,
+    icon: Compass,
+  },
+  {
+    route: 'simulator',
+    label: { id: 'Crisis Simulator', en: 'Crisis Simulator' },
+    mobileLabel: { id: 'Simulator', en: 'Simulator' },
+    href: ROUTE_PATHS.simulator,
+    icon: Globe2,
+  },
+  {
+    route: 'trivia',
+    label: { id: 'Speed Trivia', en: 'Speed Trivia' },
+    mobileLabel: { id: 'Trivia', en: 'Trivia' },
+    href: ROUTE_PATHS.trivia,
+    icon: Zap,
+  },
+  {
+    route: 'realvsai',
+    label: { id: 'Real vs AI', en: 'Real vs AI' },
+    mobileLabel: { id: 'Real/AI', en: 'Real/AI' },
+    href: ROUTE_PATHS.realvsai,
+    icon: ShieldAlert,
+  },
+  {
+    route: 'leaderboard',
+    label: { id: 'Leaderboard', en: 'Leaderboard' },
+    mobileLabel: { id: 'Peringkat', en: 'Standings' },
+    href: ROUTE_PATHS.leaderboard,
+    icon: Trophy,
+  },
 ]
 
 export function Logo({ compact = false }: { compact?: boolean }) {
@@ -42,6 +91,9 @@ export function Logo({ compact = false }: { compact?: boolean }) {
 export function Shell({ children, currentRoute = 'home' }: { children: ReactNode; currentRoute?: Route }) {
   const { player, clearPlayer } = usePlayer()
   const { theme, toggleTheme } = useTheme()
+  const { lang, toggleLang } = useLanguage()
+  const en = lang === 'en'
+  const sessionTag = formatSessionTag(currentSessionTag(), lang)
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col pb-20 text-zinc-900 transition-colors duration-300 dark:text-zinc-100 lg:pb-0">
@@ -59,7 +111,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
             <span className="text-zinc-400">
-              SESI <strong className="text-white">{currentSessionTag()}</strong>
+              {en ? 'SESSION' : 'SESI'} <strong className="text-white">{sessionTag}</strong>
             </span>
             <span className="hidden text-zinc-600 sm:inline">·</span>
             <a
@@ -90,7 +142,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
           {/* DESKTOP SEGMENTED NAVIGATION */}
           <nav
-            aria-label="Navigasi Utama Desktop"
+            aria-label={en ? 'Desktop Main Navigation' : 'Navigasi Utama Desktop'}
             className="hidden items-center gap-1 rounded-2xl border border-zinc-200/90 bg-white/80 p-1 shadow-xs dark:border-white/[0.08] dark:bg-white/[0.03] lg:flex"
           >
             {NAV_ITEMS.map((item) => {
@@ -108,43 +160,70 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                   }`}
                 >
                   <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
-                  <span>{item.label}</span>
+                  <span>{item.label[lang]}</span>
                 </a>
               )
             })}
           </nav>
 
-          {/* RIGHT ACTIONS: DELEGATE BADGE (VISIBLE ON MOBILE TOO) + THEME SWITCH */}
+          {/* RIGHT ACTIONS: DELEGATE BADGE + LANGUAGE SWITCH + THEME SWITCH */}
           <div className="flex items-center gap-1.5 sm:gap-2">
             {player && (
               <button
                 onClick={clearPlayer}
-                className="chip !px-2.5 !py-1.5 hover:border-[#AD2B17]/50 hover:text-zinc-950 dark:hover:text-white"
-                title="Ganti delegasi / pemain berikutnya"
+                className="chip !px-2 !py-1.5 hover:border-[#AD2B17]/50 hover:text-zinc-950 dark:hover:text-white sm:!px-2.5"
+                title={en ? 'Switch delegate / next player' : 'Ganti delegasi / pemain berikutnya'}
               >
                 <UserRound className="h-3.5 w-3.5 shrink-0 text-[#AD2B17]" strokeWidth={1.75} />
-                <span className="max-w-[6.5rem] truncate font-sans text-xs font-semibold normal-case tracking-normal sm:max-w-[9rem]">
+                <span className="max-w-[4.5rem] truncate font-sans text-xs font-semibold normal-case tracking-normal sm:max-w-[9rem]">
                   {player.name}
                 </span>
                 <UserRoundX className="h-3.5 w-3.5 shrink-0 opacity-60" strokeWidth={1.75} />
               </button>
             )}
 
+            {/* LANGUAGE TOGGLE BUTTON (ID / EN) */}
+            <button
+              onClick={toggleLang}
+              className="btn-secondary !px-2.5 !py-2 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:!px-3"
+              title={en ? 'Ganti ke Bahasa Indonesia (ID)' : 'Switch to English (EN)'}
+              aria-label={en ? 'Switch language to Bahasa Indonesia' : 'Switch language to English'}
+            >
+              <Languages className="hidden h-4 w-4 text-[#AD2B17] sm:inline" strokeWidth={1.75} />
+              <span className="inline-flex items-center gap-1">
+                <span className={lang === 'id' ? 'font-extrabold text-[#AD2B17] dark:text-[#C89D54]' : 'opacity-60'}>
+                  ID
+                </span>
+                <span className="opacity-40">/</span>
+                <span className={lang === 'en' ? 'font-extrabold text-[#AD2B17] dark:text-[#C89D54]' : 'opacity-60'}>
+                  EN
+                </span>
+              </span>
+            </button>
+
             <button
               onClick={toggleTheme}
-              className="btn-secondary !px-3 !py-2 text-xs text-zinc-700 dark:text-zinc-200"
-              title={theme === 'dark' ? 'Beralih ke Mode Terang (Light Mode)' : 'Beralih ke Mode Gelap (Dark Mode)'}
+              className="btn-secondary !px-2.5 !py-2 text-xs text-zinc-700 dark:text-zinc-200 sm:!px-3"
+              title={
+                theme === 'dark'
+                  ? en
+                    ? 'Switch to Light Mode'
+                    : 'Beralih ke Mode Terang (Light Mode)'
+                  : en
+                    ? 'Switch to Dark Mode'
+                    : 'Beralih ke Mode Gelap (Dark Mode)'
+              }
               aria-label="Toggle Dark/Light Mode"
             >
               {theme === 'dark' ? (
                 <>
                   <Sun className="h-4 w-4 text-[#C89D54]" strokeWidth={1.75} />
-                  <span className="hidden sm:inline">Terang</span>
+                  <span className="hidden sm:inline">{en ? 'Light' : 'Terang'}</span>
                 </>
               ) : (
                 <>
                   <Moon className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />
-                  <span className="hidden sm:inline">Gelap</span>
+                  <span className="hidden sm:inline">{en ? 'Dark' : 'Gelap'}</span>
                 </>
               )}
             </button>
@@ -176,7 +255,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
           <div className="flex flex-wrap items-center justify-center gap-3 font-mono text-[11px]">
             <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2.5 py-1 text-zinc-700 dark:border-white/10 dark:bg-white/5 dark:text-zinc-300">
-              TELEMETRI: {backendMode === 'supabase' ? 'SUPABASE REALTIME' : 'BROWSER STORAGE'}
+              {en ? 'TELEMETRY' : 'TELEMETRI'}: {backendMode === 'supabase' ? 'SUPABASE REALTIME' : 'BROWSER STORAGE'}
             </span>
             <a
               href="https://www.naii.co"
@@ -192,7 +271,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
       {/* SMARTPHONE BOTTOM NAVIGATION BAR (Thumb-Friendly, Zero Confusion on Mobile) */}
       <nav
-        aria-label="Navigasi Smartphone"
+        aria-label={en ? 'Smartphone Navigation' : 'Navigasi Smartphone'}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 px-2 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-white/[0.1] dark:bg-[#110B09]/95 lg:hidden"
       >
         <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
@@ -211,7 +290,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                 }`}
               >
                 <Icon className="h-4 w-4" strokeWidth={active ? 2.2 : 1.75} />
-                <span className="truncate">{item.mobileLabel}</span>
+                <span className="truncate">{item.mobileLabel[lang]}</span>
               </a>
             )
           })}

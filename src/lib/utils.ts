@@ -1,3 +1,5 @@
+import type { Lang } from '../context/LanguageContext'
+
 export function shuffle<T>(arr: readonly T[]): T[] {
   const a = [...arr]
   for (let i = a.length - 1; i > 0; i--) {
@@ -34,12 +36,23 @@ export function currentSessionTag(date = new Date()): string {
 
 export const SESSION_TAGS = ['Break Pagi', 'Break Siang', 'Break Sore'] as const
 
+const SESSION_EN_MAP: Record<string, string> = {
+  'Break Pagi': 'Morning Break',
+  'Break Siang': 'Midday Break',
+  'Break Sore': 'Afternoon Break',
+}
+
+export function formatSessionTag(tag: string, lang: Lang = 'id'): string {
+  if (lang === 'en') return SESSION_EN_MAP[tag] ?? tag
+  return tag
+}
+
 export function startOfToday(): Date {
   const d = new Date()
   d.setHours(0, 0, 0, 0)
   return d
 }
 
-export function formatSeconds(s: number): string {
-  return `${s.toFixed(1)} dtk`
+export function formatSeconds(s: number, lang: Lang = 'id'): string {
+  return lang === 'en' ? `${s.toFixed(1)}s` : `${s.toFixed(1)} dtk`
 }

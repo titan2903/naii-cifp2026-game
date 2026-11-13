@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react'
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import confetti from 'canvas-confetti'
 import {
   ArrowRight,
@@ -12,12 +12,13 @@ import {
   Trophy,
   XCircle,
 } from 'lucide-react'
+import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { coursesForQuiz } from '../data/personas'
 import { useCountdown } from '../hooks/useCountdown'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { fetchTodayScores, sortScores, submitScore } from '../lib/storage'
-import { currentSessionTag, pickRandom } from '../lib/utils'
+import { currentSessionTag, formatSessionTag, pickRandom } from '../lib/utils'
 import type { GameId, QuizItem, ScoreEntry } from '../types'
 import { CourseCta } from './CourseCta'
 import { TimerBar } from './TimerBar'
@@ -50,10 +51,12 @@ const LETTERS = ['A', 'B', 'C', 'D']
 
 export function QuizGame({ config }: { config: QuizConfig }) {
   const { player } = usePlayer()
+  const { lang } = useLanguage()
+  const en = lang === 'en'
   const durationMs = config.secondsPerQuestion * 1000
 
   const [phase, setPhase] = useState<Phase>('intro')
-  const [round, setRound] = useState<QuizItem[]>([])
+  const [roundIds, setRoundIds] = useState<string[]>([])
   const [index, setIndex] = useState(0)
   const [answers, setAnswers] = useState<Answer[]>([])
   const [entry, setEntry] = useState<ScoreEntry | null>(null)
@@ -68,6 +71,12 @@ export function QuizGame({ config }: { config: QuizConfig }) {
       mountedRef.current = false
     }
   }, [])
+
+  // Resolve current round items from config.pool so switching ID <-> EN mid-round updates text immediately
+  const round = useMemo(() => {
+    const byId = new Map(config.pool.map((item) => [item.id, item]))
+    return roundIds.map((id) => byId.get(id)).filter((item): item is QuizItem => Boolean(item))
+  }, [config.pool, roundIds])
 
   const current = round[index]
   const lastAnswer = answers[index]
@@ -91,7 +100,8 @@ export function QuizGame({ config }: { config: QuizConfig }) {
   const start = () => {
     roundIdRef.current += 1
     answeredIndexRef.current = -1
-    setRound(pickRandom(config.pool, config.questionsPerRound))
+    const pickedItems = pickRandom(config.pool, config.questionsPerRound)
+    setRoundIds(pickedItems.map((q) => q.id))
     setIndex(0)
     setAnswers([])
     setEntry(null)
@@ -109,7 +119,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
       const score = all.reduce((s, a) => s + a.points, 0)
       const saved = await submitScore({
         player_name: player.name,
-        institution: player.institution || 'Umum',
+        institution: player.institution || (en ? 'Public Delegate' : 'Umum'),
         game: config.game,
         score,
         correct_count: all.filter((a) => a.correct).length,
@@ -136,7 +146,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
         })
       }
     },
-    [player, config.game],
+    [player, config.game, en],
   )
 
   const next = useCallback(() => {
@@ -193,7 +203,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             ))}
           </ul>
           <button onClick={start} className="btn-primary mt-6 min-h-12 w-full !py-3.5 text-sm sm:mt-8 sm:text-base">
-            Mulai Permainan Sekarang <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
+            {en ? 'Start Challenge Now' : 'Mulai Permainan Sekarang'} <ArrowRight className="h-5 w-5" strokeWidth={1.75} />
           </button>
         </div>
       </div>
@@ -212,26 +222,37 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             <Trophy className="h-7 w-7 text-[#AD2B17]" strokeWidth={1.75} />
           </div>
           <p className="mt-3.5 font-mono text-xs font-semibold uppercase tracking-[0.2em] text-zinc-500 dark:text-zinc-400">
-            SKOR EVALUASI AKHIR
+            {en ? 'FINAL EVALUATION SCORE' : 'SKOR EVALUASI AKHIR'}
           </p>
           <p className="mt-1 animate-pop font-mono text-5xl font-extrabold tabular-nums text-zinc-900 dark:text-white sm:text-7xl">
             {score}
           </p>
-          <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400">DARI MAKSIMAL {max} PTS</p>
+          <p className="font-mono text-xs text-zinc-500 dark:text-zinc-400">
+            {en ? `OUT OF MAXIMUM ${max} PTS` : `DARI MAKSIMAL ${max} PTS`}
+          </p>
 
           <div className="mt-5 grid grid-cols-3 gap-2.5 text-center sm:mt-6 sm:gap-3">
-            <Stat label="BENAR" value={`${correct}/${answers.length}`} />
-            <Stat label="WAKTU" value={`${(answers.reduce((s, a) => s + a.elapsedMs, 0) / 1000).toFixed(1)}s`} />
-            <Stat label="PERINGKAT" value={rank ? `#${rank}` : entry ? '...' : '—'} />
+            <Stat label={en ? 'ACCURACY' : 'BENAR'} value={`${correct}/${answers.length}`} />
+            <Stat
+              label={en ? 'TIME' : 'WAKTU'}
+              value={`${(answers.reduce((s, a) => s + a.elapsedMs, 0) / 1000).toFixed(1)}s`}
+            />
+            <Stat label={en ? 'STANDING' : 'PERINGKAT'} value={rank ? `#${rank}` : entry ? '...' : '—'} />
           </div>
 
           {entry && (
             <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs text-zinc-700 dark:border-white/10 dark:bg-black/40 dark:text-zinc-300 sm:mt-5">
-              Skor tercatat pada Leaderboard <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">{entry.session_tag}</b>.{' '}
+              {en ? 'Score recorded on the ' : 'Skor tercatat pada Leaderboard '}
+              <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">
+                {formatSessionTag(entry.session_tag, lang)}
+              </b>
+              {en ? ' Leaderboard.' : '.'}{' '}
               {rank !== null && rank <= 3 && (
                 <span className="mt-1.5 flex items-center justify-center gap-1.5 font-bold text-[#AD2B17] dark:text-[#C89D54]">
                   <Award className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-                  Anda masuk Podium Top 3 — klaim Grand Merchandise saat pengumuman sesi break!
+                  {en
+                    ? 'You made the Top 3 Podium — claim your Grand Merchandise at the break announcement!'
+                    : 'Anda masuk Podium Top 3 — klaim Grand Merchandise saat pengumuman sesi break!'}
                 </span>
               )}
             </div>
@@ -239,18 +260,18 @@ export function QuizGame({ config }: { config: QuizConfig }) {
 
           <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-7 sm:flex sm:flex-row sm:gap-3">
             <button onClick={start} className="btn-secondary min-h-12 flex-1">
-              <RotateCcw className="h-4 w-4" strokeWidth={1.75} /> Main Lagi
+              <RotateCcw className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Play Again' : 'Main Lagi'}
             </button>
             <a href={ROUTE_PATHS.leaderboard} className="btn-primary min-h-12 flex-1">
-              <Trophy className="h-4 w-4" strokeWidth={1.75} /> Cek Peringkat
+              <Trophy className="h-4 w-4" strokeWidth={1.75} /> {en ? 'View Standings' : 'Cek Peringkat'}
             </a>
           </div>
           <a href={ROUTE_PATHS.home} className="btn-secondary mt-2.5 min-h-11 w-full sm:mt-3">
-            Kembali ke Paviliun Utama
+            {en ? 'Back to Main Pavilion' : 'Kembali ke Paviliun Utama'}
           </a>
         </div>
         <div className="space-y-4">
-          <CourseCta courses={coursesForQuiz(score / max)} />
+          <CourseCta courses={coursesForQuiz(score / max, lang)} />
         </div>
       </div>
     )
@@ -267,7 +288,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
       <div className="mb-3 flex flex-wrap items-center justify-between gap-2 font-mono text-xs sm:mb-4">
         <div className="flex items-center gap-2">
           <span className="chip">
-            SOAL 0{index + 1}/0{round.length}
+            {en ? 'QUESTION' : 'SOAL'} 0{index + 1}/0{round.length}
           </span>
           {/* Visual 5-dot question tracker */}
           <div className="flex items-center gap-1" aria-hidden>
@@ -285,14 +306,14 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           </div>
         </div>
         <span className="chip tabular-nums font-bold !text-zinc-900 dark:!text-white">
-          SKOR: {totalScore} PTS
+          {en ? 'SCORE' : 'SKOR'}: {totalScore} PTS
         </span>
       </div>
 
       <div className="glass p-5 sm:p-8">
         {current.category && (
           <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54] sm:text-[11px]">
-            KATEGORI // {current.category}
+            {en ? 'CATEGORY' : 'KATEGORI'} // {current.category}
           </p>
         )}
 
@@ -300,7 +321,9 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           {revealed ? (
             <div className="flex items-center gap-2 font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
               <Clock className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />
-              DIJAWAB DALAM {(lastAnswer.elapsedMs / 1000).toFixed(1)} DETIK
+              {en
+                ? `ANSWERED IN ${(lastAnswer.elapsedMs / 1000).toFixed(1)} SECONDS`
+                : `DIJAWAB DALAM ${(lastAnswer.elapsedMs / 1000).toFixed(1)} DETIK`}
             </div>
           ) : (
             <TimerBar remaining={remaining} total={durationMs} />
@@ -315,7 +338,11 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           {config.layout === 'binary' ? `“${current.prompt}”` : current.prompt}
         </h2>
 
-        <div className={`mt-5 grid gap-2.5 sm:mt-6 sm:gap-3 ${config.layout === 'binary' ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'}`}>
+        <div
+          className={`mt-5 grid gap-2.5 sm:mt-6 sm:gap-3 ${
+            config.layout === 'binary' ? 'grid-cols-2' : 'grid-cols-1 sm:grid-cols-2'
+          }`}
+        >
           {current.options.map((opt, i) => {
             const isAnswer = i === current.answer
             const isPicked = lastAnswer?.picked === i
@@ -388,10 +415,16 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             >
               <span>
                 {lastAnswer.correct
-                  ? 'JAWABAN TEPAT'
+                  ? en
+                    ? 'CORRECT ANSWER'
+                    : 'JAWABAN TEPAT'
                   : lastAnswer.picked === null
-                    ? 'WAKTU HABIS'
-                    : 'JAWABAN KURANG TEPAT'}
+                    ? en
+                      ? 'TIME EXPIRED'
+                      : 'WAKTU HABIS'
+                    : en
+                      ? 'INCORRECT ANSWER'
+                      : 'JAWABAN KURANG TEPAT'}
               </span>
               <span className="animate-pop tabular-nums">+{lastAnswer.points} PTS</span>
             </div>
@@ -400,14 +433,20 @@ export function QuizGame({ config }: { config: QuizConfig }) {
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-[#AD2B17] sm:h-5 sm:w-5" strokeWidth={1.75} />
               <p className="leading-relaxed">
                 <b className="font-mono text-[11px] uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
-                  FAKTA DIPLOMATIK:{' '}
+                  {en ? 'DIPLOMATIC FACT: ' : 'FAKTA DIPLOMATIK: '}
                 </b>
                 {current.info}
               </p>
             </div>
 
             <button onClick={next} className="btn-primary min-h-12 w-full">
-              {index + 1 < round.length ? 'Lanjut ke Soal Berikutnya' : 'Lihat Hasil Akhir'}{' '}
+              {index + 1 < round.length
+                ? en
+                  ? 'Next Question'
+                  : 'Lanjut ke Soal Berikutnya'
+                : en
+                  ? 'View Final Results'
+                  : 'Lihat Hasil Akhir'}{' '}
               <ArrowRight className="h-4 w-4" strokeWidth={1.75} />
             </button>
           </div>

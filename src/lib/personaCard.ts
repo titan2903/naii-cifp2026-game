@@ -1,4 +1,5 @@
 import { NAII_STAR_PATH } from '../components/NaiiBrand'
+import type { Lang } from '../context/LanguageContext'
 import type { Player, SimulationResult } from '../types'
 
 const W = 1080
@@ -38,7 +39,12 @@ function loadImage(src: string): Promise<HTMLImageElement | null> {
  * Menggambar "Diplomatic Persona Card" ukuran IG Story (1080×1920)
  * mengikuti NAII Brand Guidelines v1.0 (Dark Red #3A0900, NAII Red #AD2B17, White #FFFFFF, Plus Jakarta Sans).
  */
-export async function drawPersonaCard(player: Player, r: SimulationResult): Promise<HTMLCanvasElement> {
+export async function drawPersonaCard(
+  player: Player,
+  r: SimulationResult,
+  lang: Lang = 'id',
+): Promise<HTMLCanvasElement> {
+  const en = lang === 'en'
   const logoWhite = await loadImage('/brand/naii-logo-white.png')
   const canvas = document.createElement('canvas')
   canvas.width = W
@@ -92,7 +98,7 @@ export async function drawPersonaCard(player: Player, r: SimulationResult): Prom
   const instY = nameStartY + (nameLines.length - 1) * 64 + 62
   ctx.fillStyle = 'rgba(255, 255, 255, 0.78)'
   ctx.font = `500 32px ${FONT}`
-  ctx.fillText(player.institution || 'Delegasi CIFP 2026', cx, instY)
+  ctx.fillText(player.institution || (en ? 'CIFP 2026 Delegate' : 'Delegasi CIFP 2026'), cx, instY)
 
   // Lingkaran Skor Diplomasi Bebas-Aktif
   ctx.beginPath()
@@ -114,22 +120,33 @@ export async function drawPersonaCard(player: Player, r: SimulationResult): Prom
   ctx.fillText(String(r.score), cx, 768)
   ctx.fillStyle = 'rgba(255, 255, 255, 0.75)'
   ctx.font = `700 26px ${FONT}`
-  ctx.fillText('SKOR DIPLOMASI BEBAS-AKTIF', cx, 955)
+  ctx.fillText(en ? 'INDEPENDENT-ACTIVE DIPLOMACY SCORE' : 'SKOR DIPLOMASI BEBAS-AKTIF', cx, 955)
 
-  // Julukan Persona
+  // Julukan Persona (dinamis agar judul 1–2 baris tidak pernah bertabrakan dengan tagline)
   ctx.fillStyle = '#FFFFFF'
-  ctx.font = `800 66px ${FONT}`
-  wrap(ctx, r.persona.title, 960).forEach((l, i) => ctx.fillText(l, cx, 1065 + i * 76))
+  ctx.font = `800 56px ${FONT}`
+  const titleLines = wrap(ctx, r.persona.title, 980).slice(0, 2)
+  const titleStartY = titleLines.length > 1 ? 1045 : 1065
+  titleLines.forEach((l, i) => ctx.fillText(l, cx, titleStartY + i * 64))
+  const taglineStartY = titleStartY + (titleLines.length - 1) * 64 + 78
   ctx.fillStyle = 'rgba(255, 255, 255, 0.85)'
-  ctx.font = `italic 500 34px ${FONT}`
-  wrap(ctx, `“${r.persona.tagline}”`, 900).forEach((l, i) => ctx.fillText(l, cx, 1165 + i * 46))
+  ctx.font = `italic 500 31px ${FONT}`
+  wrap(ctx, `“${r.persona.tagline}”`, 920)
+    .slice(0, 2)
+    .forEach((l, i) => ctx.fillText(l, cx, taglineStartY + i * 42))
 
   // Bar 3 Dimensi
-  const dims: [string, number][] = [
-    ['Kemandirian (Bebas)', r.dims.bebas],
-    ['Kepemimpinan (Aktif)', r.dims.aktif],
-    ['Literasi & Kedaulatan AI', r.dims.teknologi],
-  ]
+  const dims: [string, number][] = en
+    ? [
+        ['Strategic Autonomy (Bebas)', r.dims.bebas],
+        ['Multilateral Leadership (Aktif)', r.dims.aktif],
+        ['AI Literacy & Sovereignty', r.dims.teknologi],
+      ]
+    : [
+        ['Kemandirian (Bebas)', r.dims.bebas],
+        ['Kepemimpinan (Aktif)', r.dims.aktif],
+        ['Literasi & Kedaulatan AI', r.dims.teknologi],
+      ]
   ctx.textAlign = 'left'
   dims.forEach(([label, val], i) => {
     const y = 1320 + i * 92
@@ -151,10 +168,10 @@ export async function drawPersonaCard(player: Player, r: SimulationResult): Prom
   ctx.textAlign = 'center'
   ctx.fillStyle = 'rgba(255, 255, 255, 0.7)'
   ctx.font = `600 27px ${FONT}`
-  ctx.fillText(`Skenario: ${r.scenario.title}`, cx, 1635)
+  ctx.fillText(`${en ? 'Scenario' : 'Skenario'}: ${r.scenario.title}`, cx, 1635)
   ctx.fillStyle = '#FFFFFF'
   ctx.font = `600 28px ${FONT}`
-  const courseText = `Rekomendasi Kelas: ${r.persona.courses[0]}`
+  const courseText = `${en ? 'Recommended Course' : 'Rekomendasi Kelas'}: ${r.persona.courses[0]}`
   ctx.fillText(courseText.length > 64 ? `${courseText.slice(0, 61)}...` : courseText, cx, 1685)
 
   // Footer CTA Pill (#AD2B17 dengan teks putih, rasio kontras 6.7:1 sesuai hal. 11 Brand Guidelines)
@@ -163,19 +180,19 @@ export async function drawPersonaCard(player: Player, r: SimulationResult): Prom
   ctx.fill()
   ctx.fillStyle = '#FFFFFF'
   ctx.font = `800 36px ${FONT}`
-  ctx.fillText('Belajar AI gratis di www.naii.co', cx, 1807)
+  ctx.fillText(en ? 'Learn AI for free at www.naii.co' : 'Belajar AI gratis di www.naii.co', cx, 1807)
 
   return canvas
 }
 
 function canvasToBlob(canvas: HTMLCanvasElement): Promise<Blob> {
   return new Promise((resolve, reject) =>
-    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Gagal membuat gambar'))), 'image/png'),
+    canvas.toBlob((b) => (b ? resolve(b) : reject(new Error('Failed to generate image'))), 'image/png'),
   )
 }
 
-export async function downloadPersonaCard(player: Player, r: SimulationResult) {
-  const canvas = await drawPersonaCard(player, r)
+export async function downloadPersonaCard(player: Player, r: SimulationResult, lang: Lang = 'id') {
+  const canvas = await drawPersonaCard(player, r, lang)
   const blob = await canvasToBlob(canvas)
   const url = URL.createObjectURL(blob)
   const a = document.createElement('a')
@@ -185,8 +202,13 @@ export async function downloadPersonaCard(player: Player, r: SimulationResult) {
   setTimeout(() => URL.revokeObjectURL(url), 2000)
 }
 
-export async function sharePersonaCard(player: Player, r: SimulationResult): Promise<'shared' | 'downloaded'> {
-  const canvas = await drawPersonaCard(player, r)
+export async function sharePersonaCard(
+  player: Player,
+  r: SimulationResult,
+  lang: Lang = 'id',
+): Promise<'shared' | 'downloaded'> {
+  const en = lang === 'en'
+  const canvas = await drawPersonaCard(player, r, lang)
   const blob = await canvasToBlob(canvas)
   const file = new File([blob], 'persona-diplomat-naii-cifp2026.png', { type: 'image/png' })
   if (navigator.canShare?.({ files: [file] })) {
@@ -194,13 +216,15 @@ export async function sharePersonaCard(player: Player, r: SimulationResult): Pro
       await navigator.share({
         files: [file],
         title: 'Diplomatic Persona Card — Nusantara AI Institute (NAII) × CIFP 2026',
-        text: `Saya "${r.persona.title}" dengan skor ${r.score}! Coba juga di booth NAII @CIFP2026 dan belajar AI gratis di www.naii.co`,
+        text: en
+          ? `I earned "${r.persona.title}" with a score of ${r.score}! Try the simulator at the NAII booth @CIFP2026 and learn AI for free at www.naii.co`
+          : `Saya "${r.persona.title}" dengan skor ${r.score}! Coba juga di booth NAII @CIFP2026 dan belajar AI gratis di www.naii.co`,
       })
       return 'shared'
     } catch {
       /* dibatalkan pengguna → lanjut unduh */
     }
   }
-  await downloadPersonaCard(player, r)
+  await downloadPersonaCard(player, r, lang)
   return 'downloaded'
 }

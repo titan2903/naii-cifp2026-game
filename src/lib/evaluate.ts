@@ -1,13 +1,11 @@
+import type { Lang } from '../context/LanguageContext'
 import { personaFromScore } from '../data/personas'
 import type { Dimensions, Scenario, ScenarioOption, SimulationResult } from '../types'
 
 /**
  * Mesin analisis Crisis Simulator (rule-based, berjalan 100% offline di browser).
  * Skor dasar berasal dari opsi kebijakan yang dipilih; instruksi tambahan pengunjung
- * dianalisis dengan kata kunci kebijakan untuk bonus/penalti per dimensi.
- *
- * Bisa diganti LLM (mis. Gemini via serverless function) tanpa mengubah UI —
- * cukup kembalikan objek SimulationResult yang sama.
+ * dianalisis dengan kata kunci kebijakan (Indonesia & Inggris) untuk bonus/penalti per dimensi.
  */
 
 interface KeywordGroup {
@@ -18,26 +16,129 @@ interface KeywordGroup {
 const POSITIVE: KeywordGroup[] = [
   {
     dim: 'bebas',
-    words: ['netral', 'mandiri', 'kemandirian', 'kedaulatan', 'berdaulat', 'independen', 'tidak memihak', 'non-blok', 'nonblok', 'kepentingan nasional', 'seimbang', 'bebas aktif', 'bebas-aktif'],
+    words: [
+      'netral',
+      'neutral',
+      'mandiri',
+      'kemandirian',
+      'autonomy',
+      'kedaulatan',
+      'sovereignty',
+      'sovereign',
+      'berdaulat',
+      'independen',
+      'independent',
+      'tidak memihak',
+      'non-blok',
+      'nonblok',
+      'non-aligned',
+      'kepentingan nasional',
+      'national interest',
+      'seimbang',
+      'balanced',
+      'bebas-aktif',
+    ],
   },
   {
     dim: 'aktif',
-    words: ['asean', 'global south', 'pbb', 'multilateral', 'dialog', 'kerja sama', 'kerjasama', 'koalisi', 'perdamaian', 'de-eskalasi', 'deeskalasi', 'mediasi', 'jembatan', 'inklusif', 'kolaborasi', 'diplomasi', 'konsensus'],
+    words: [
+      'asean',
+      'global south',
+      'pbb',
+      'united nations',
+      'multilateral',
+      'dialog',
+      'dialogue',
+      'kerja sama',
+      'kerjasama',
+      'cooperation',
+      'koalisi',
+      'coalition',
+      'perdamaian',
+      'peace',
+      'de-eskalasi',
+      'deeskalasi',
+      'de-escalation',
+      'mediasi',
+      'mediation',
+      'jembatan',
+      'bridge',
+      'inklusif',
+      'inclusive',
+      'kolaborasi',
+      'collaboration',
+      'diplomasi',
+      'diplomacy',
+      'konsensus',
+      'consensus',
+    ],
   },
   {
     dim: 'teknologi',
-    words: ['talenta', 'literasi', 'etika', 'pdp', 'data', 'open-source', 'open source', 'riset', 'pendidikan', 'transfer', 'verifikasi', 'watermark', 'watermarking', 'standar', 'regulasi', 'privasi', 'keamanan siber', 'sdm', 'ai'],
+    words: [
+      'talenta',
+      'talent',
+      'literasi',
+      'literacy',
+      'etika',
+      'ethics',
+      'pdp',
+      'data',
+      'open-source',
+      'open source',
+      'riset',
+      'research',
+      'pendidikan',
+      'education',
+      'transfer',
+      'verifikasi',
+      'verification',
+      'watermark',
+      'watermarking',
+      'standar',
+      'standard',
+      'regulasi',
+      'regulation',
+      'privasi',
+      'privacy',
+      'keamanan siber',
+      'cybersecurity',
+      'sdm',
+    ],
   },
 ]
 
-const NEGATIVE = ['bergabung dengan blok', 'pilih blok', 'memilih blok', 'embargo', 'serang', 'serangan balasan', 'balas dendam', 'putus hubungan', 'ancam', 'perang dagang']
+const NEGATIVE = [
+  'bergabung dengan blok',
+  'pilih blok',
+  'memilih blok',
+  'join bloc',
+  'pick a bloc',
+  'embargo',
+  'serang',
+  'attack',
+  'serangan balasan',
+  'retaliation',
+  'balas dendam',
+  'putus hubungan',
+  'sever ties',
+  'ancam',
+  'threaten',
+  'perang dagang',
+  'trade war',
+]
 
 const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const has = (text: string, word: string) => new RegExp(`(^|[^a-z0-9])${escape(word)}([^a-z0-9]|$)`, 'i').test(text)
 
 const clamp = (n: number) => Math.max(0, Math.min(100, Math.round(n)))
 
-export function evaluateDecision(scenario: Scenario, option: ScenarioOption, customNote: string): SimulationResult {
+export function evaluateDecision(
+  scenario: Scenario,
+  option: ScenarioOption,
+  customNote: string,
+  lang: Lang = 'id',
+): SimulationResult {
   const note = customNote.trim().toLowerCase()
   const dims: Dimensions = { ...option.dims }
   const matchedKeywords: string[] = []
@@ -70,7 +171,7 @@ export function evaluateDecision(scenario: Scenario, option: ScenarioOption, cus
     customNote: customNote.trim(),
     dims,
     score,
-    persona: personaFromScore(score),
+    persona: personaFromScore(score, lang),
     matchedKeywords: [...new Set(matchedKeywords)],
     penalties,
   }
