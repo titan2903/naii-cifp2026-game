@@ -1,5 +1,6 @@
 -- ========================================================
 -- SUPABASE SCHEMA: CIFP 2026 NAII BOOTH GAME
+-- Nusantara AI Institute (NAII) × 10th CIFP 2026
 -- ========================================================
 
 -- 1. Table: Leaderboard (Speed Trivia & Real vs AI)
@@ -16,8 +17,11 @@ create table if not exists public.leaderboard (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
-create index if not exists idx_leaderboard_score_desc on public.leaderboard (score desc, time_seconds asc);
+-- Index performa untuk query Live Leaderboard harian & per sesi break
+create index if not exists idx_leaderboard_today on public.leaderboard (created_at desc, score desc, time_seconds asc);
+create index if not exists idx_leaderboard_session on public.leaderboard (session_tag, score desc, time_seconds asc);
 
+-- Row Level Security (RLS)
 alter table public.leaderboard enable row level security;
 
 create policy "Allow anyone to read leaderboard"
@@ -28,9 +32,12 @@ create policy "Allow anyone to insert valid score"
   on public.leaderboard for insert
   with check (score >= 0 and score <= 750 and char_length(player_name) between 2 and 50);
 
+-- Aktifkan Supabase Realtime dengan full payload agar layar TV booth update instan
+alter table public.leaderboard replica identity full;
 alter publication supabase_realtime add table public.leaderboard;
 
--- 2. Table: Diplomat Personas (Hasil AI Crisis Simulator)
+
+-- 2. Table: Diplomat Personas (Hasil Bebas-Aktif AI Crisis Simulator)
 create table if not exists public.diplomat_personas (
   id uuid default gen_random_uuid() primary key,
   player_name text not null check (char_length(player_name) between 2 and 50),
@@ -43,13 +50,24 @@ create table if not exists public.diplomat_personas (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+create index if not exists idx_personas_created on public.diplomat_personas (created_at desc);
+
 alter table public.diplomat_personas enable row level security;
+
+create policy "Allow anyone to read diplomat personas"
+  on public.diplomat_personas for select
+  using (true);
 
 create policy "Allow anyone to insert diplomat persona"
   on public.diplomat_personas for insert
-  with check (diplomacy_score between 0 and 100);
+  with check (diplomacy_score between 0 and 100 and char_length(player_name) between 2 and 50);
 
--- 3. Table: Leads (Insert-only untuk kepatuhan privasi UU PDP)
+
+-- 3. Table: Leads (Registrasi Kontak Kursus Gratis www.naii.co)
+-- Kepatuhan UU No. 27/2022 tentang Pelindungan Data Pribadi (UU PDP):
+-- Tabel bersifat INSERT-ONLY untuk publik/anon key.
+-- TIDAK ADA SELECT policy publik, sehingga email pengunjung terlindungi dari scraping.
+-- Hanya admin panitia NAII lewat Dashboard Supabase (service_role) yang bisa melihat & mengekspor data.
 create table if not exists public.leads (
   id uuid default gen_random_uuid() primary key,
   player_name text not null check (char_length(player_name) between 2 and 50),
@@ -60,8 +78,10 @@ create table if not exists public.leads (
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
 
+create index if not exists idx_leads_created on public.leads (created_at desc);
+
 alter table public.leads enable row level security;
 
 create policy "Allow anyone to insert lead with consent"
   on public.leads for insert
-  with check (consent = true);
+  with check (consent = true and char_length(player_name) between 2 and 50);
