@@ -13,6 +13,7 @@ import {
   Scale,
   ShieldAlert,
   Sparkles,
+  Swords,
   Trophy,
   X,
   Zap,
@@ -380,11 +381,11 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                 {en ? (
                   <>
-                    Play <b>Crisis Simulator</b>, <b>Speed Trivia</b>, or <b>Real vs AI</b> right on your phone.
+                    Play <b>Crisis Simulator</b>, <b>Speed Trivia</b>, <b>Real vs AI</b>, or <b>Prompt Battle</b> right on your phone.
                   </>
                 ) : (
                   <>
-                    Mainkan <b>Crisis Simulator</b>, <b>Speed Trivia</b>, atau <b>Real vs AI</b> langsung dari ponsel.
+                    Mainkan <b>Crisis Simulator</b>, <b>Speed Trivia</b>, <b>Real vs AI</b>, atau <b>Prompt Battle</b> langsung dari ponsel.
                   </>
                 )}
               </p>
@@ -647,16 +648,85 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
             </div>
           </a>
 
-          {/* TILE 04 (7 COLS): LIVE BOOTH LEADERBOARD */}
+          {/* TILE 04 (7 COLS): 60-SECOND DIPLOMATIC PROMPT BATTLE */}
+          <a
+            href={ROUTE_PATHS.battle}
+            className="glass group relative flex flex-col justify-between overflow-hidden p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-7"
+          >
+            <div className="space-y-3.5 sm:space-y-4">
+              <div className="flex flex-wrap items-center justify-between gap-2">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white sm:px-3 sm:text-xs">
+                  <Swords className="h-3.5 w-3.5" strokeWidth={1.75} />
+                  {en ? 'MISSION 04 // 60s PROMPT BATTLE' : 'MISI 04 // DUEL PROMPT 60 DETIK'}
+                </span>
+                <span className="chip !border-[#C89D54]/50 !bg-[#C89D54]/10 !text-[#9A6F22] dark:!text-[#C89D54]">
+                  {en ? 'STAGE DUEL & SOLO' : 'DUEL PANGGUNG & SOLO'}
+                </span>
+              </div>
+
+              <div>
+                <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-2xl">
+                  60-Second Diplomatic Prompt Battle
+                </h3>
+                <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-2 sm:text-sm">
+                  {en ? (
+                    <>
+                      Special coffee break stage activation! Race against a 60-second timer to craft a policy-grade
+                      diplomatic prompt. Evaluated instantly across NAII's 4 Prompting Pillars: <b>Role</b>,{' '}
+                      <b>Context</b>, <b>Constraint</b>, and <b>Objective</b>.
+                    </>
+                  ) : (
+                    <>
+                      Aktivasi spesial panggung jam coffee break! Adu cepat susun <i>diplomatic prompt</i> berbobot
+                      kebijakan dalam 60 detik. Dinilai instan berdasarkan 4 Pilar NAII: <b>Peran</b>, <b>Konteks</b>,{' '}
+                      <b>Batasan</b>, dan <b>Tujuan</b>.
+                    </>
+                  )}
+                </p>
+              </div>
+
+              {/* 4 Pillars Mini-Tags */}
+              <div className="grid grid-cols-2 gap-2 font-mono text-[10px] sm:grid-cols-4 sm:text-[11px]">
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
+                  <p className="font-bold text-[#AD2B17]">{en ? 'ROLE' : 'PERAN'}</p>
+                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
+                </div>
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
+                  <p className="font-bold text-[#C89D54]">{en ? 'CONTEXT' : 'KONTEKS'}</p>
+                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
+                </div>
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
+                  <p className="font-bold text-sky-600 dark:text-sky-400">{en ? 'CONSTRAINT' : 'BATASAN'}</p>
+                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
+                </div>
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
+                  <p className="font-bold text-emerald-600 dark:text-emerald-400">{en ? 'OBJECTIVE' : 'TUJUAN'}</p>
+                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between border-t border-zinc-200/80 pt-3.5 dark:border-white/[0.08] sm:mt-6 sm:pt-4">
+              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+                {en ? '60s Live Countdown' : 'Hitung Mundur 60 Detik'}
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17]/10 px-3 py-1.5 text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/25 dark:text-white sm:bg-transparent sm:p-0 sm:text-sm">
+                {en ? 'Enter Arena' : 'Masuk Arena Duel'}
+                <ArrowRight className="h-4 w-4 text-[#AD2B17] transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
+              </span>
+            </div>
+          </a>
+
+          {/* TILE 05 (12 COLS): LIVE BOOTH LEADERBOARD */}
           <a
             href={ROUTE_PATHS.leaderboard}
-            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-7"
+            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-12"
           >
             <div className="space-y-3.5 sm:space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-zinc-100 px-2.5 py-1 font-mono text-[11px] font-bold text-zinc-800 dark:border-white/15 dark:bg-white/10 dark:text-white sm:text-xs">
                   <Trophy className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
-                  {en ? 'MISSION 04 // LIVE STANDINGS' : 'MISI 04 // PAPAN PERINGKAT LIVE'}
+                  {en ? 'MISSION 05 // LIVE STANDINGS' : 'MISI 05 // PAPAN PERINGKAT LIVE'}
                 </span>
                 <span className="chip">
                   <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
@@ -671,13 +741,15 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
                   {en ? (
                     <>
-                      Track your standing in real time. The top three delegates of every break session (Morning, Midday,
-                      Afternoon) win <b>Official NAII Grand Merchandise</b>.
+                      Track your standing in real time across all 3 competitive games (Speed Trivia, Real vs AI, and Prompt
+                      Battle). The top three delegates of every break session (Morning, Midday, Afternoon) win{' '}
+                      <b>Official NAII Grand Merchandise</b>.
                     </>
                   ) : (
                     <>
-                      Pantau posisi skor Anda secara <i>real-time</i>. Tiga delegasi terbaik di setiap sesi break (Pagi,
-                      Siang, Sore) berhak meraih <b>Grand Merchandise Resmi NAII</b>.
+                      Pantau posisi skor Anda secara <i>real-time</i> di 3 permainan kompetitif (Speed Trivia, Real vs AI,
+                      dan Prompt Battle). Tiga delegasi terbaik di setiap sesi break (Pagi, Siang, Sore) berhak meraih{' '}
+                      <b>Grand Merchandise Resmi NAII</b>.
                     </>
                   )}
                 </p>

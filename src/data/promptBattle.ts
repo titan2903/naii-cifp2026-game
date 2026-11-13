@@ -1,0 +1,280 @@
+import type { Lang } from '../context/LanguageContext'
+import type { PromptBattleMission } from '../types'
+
+export const PROMPT_MISSIONS_ID: PromptBattleMission[] = [
+  {
+    id: 'mission-satellite',
+    code: 'MISI 01 // COFFEE BREAK ACTIVATION',
+    title: 'Krisis Satelit & Kabel Bawah Laut Indo-Pasifik',
+    topic: 'Ketegangan Jalur Komunikasi Maritim & Antariksa',
+    scenario:
+      'Negara X dan Negara Y bersitegang di perairan Indo-Pasifik atas klaim rute kabel serat optik bawah laut dan jalur satelit orbit rendah (LEO). Kedua belah pihak saling mengancam blokade sinyal telekomunikasi.',
+    task:
+      'Dalam 60 detik, susun prompt terbaik agar AI merancang Pidato Penengah Presiden RI (1 paragraf) yang menjunjung tinggi politik Bebas-Aktif, de-eskalasi, dan sentralitas ASEAN.',
+    guidelines: [
+      'Tentukan Peran (Role): Analis Kebijakan Luar Negeri RI / Juru Bicara Kepresidenan.',
+      'Sertakan Konteks (Context): Ketegangan satelit, kabel laut, kawasan Indo-Pasifik, risiko blokade sinyal.',
+      'Beri Batasan (Constraint): 1 paragraf ringkas, nada tegas diplomatis, tidak memihak salah satu blok.',
+      'Tetapkan Tujuan (Objective): Merumuskan seruan de-eskalasi dan pembentukan zona damai digital ASEAN.',
+    ],
+    starterTemplate:
+      'Bertindaklah sebagai Analis Kebijakan Luar Negeri RI. Analisis krisis ketegangan kabel laut dan satelit di Indo-Pasifik...',
+  },
+  {
+    id: 'mission-treaty',
+    code: 'MISI 02 // COFFEE BREAK ACTIVATION',
+    title: 'Polarisasi Traktat Regulasi AI Global di PBB',
+    topic: 'Keadilan Akses Teknologi untuk Global South',
+    scenario:
+      'Sidang Majelis Umum PBB terbelah menjadi dua kutub: Blok Barat menuntut audit keselamatan AI yang sangat ketat dan berbiaya tinggi, sedangkan negara-negara berkembang khawatir aturan tersebut menjadi kedok monopoli teknologi.',
+    task:
+      'Susun prompt terstruktur agar AI merumuskan Draf Kompromi Indonesia & Global South (3 butir usulan) yang menyeimbangkan standar keselamatan AI dengan jaminan transfer teknologi.',
+    guidelines: [
+      'Tentukan Peran (Role): Ketua Delegasi RI untuk Sidang AI Majelis Umum PBB.',
+      'Sertakan Konteks (Context): Polarisasi traktat PBB, kepatuhan keselamatan, keadilan akses Global South.',
+      'Beri Batasan (Constraint): Format 3 poin ringkas, berwibawa, selaras dengan doktrin Bebas-Aktif.',
+      'Tetapkan Tujuan (Objective): Menjembatani kompromi agar negara berkembang tidak dipaksa memilih blok.',
+    ],
+    starterTemplate:
+      'Bertindaklah sebagai Ketua Delegasi RI di PBB. Terkait polarisasi pembahasan Traktat Regulasi AI...',
+  },
+  {
+    id: 'mission-cyber',
+    code: 'MISI 03 // COFFEE BREAK ACTIVATION',
+    title: 'Serangan Siber Lintas Batas & Kedaulatan Data ASEAN',
+    topic: 'Protokol Darurat Keamanan Siber Regional & UU PDP',
+    scenario:
+      'Insiden kebocoran data jutaan warga antarnegara di Asia Tenggara memicu saling tuduh sabotase siber antara dua negara tetangga, mengancam kestabilan ekonomi digital kawasan.',
+    task:
+      'Susun prompt agar AI menyusun Draf Nota Diplomatik Kemlu RI kepada Sekretariat ASEAN untuk menginisiasi Satgas Investigasi Bersama yang mengacu pada UU PDP dan transparansi regional.',
+    guidelines: [
+      'Tentukan Peran (Role): Diplomat Senior Kemlu RI Urusan Keamanan Siber & Tata Kelola Data.',
+      'Sertakan Konteks (Context): Kebocoran data lintas batas di ASEAN, risiko eskalasi konflik digital.',
+      'Beri Batasan (Constraint): Nada diplomatis konstruktif, patuh asas pelindungan data pribadi (UU PDP).',
+      'Tetapkan Tujuan (Objective): Membentuk Satgas Investigasi Bersama dan de-eskalasi dalam 24 jam.',
+    ],
+    starterTemplate:
+      'Bertindaklah sebagai Diplomat Senior Kemlu RI. Berkaitan dengan insiden kebocoran data siber regional ASEAN...',
+  },
+]
+
+export const PROMPT_MISSIONS_EN: PromptBattleMission[] = [
+  {
+    id: 'mission-satellite',
+    code: 'MISSION 01 // COFFEE BREAK ACTIVATION',
+    title: 'Indo-Pacific Subsea Cable & Satellite Crisis',
+    topic: 'Maritime & Orbital Communications Tension',
+    scenario:
+      'Nation X and Nation Y face a tense standoff in the Indo-Pacific over subsea fiber-optic routes and low-Earth-orbit (LEO) satellite slots, threatening cross-border communications blockades.',
+    task:
+      'Within 60 seconds, craft the optimal prompt instructing AI to draft a 1-paragraph presidential mediation address embodying Indonesia’s Independent & Active foreign policy and ASEAN Centrality.',
+    guidelines: [
+      'Define Role: Senior Indonesian Foreign Policy Analyst or Presidential Spokesperson.',
+      'Provide Context: Subsea cables, satellite slots, Indo-Pacific tension, risk of telecommunication embargoes.',
+      'Set Constraints: Concise 1-paragraph limit, firm yet diplomatic tone, strict non-alignment.',
+      'Specify Objective: Issue an immediate call for de-escalation and establish an ASEAN Digital Peace Zone.',
+    ],
+    starterTemplate:
+      'Act as a Senior Indonesian Foreign Policy Analyst. In response to the Indo-Pacific satellite and subsea cable crisis...',
+  },
+  {
+    id: 'mission-treaty',
+    code: 'MISSION 02 // COFFEE BREAK ACTIVATION',
+    title: 'UN Global AI Regulation Treaty Polarization',
+    topic: 'Equitable Technology Access for the Global South',
+    scenario:
+      'The UN General Assembly is deadlocked: Western nations push for cost-heavy AI safety audits, while developing countries fear the rules serve as a barrier to entry that cements technological monopoly.',
+    task:
+      'Craft a structured prompt directing AI to generate a 3-point compromise proposal from Indonesia & the Global South balancing stringent safety standards with guaranteed technology transfer.',
+    guidelines: [
+      'Define Role: Head of the Indonesian Delegation to the UN General Assembly on AI.',
+      'Provide Context: UN treaty deadlock, compliance burdens, developmental equity for the Global South.',
+      'Set Constraints: Exactly 3 numbered policy points, authoritative tone, anchored in Bebas-Aktif.',
+      'Specify Objective: Table an inclusive consensus bridging the divide without forcing bloc alignment.',
+    ],
+    starterTemplate:
+      'Act as Head of the Indonesian Delegation to the UN. Addressing the deadlock on the Global AI Treaty...',
+  },
+  {
+    id: 'mission-cyber',
+    code: 'MISSION 03 // COFFEE BREAK ACTIVATION',
+    title: 'Cross-Border Cyber Breach & ASEAN Data Sovereignty',
+    topic: 'Regional Emergency Protocol & Data Protection',
+    scenario:
+      'A massive cross-border data spill affecting millions of Southeast Asian citizens triggers mutual cyber-sabotage accusations between neighboring states, threatening the region’s digital economy.',
+    task:
+      'Craft a prompt instructing AI to draft an official Diplomatic Note to the ASEAN Secretariat initiating a Joint Digital Forensic Task Force compliant with Indonesia’s UU PDP.',
+    guidelines: [
+      'Define Role: Senior Diplomat at the Ministry of Foreign Affairs specializing in Cyber Affairs.',
+      'Provide Context: ASEAN cross-border data breach, risk of rapid cyber escalation.',
+      'Set Constraints: Constructive diplomatic tone, compliant with Personal Data Protection principles (UU PDP).',
+      'Specify Objective: Establish an ASEAN Joint Forensic Task Force within 24 hours to restore regional trust.',
+    ],
+    starterTemplate:
+      'Act as a Senior Diplomat at Indonesia’s Ministry of Foreign Affairs. Regarding the regional cyber breach incident...',
+  },
+]
+
+export function getPromptMissions(lang: Lang = 'id'): PromptBattleMission[] {
+  return lang === 'en' ? PROMPT_MISSIONS_EN : PROMPT_MISSIONS_ID
+}
+
+/** Keyword groups for detecting the 4 NAII Prompting Pillars */
+export const PILLAR_KEYWORDS = {
+  role: {
+    id: [
+      'bertindaklah sebagai',
+      'berperan sebagai',
+      'posisikan dirimu sebagai',
+      'sebagai analis',
+      'sebagai diplomat',
+      'sebagai perwakilan ri',
+      'sebagai ketua delegasi',
+      'sebagai menteri luar negeri',
+      'sebagai juru bicara',
+      'analis kebijakan luar negeri',
+      'diplomat senior',
+      'utusan khusus',
+      'delegasi ri',
+      'kemlu',
+      'pemerintah indonesia',
+      'presiden ri',
+    ],
+    en: [
+      'act as',
+      'roleplay as',
+      'assume the role',
+      'as an analyst',
+      'as a senior diplomat',
+      'as head of delegation',
+      'as special envoy',
+      'foreign policy analyst',
+      'indonesian delegation',
+      'spokesperson',
+      'presidential envoy',
+      'diplomatic counsel',
+    ],
+  },
+  context: {
+    id: [
+      'krisis',
+      'satelit',
+      'kabel bawah laut',
+      'kabel laut',
+      'indo-pasifik',
+      'blok barat',
+      'tiongkok',
+      'timur',
+      'asean',
+      'global south',
+      'pbb',
+      'traktat',
+      'pdp',
+      'perlindungan data pribadi',
+      'siber',
+      'kebocoran data',
+      'disinformasi',
+      'ketegangan',
+      'tatanan dunia baru',
+      'next world order',
+    ],
+    en: [
+      'crisis',
+      'satellite',
+      'subsea cable',
+      'undersea cable',
+      'indo-pacific',
+      'western bloc',
+      'china',
+      'asean',
+      'global south',
+      'un',
+      'united nations',
+      'treaty',
+      'pdp',
+      'data protection',
+      'cyber',
+      'data breach',
+      'disinformation',
+      'tension',
+      'next world order',
+    ],
+  },
+  constraint: {
+    id: [
+      '1 paragraf',
+      'satu paragraf',
+      '3 poin',
+      'tiga poin',
+      '3 butir',
+      '2 menit',
+      'dua menit',
+      'ringkas',
+      'singkat',
+      'tegas',
+      'diplomatis',
+      'netral',
+      'tidak memihak',
+      'non-blok',
+      'tanpa eskalasi',
+      'etika',
+      'batasan',
+      'maksimal',
+      'format',
+    ],
+    en: [
+      '1 paragraph',
+      'one paragraph',
+      '3 points',
+      'three points',
+      '2 minutes',
+      'concise',
+      'brief',
+      'diplomatic tone',
+      'firm',
+      'neutral',
+      'non-aligned',
+      'de-escalation',
+      'ethical',
+      'constraint',
+      'maximum',
+      'format',
+      'without bias',
+    ],
+  },
+  objective: {
+    id: [
+      'pidato penengah',
+      'draf kompromi',
+      'nota diplomatik',
+      'de-eskalasi',
+      'solusi damai',
+      'bebas-aktif',
+      'bebas aktif',
+      'sentralitas asean',
+      'kedaulatan data',
+      'satgas bersama',
+      'zona damai',
+      'rekomendasi kebijakan',
+      'kesepakatan bersama',
+      'meredakan ketegangan',
+    ],
+    en: [
+      'mediation address',
+      'speech',
+      'compromise proposal',
+      'diplomatic note',
+      'de-escalation',
+      'peaceful resolution',
+      'independent and active',
+      'bebas-aktif',
+      'asean centrality',
+      'data sovereignty',
+      'joint task force',
+      'peace zone',
+      'policy recommendation',
+      'consensus',
+      'defuse tension',
+    ],
+  },
+} as const

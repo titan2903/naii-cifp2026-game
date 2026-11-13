@@ -49,16 +49,34 @@
   body {
     @apply min-h-[100dvh] bg-[#F6F4F0] font-sans text-zinc-900 antialiased selection:bg-[#AD2B17] selection:text-white transition-colors duration-300;
     background-image:
-      radial-gradient(1100px 580px at 8% -8%, rgb(173 43 23 / 0.06), transparent 60%),
-      radial-gradient(900px 500px at 96% 10%, rgb(58 9 0 / 0.04), transparent 65%);
+      radial-gradient(1100px 580px at 8% -8%, rgb(173 43 23 / 0.08), transparent 60%),
+      radial-gradient(900px 500px at 96% 10%, rgb(58 9 0 / 0.05), transparent 65%),
+      radial-gradient(800px 800px at 50% 100%, rgb(200 157 84 / 0.04), transparent 70%);
     background-attachment: fixed;
   }
 
   .dark body {
     @apply bg-[#0B0908] text-zinc-100;
     background-image:
-      radial-gradient(1100px 600px at 10% -10%, rgb(173 43 23 / 0.22), transparent 62%),
-      radial-gradient(950px 580px at 98% 12%, rgb(58 9 0 / 0.55), transparent 65%);
+      radial-gradient(1200px 600px at 10% -10%, rgb(173 43 23 / 0.28), transparent 65%),
+      radial-gradient(1000px 580px at 98% 12%, rgb(58 9 0 / 0.65), transparent 68%),
+      radial-gradient(900px 700px at 50% 100%, rgb(200 157 84 / 0.08), transparent 75%);
+  }
+
+  /* Custom high-craft diplomatic scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: rgba(173, 43, 23, 0.25);
+    border-radius: 9999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: rgba(173, 43, 23, 0.55);
   }
 
   button {
@@ -67,12 +85,13 @@
 }
 
 @layer components {
-  /* Liquid-glass & Bento architectural surface */
+  /* Liquid-glass & Bento architectural surface with tactile specular rim */
   .glass {
     @apply rounded-[1.5rem] border border-zinc-200/90 bg-white/95 backdrop-blur-md;
     box-shadow:
-      0 20px 40px -15px rgba(24, 12, 8, 0.06),
-      inset 0 1px 0 rgba(255, 255, 255, 0.8);
+      0 20px 40px -15px rgba(24, 12, 8, 0.07),
+      inset 0 1px 0 rgba(255, 255, 255, 0.95),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.02);
     transition:
       transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
       border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -83,22 +102,23 @@
   .dark .glass {
     @apply border-white/[0.09] bg-[#140E0C]/90;
     box-shadow:
-      0 24px 48px -16px rgba(0, 0, 0, 0.65),
-      inset 0 1px 0 rgba(255, 255, 255, 0.08);
+      0 24px 48px -16px rgba(0, 0, 0, 0.75),
+      inset 0 1px 0 rgba(255, 255, 255, 0.12),
+      inset 0 -1px 0 rgba(0, 0, 0, 0.5);
   }
 
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#AD2B17] px-5 py-3 text-sm font-bold tracking-tight text-white shadow-[0_10px_24px_-6px_rgba(173,43,23,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] hover:-translate-y-[1px] hover:bg-[#be311b] active:translate-y-0 active:scale-[0.98] disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#AD2B17] px-5 py-3 text-sm font-bold tracking-tight text-white shadow-[0_10px_24px_-6px_rgba(173,43,23,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] hover:-translate-y-[1px] hover:bg-[#be311b] hover:shadow-[0_14px_28px_-6px_rgba(173,43,23,0.55),inset_0_1px_0_rgba(255,255,255,0.3)] active:translate-y-0 active:scale-[0.98] disabled:opacity-50;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300/90 bg-white px-4 py-2.5 text-sm font-semibold tracking-tight text-zinc-800 shadow-[0_2px_8px_rgba(0,0,0,0.03),inset_0_1px_0_rgba(255,255,255,0.9)] hover:-translate-y-[1px] hover:border-zinc-400 hover:bg-zinc-50 active:translate-y-0 active:scale-[0.98] disabled:opacity-50;
+    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300/90 bg-white px-4 py-2.5 text-sm font-semibold tracking-tight text-zinc-800 shadow-[0_2px_8px_rgba(0,0,0,0.03),inset_0_1px_0_rgba(255,255,255,0.95)] hover:-translate-y-[1px] hover:border-zinc-400 hover:bg-zinc-50 active:translate-y-0 active:scale-[0.98] disabled:opacity-50;
     transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
 
   .dark .btn-secondary {
-    @apply border-white/[0.12] bg-white/[0.04] text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.07)] hover:border-white/25 hover:bg-white/[0.08];
+    @apply border-white/[0.12] bg-white/[0.04] text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] hover:border-white/25 hover:bg-white/[0.08];
   }
 
   .chip {
@@ -117,11 +137,29 @@
     @apply border-white/[0.14] bg-[#0B0908]/90 text-zinc-100 placeholder:text-zinc-500 focus:border-[#AD2B17] focus:ring-[#AD2B17]/25;
   }
 
+  /* Diplomatic fine crosshair grid */
   .bg-diplomatic-grid {
     background-size: 28px 28px;
     background-image:
       linear-gradient(to right, rgba(255, 255, 255, 0.04) 1px, transparent 1px),
       linear-gradient(to bottom, rgba(255, 255, 255, 0.04) 1px, transparent 1px);
+  }
+
+  /* Diplomatic metallic seal & grade badges */
+  .seal-grade-s {
+    @apply border-[#C89D54] bg-gradient-to-br from-[#AD2B17] via-[#851E0D] to-[#3A0900] text-[#FFF4DE] shadow-[0_0_24px_rgba(200,157,84,0.45),inset_0_1px_0_rgba(255,255,255,0.35)];
+  }
+
+  .seal-grade-a {
+    @apply border-[#C89D54]/70 bg-gradient-to-br from-zinc-900 via-[#3A0900] to-zinc-950 text-white shadow-[0_0_20px_rgba(173,43,23,0.35),inset_0_1px_0_rgba(255,255,255,0.2)];
+  }
+
+  .seal-grade-b {
+    @apply border-zinc-400 bg-zinc-800 text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)];
+  }
+
+  .seal-grade-c {
+    @apply border-zinc-500 bg-zinc-900 text-zinc-300 shadow-none;
   }
 }
 

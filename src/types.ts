@@ -1,4 +1,4 @@
-export type GameId = 'trivia' | 'realvsai'
+export type GameId = 'trivia' | 'realvsai' | 'battle'
 
 export interface Player {
   name: string
@@ -92,3 +92,36 @@ export interface SimulationResult {
   matchedKeywords: string[]
   penalties: string[]
 }
+
+export interface PromptPillar {
+  name: string
+  score: number
+  maxScore: number
+  detected: string[]
+  feedback: string
+}
+
+export interface PromptBattleMission {
+  id: string
+  code: string
+  title: string
+  topic: string
+  scenario: string
+  task: string
+  guidelines: string[]
+  starterTemplate: string
+}
+
+export interface PromptEvaluation {
+  score: number
+  grade: 'S' | 'A' | 'B' | 'C'
+  pillars: {
+    role: PromptPillar
+    context: PromptPillar
+    constraint: PromptPillar
+    objective: PromptPillar
+  }
+  simulatedOutput: string
+  feedback: string
+}
+

@@ -584,9 +584,14 @@ function SimulatorFlow() {
         {/* VISUAL DIPLOMATIC PERSONA CARD */}
         <div
           className="glass relative overflow-hidden p-5 sm:p-8"
-          style={{ borderColor: `${result.persona.accent}55` }}
+          style={{ borderColor: `${result.persona.accent}66` }}
         >
-          <div className="flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 pb-3.5 dark:border-white/10">
+          {/* Subtle archival watermark stamp in background */}
+          <div className="pointer-events-none absolute -bottom-10 -right-10 opacity-5 dark:opacity-10" aria-hidden>
+            <NaiiStarMark color={result.persona.accent} className="h-56 w-56" />
+          </div>
+
+          <div className="relative flex flex-wrap items-center justify-between gap-2 border-b border-zinc-200 pb-3.5 dark:border-white/10">
             <div className="flex items-center gap-2.5">
               <NaiiStarMark color="#AD2B17" className="h-6 w-6" />
               <div>
@@ -598,13 +603,18 @@ function SimulatorFlow() {
                 </p>
               </div>
             </div>
-            <span className="chip">{result.scenario.code}</span>
+            <span className="chip !border-[#C89D54]/40 !text-zinc-800 dark:!text-zinc-200">
+              {result.scenario.code}
+            </span>
           </div>
 
-          <div className="mt-5 flex flex-col items-center gap-4 sm:mt-6 sm:flex-row sm:gap-6">
+          <div className="relative mt-5 flex flex-col items-center gap-4 sm:mt-6 sm:flex-row sm:gap-6">
             <div
               className="grid h-24 w-24 shrink-0 place-items-center rounded-2xl border-2 bg-zinc-50 shadow-inner dark:bg-black/50 sm:h-28 sm:w-28"
-              style={{ borderColor: result.persona.accent }}
+              style={{
+                borderColor: result.persona.accent,
+                boxShadow: `0 0 20px ${result.persona.accent}22`,
+              }}
             >
               <div className="text-center">
                 <p className="font-mono text-3xl font-extrabold tabular-nums text-zinc-900 dark:text-white sm:text-4xl">
@@ -631,7 +641,7 @@ function SimulatorFlow() {
             </div>
           </div>
 
-          <p className="mt-4 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-5 sm:text-sm">
+          <p className="relative mt-4 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-5 sm:text-sm">
             {result.persona.description}
           </p>
 

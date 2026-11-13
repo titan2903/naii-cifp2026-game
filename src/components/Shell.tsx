@@ -7,6 +7,7 @@ import {
   Moon,
   ShieldAlert,
   Sun,
+  Swords,
   Trophy,
   UserRound,
   UserRoundX,
@@ -54,6 +55,13 @@ const NAV_ITEMS: Array<{
     mobileLabel: { id: 'Real/AI', en: 'Real/AI' },
     href: ROUTE_PATHS.realvsai,
     icon: ShieldAlert,
+  },
+  {
+    route: 'battle',
+    label: { id: 'Prompt Battle', en: 'Prompt Battle' },
+    mobileLabel: { id: 'Battle', en: 'Battle' },
+    href: ROUTE_PATHS.battle,
+    icon: Swords,
   },
   {
     route: 'leaderboard',
@@ -272,9 +280,9 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
       {/* SMARTPHONE BOTTOM NAVIGATION BAR (Thumb-Friendly, Zero Confusion on Mobile) */}
       <nav
         aria-label={en ? 'Smartphone Navigation' : 'Navigasi Smartphone'}
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 px-2 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-white/[0.1] dark:bg-[#110B09]/95 lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 px-1.5 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-white/[0.1] dark:bg-[#110B09]/95 lg:hidden"
       >
-        <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
+        <div className="mx-auto grid max-w-lg grid-cols-6 gap-0.5">
           {NAV_ITEMS.map((item) => {
             const Icon = item.icon
             const active = currentRoute === item.route
@@ -283,13 +291,13 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                 key={item.route}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`flex flex-col items-center justify-center gap-1 rounded-xl py-1.5 text-[11px] font-bold tracking-tight transition active:scale-95 ${
+                className={`flex flex-col items-center justify-center gap-1 rounded-xl py-1 text-[10px] font-bold tracking-tight transition active:scale-95 ${
                   active
                     ? 'bg-[#AD2B17] text-white shadow-xs'
                     : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'
                 }`}
               >
-                <Icon className="h-4 w-4" strokeWidth={active ? 2.2 : 1.75} />
+                <Icon className="h-3.5 w-3.5" strokeWidth={active ? 2.2 : 1.75} />
                 <span className="truncate">{item.mobileLabel[lang]}</span>
               </a>
             )

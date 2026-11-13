@@ -3,12 +3,12 @@
 -- Nusantara AI Institute (NAII) × 10th CIFP 2026
 -- ========================================================
 
--- 1. Table: Leaderboard (Speed Trivia & Real vs AI)
+-- 1. Table: Leaderboard (Speed Trivia, Real vs AI & Prompt Battle)
 create table if not exists public.leaderboard (
   id uuid default gen_random_uuid() primary key,
   player_name text not null check (char_length(player_name) between 2 and 50),
   institution text default 'Umum' check (char_length(institution) <= 80),
-  game text not null default 'trivia' check (game in ('trivia', 'realvsai')),
+  game text not null default 'trivia' check (game in ('trivia', 'realvsai', 'battle')),
   score integer not null default 0 check (score >= 0 and score <= 750),
   correct_count integer not null default 0 check (correct_count >= 0 and correct_count <= total_questions),
   total_questions integer not null default 5 check (total_questions between 1 and 15),
