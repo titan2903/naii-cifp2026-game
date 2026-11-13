@@ -1,0 +1,190 @@
+import type { QuizItem } from '../types'
+
+/** Bank soal Speed Trivia — sumber: KONSEP_BOOTH_NAII_CIFP2026.md (15 soal). */
+export const TRIVIA_QUESTIONS: QuizItem[] = [
+  // ── Kategori 1: CIFP 2026 & Politik Luar Negeri Bebas-Aktif ──
+  {
+    id: 't1',
+    category: 'CIFP & Bebas-Aktif',
+    prompt: 'Apa tema utama penyelenggaraan edisi ke-10 CIFP 2026?',
+    options: [
+      'Globalizing Indonesian Foreign Policy',
+      'Independent and Active Foreign Policy: How to Keep Indonesia and the Next World Order Moving in the Right Direction',
+      'The Rise of Artificial Intelligence in Southeast Asia',
+      'One Decade of ASEAN Centrality',
+    ],
+    answer: 1,
+    info: 'CIFP 2026 merayakan 10 tahun penyelenggaraan dengan menyoroti bagaimana politik luar negeri Bebas-Aktif mengarahkan tatanan dunia baru (Next World Order).',
+  },
+  {
+    id: 't2',
+    category: 'CIFP & Bebas-Aktif',
+    prompt: 'Siapa tokoh yang mencetuskan doktrin "Bebas-Aktif" lewat pidato "Mendayung di Antara Dua Karang" (1948)?',
+    options: ['Ir. Soekarno', 'Sutan Sjahrir', 'Mohammad Hatta', 'Adam Malik'],
+    answer: 2,
+    info: 'Bung Hatta menegaskan Indonesia tidak memihak blok mana pun (Bebas), namun aktif memperjuangkan perdamaian dan keadilan dunia (Aktif).',
+  },
+  {
+    id: 't3',
+    category: 'CIFP & Bebas-Aktif',
+    prompt: 'Dalam konteks geopolitik modern, istilah "Global South" merujuk pada…',
+    options: [
+      'Negara yang secara geografis hanya berada di selatan khatulistiwa',
+      'Negara berkembang di Asia, Afrika, dan Amerika Latin yang memperjuangkan tatanan global lebih setara',
+      'Pakta pertahanan militer negara-negara Pasifik Selatan',
+      'Organisasi perdagangan bebas pengganti WTO',
+    ],
+    answer: 1,
+    info: 'Sejak Konferensi Asia-Afrika 1955 di Bandung, Indonesia menjadi salah satu penggerak utama solidaritas Global South.',
+  },
+  {
+    id: 't4',
+    category: 'CIFP & Bebas-Aktif',
+    prompt: 'Apa makna prinsip "Bebas-Aktif" jika diterapkan pada diplomasi teknologi & AI Indonesia?',
+    options: [
+      'Menolak seluruh teknologi AI dari luar negeri',
+      'Hanya memakai teknologi dari satu negara adidaya',
+      'Bermitra dengan berbagai ekosistem teknologi secara mandiri sambil aktif memperjuangkan etika, kedaulatan data, dan akses AI yang inklusif',
+      'Menyerahkan seluruh regulasi AI kepada perusahaan asing',
+    ],
+    answer: 2,
+    info: 'Kemandirian teknologi dan kolaborasi terbuka adalah wujud nyata politik Bebas-Aktif di abad ke-21.',
+  },
+  {
+    id: 't5',
+    category: 'CIFP & Bebas-Aktif',
+    prompt: 'Organisasi mana yang menjadi penyelenggara tahunan Conference on Indonesian Foreign Policy (CIFP)?',
+    options: [
+      'Foreign Policy Community of Indonesia (FPCI)',
+      'Sekretariat ASEAN',
+      'Dewan Keamanan PBB',
+      'Lembaga Ketahanan Nasional',
+    ],
+    answer: 0,
+    info: 'FPCI didirikan oleh Dr. Dino Patti Djalal untuk membumikan diplomasi publik (citizen diplomacy) di Indonesia.',
+  },
+
+  // ── Kategori 2: Geopolitik AI & Tata Kelola Global ──
+  {
+    id: 't6',
+    category: 'Geopolitik AI',
+    prompt: 'Istilah "Sovereign AI" (Kedaulatan AI) berarti…',
+    options: [
+      'AI yang diberi hak pilih dalam pemilu',
+      'Kemampuan bangsa mengembangkan, mengatur, dan mengoperasikan AI sesuai bahasa, budaya, data, dan kepentingan nasionalnya',
+      'AI khusus untuk operasi militer luar angkasa',
+      'Pelarangan internet lintas negara',
+    ],
+    answer: 1,
+    info: 'Tanpa literasi dan talenta lokal, sebuah negara hanya akan menjadi konsumen pasif di era AI.',
+  },
+  {
+    id: 't7',
+    category: 'Geopolitik AI',
+    prompt: 'Komponen apa yang menjadi pusat persaingan geopolitik teknologi ("Chip War") karena krusial untuk melatih AI?',
+    options: [
+      'Kabel serat optik bawah laut',
+      'Semikonduktor canggih / GPU',
+      'Satelit cuaca orbit rendah',
+      'Layar panel OLED',
+    ],
+    answer: 1,
+    info: 'Rantai pasok semikonduktor kini menjadi salah satu isu paling strategis dalam hubungan internasional.',
+  },
+  {
+    id: 't8',
+    category: 'Geopolitik AI',
+    prompt: 'Apa sifat utama "ASEAN Guide on AI Governance and Ethics" yang diluncurkan tahun 2024?',
+    options: [
+      'Mendorong inovasi AI yang bertanggung jawab, etis, terpercaya, dan menghormati keberagaman anggota ASEAN',
+      'Melarang mahasiswa memakai AI untuk riset',
+      'Mewajibkan semua negara ASEAN memakai satu aplikasi AI yang sama',
+      'Menghapus hak cipta atas seluruh karya seni digital',
+    ],
+    answer: 0,
+    info: 'Pendekatan ASEAN menyeimbangkan pertumbuhan inovasi ekonomi digital dengan perlindungan masyarakat.',
+  },
+  {
+    id: 't9',
+    category: 'Geopolitik AI',
+    prompt: 'Mengapa negara Global South perlu aktif menyusun standar etika AI internasional?',
+    options: [
+      'Agar biaya langganan media sosial lebih mahal',
+      'Agar aturan dan model AI global tidak bias ke negara maju, melainkan adil bagi negara berkembang',
+      'Karena negara maju sudah berhenti mengembangkan AI',
+      'Untuk menggantikan diplomat manusia dengan robot',
+    ],
+    answer: 1,
+    info: 'Inklusivitas dalam tata kelola AI memastikan teknologi memperkecil ketimpangan global, bukan memperlebarnya.',
+  },
+  {
+    id: 't10',
+    category: 'Geopolitik AI',
+    prompt: 'AI menghasilkan kutipan perjanjian internasional yang terdengar meyakinkan padahal tidak pernah ada. Fenomena ini disebut…',
+    options: ['AI Diplomacy', 'AI Hallucination (Halusinasi AI)', 'Deep Learning', 'Cloud Computing'],
+    answer: 1,
+    info: 'Memahami halusinasi AI krusial bagi mahasiswa HI, peneliti, dan pembuat kebijakan agar tidak terjebak referensi palsu.',
+  },
+
+  // ── Kategori 3: Konteks Indonesia, Etika AI & NAII ──
+  {
+    id: 't11',
+    category: 'Indonesia & NAII',
+    prompt: 'Regulasi nasional yang menjadi landasan utama perlindungan data warga — termasuk untuk sistem AI — adalah…',
+    options: [
+      'UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP)',
+      'UU Lalu Lintas dan Angkutan Jalan',
+      'UU Perdagangan Bebas ASEAN',
+      'UU Pemerintahan Daerah',
+    ],
+    answer: 0,
+    info: 'Di www.naii.co ada kursus "Etika AI dari Perspektif Indonesia" yang membahas relevansinya dengan UU PDP.',
+  },
+  {
+    id: 't12',
+    category: 'Indonesia & NAII',
+    prompt: 'Apa misi utama Nusantara AI Institute (NAII) di www.naii.co?',
+    options: [
+      'Menjual perangkat keras komputer untuk korporasi',
+      'Menyediakan kursus literasi AI berkualitas secara gratis dan inklusif bagi masyarakat Indonesia',
+      'Menjadi pemberi pinjaman modal ventura',
+      'Membatasi pembelajaran AI hanya untuk lulusan informatika',
+    ],
+    answer: 1,
+    info: 'NAII diinisiasi mahasiswa dan diaspora Indonesia di AS agar siapa pun di Indonesia bisa belajar AI tanpa biaya.',
+  },
+  {
+    id: 't13',
+    category: 'Indonesia & NAII',
+    prompt: 'Apa tiga pilar kurikulum gratis di www.naii.co?',
+    options: [
+      'AI Literacy, AI for Business, dan AI Technicals',
+      'AI Gaming, AI Crypto, dan AI Hardware',
+      'Basic Coding, Graphic Design, dan Video Editing',
+      'Macroeconomics, International Law, dan Public Speaking',
+    ],
+    answer: 0,
+    info: 'Pemula non-IT, profesional/eksekutif, hingga developer punya jalur belajar masing-masing di naii.co.',
+  },
+  {
+    id: 't14',
+    category: 'Indonesia & NAII',
+    prompt: 'Berapa rata-rata durasi satu kursus mandiri (self-paced) di www.naii.co?',
+    options: ['6 bulan penuh', '100 jam per modul', 'Sekitar 2–4 jam per kursus', '3 tahun akademik'],
+    answer: 2,
+    info: 'Kurikulum NAII dirancang ringkas, aplikatif, dan langsung ke studi kasus nyata.',
+  },
+  {
+    id: 't15',
+    category: 'Indonesia & NAII',
+    prompt: 'Bagi mahasiswa HI atau lulusan baru, kursus gratis mana di www.naii.co yang paling cocok diambil pertama?',
+    options: [
+      'AI untuk Pencari Kerja & AI dalam Akademik untuk Pelajar dan Mahasiswa',
+      'Arsitektur Mesin Pesawat Terbang',
+      'Hukum Agraria Tradisional',
+      'Manajemen Perhotelan Dasar',
+    ],
+    answer: 0,
+    info: 'Kedua kursus tersebut tersedia gratis di kategori AI Literacy di www.naii.co.',
+  },
+]
