@@ -5,6 +5,7 @@ import {
   Layers,
   Maximize2,
   Medal,
+  QrCode,
   RefreshCw,
   ShieldAlert,
   Sparkles,
@@ -14,7 +15,9 @@ import {
   Zap,
 } from 'lucide-react'
 import { NaiiStarMark } from '../components/NaiiBrand'
+import { BoothQrShowcase } from '../components/QrCodeModal'
 import { useLanguage } from '../context/LanguageContext'
+import { usePlayer } from '../context/PlayerContext'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { backendMode, fetchTodayScores, sortScores, submitScore, subscribeScores } from '../lib/storage'
 import { currentSessionTag, formatSeconds, formatSessionTag, SESSION_TAGS } from '../lib/utils'
@@ -34,6 +37,7 @@ const DEMO_PLAYERS: Array<{ name: string; inst: string; game: GameId; score: num
 
 export function LeaderboardScreen() {
   const { lang } = useLanguage()
+  const { setQrModalOpen } = usePlayer()
   const en = lang === 'en'
 
   const [scores, setScores] = useState<ScoreEntry[]>([])
@@ -159,6 +163,14 @@ export function LeaderboardScreen() {
         </div>
 
         <div className="flex flex-wrap gap-2">
+          <button
+            type="button"
+            onClick={() => setQrModalOpen(true)}
+            className="btn-primary !px-3.5 !py-2 text-xs"
+          >
+            <QrCode className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
+            {en ? 'Show QR Codes' : 'Tampilkan QR Code'}
+          </button>
           <button onClick={() => void reload()} className="btn-secondary !px-3.5 !py-2 text-xs">
             <RefreshCw className={`h-4 w-4 ${loading ? 'animate-spin' : ''}`} strokeWidth={1.75} />
             {en ? 'Refresh Data' : 'Segarkan Data'}
@@ -447,6 +459,9 @@ export function LeaderboardScreen() {
           )}
         </>
       )}
+
+      {/* DUAL QR CODE SHOWCASE ON BOOTH TV */}
+      <BoothQrShowcase onExpand={() => setQrModalOpen(true)} />
     </div>
   )
 }

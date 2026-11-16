@@ -32,6 +32,8 @@ interface PlayerCtx {
   stampCount: number
   passportOpen: boolean
   setPassportOpen: (open: boolean) => void
+  qrModalOpen: boolean
+  setQrModalOpen: (open: boolean) => void
   unlockStamp1: (personaTitle: string, score: number) => void
   unlockStamp2: (game: GameId, score: number) => void
   unlockStamp3: (codeUsed: string, email?: string) => void
@@ -82,6 +84,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   const [player, setState] = useState<Player | null>(loadPlayer)
   const [passport, setPassportState] = useState<PassportState>(loadPassport)
   const [passportOpen, setPassportOpen] = useState(false)
+  const [qrModalOpen, setQrModalOpen] = useState(false)
 
   const setPlayer = useCallback((p: Player) => {
     setState(p)
@@ -99,6 +102,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     const fresh = createInitialPassport()
     setPassportState(fresh)
     setPassportOpen(false)
+    setQrModalOpen(false)
     try {
       localStorage.removeItem(KEY)
       sessionStorage.removeItem(KEY)
@@ -203,6 +207,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       stampCount,
       passportOpen,
       setPassportOpen,
+      qrModalOpen,
+      setQrModalOpen,
       unlockStamp1,
       unlockStamp2,
       unlockStamp3,
@@ -215,6 +221,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       passport,
       stampCount,
       passportOpen,
+      qrModalOpen,
       unlockStamp1,
       unlockStamp2,
       unlockStamp3,

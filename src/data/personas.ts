@@ -2,6 +2,7 @@ import type { Lang } from '../context/LanguageContext'
 import type { Persona, PersonaId } from '../types'
 
 export const NAII_URL = 'https://www.naii.co'
+export const BOOTH_GAME_URL = 'https://naii-cifp2026-game.vercel.app/'
 
 export const PERSONAS: Record<PersonaId, Persona> = {
   'bridge-builder': {

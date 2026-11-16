@@ -1,4 +1,4 @@
-import { memo, useEffect, useState } from 'react'
+import { memo, useEffect, useMemo, useState } from 'react'
 import {
   Activity,
   ArrowRight,
@@ -9,6 +9,8 @@ import {
   FileTerminal,
   Globe2,
   Layers,
+  Play,
+  QrCode,
   Radio,
   Scale,
   ShieldAlert,
@@ -21,10 +23,13 @@ import {
   Zap,
 } from 'lucide-react'
 import { NaiiLogo, NaiiStarMark, NaiiWatermark } from '../components/NaiiBrand'
+import { BoothQrShowcase } from '../components/QrCodeModal'
 import { useLanguage, type Lang } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { NAII_URL } from '../data/personas'
+import { getPromptMissions } from '../data/promptBattle'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
+import { evaluatePrompt } from '../lib/evaluatePrompt'
 import { fetchTodayScores, sortScores } from '../lib/storage'
 import { currentSessionTag, formatSeconds, formatSessionTag } from '../lib/utils'
 import type { ScoreEntry } from '../types'
@@ -88,10 +93,14 @@ const COPILOT_EXAMPLES = {
       naive: '“Rangkum isu tatanan dunia baru dan peran Indonesia.”',
       naiveResult:
         'Output normatif dan dangkal; hanya mengulang definisi multipolaritas tanpa memetakan posisi tawar strategis Republik Indonesia.',
+      naiveOutput:
+        '“Tatanan dunia saat ini sedang berubah menjadi multipolar di mana banyak negara berkembang mulai tumbuh. Indonesia sebagai negara besar di Asia Tenggara perlu bekerja sama dengan semua negara untuk menjaga perdamaian dan meningkatkan pertumbuhan ekonomi nasional di masa depan.”',
       structured:
-        '“Bertindaklah sebagai Analis Kebijakan Luar Negeri RI. Analisis teks resolusi berikut menggunakan kacamata Politik Bebas-Aktif. Susun Policy Brief 3 poin berisi: (1) Peluang strategis bagi Indonesia & Global South, (2) Risiko ketergantungan blok, dan (3) Rekomendasi sikap delegasi RI.”',
+        '“Bertindaklah sebagai Analis Kebijakan Luar Negeri RI di Kemlu. Analisis teks resolusi PBB terkait tatanan dunia baru dan kedaulatan AI menggunakan kacamata Politik Bebas-Aktif. Susun Policy Brief ringkas 3 poin dengan nada tegas diplomatis berisi: (1) Peluang strategis bagi Indonesia & Global South, (2) Risiko ketergantungan blok, dan (3) Rekomendasi sikap delegasi RI.”',
       structuredResult:
         'Menghasilkan Policy Brief terstruktur (Peluang, Risiko, Rekomendasi) yang langsung selaras dengan doktrin Bebas-Aktif.',
+      structuredOutput:
+        '“[POLICY BRIEF KEMLU RI] (1) Peluang Strategis: Memosisikan ASEAN & Global South sebagai penyeimbang rantai pasok AI dan mineral kritis dunia. (2) Risiko Blok: Ketergantungan pada standar tertutup satu poros dapat menggerus kedaulatan data nasional (UU PDP). (3) Rekomendasi Sikap RI: Dorong klausul interoperabilitas terbuka dan transfer kapasitas talenta AI tanpa pakta eksklusif.”',
       metrics: ['Konteks Doktrin RI', 'Mitigasi Risiko Blok', 'Siap Sidang Pleno'],
     },
     {
@@ -102,10 +111,14 @@ const COPILOT_EXAMPLES = {
       naive: '“Apa isi berita tentang regulasi teknologi ini?”',
       naiveResult:
         'Sekadar merangkum ulang artikel permukaan tanpa membongkar asumsi geopolitik dan bias narasi blok kekuatan besar.',
+      naiveOutput:
+        '“Artikel berita ini membahas tentang aturan baru pembatasan ekspor teknologi chip dan kecerdasan buatan. Beberapa negara mendukung aturan ini demi keamanan, sementara negara lain merasa keberatan karena dapat menghambat perdagangan global.”',
       structured:
-        '“Bandingkan dua artikel berita dari media Barat dan media Global South berikut. Identifikasi perbedaan framing, asumsi geopolitik yang tersembunyi, serta implikasinya terhadap posisi sentralitas ASEAN.”',
+        '“Bertindaklah sebagai Analis Kebijakan Luar Negeri RI dan Juru Bicara Kemlu. Bandingkan dua artikel berita dari media Blok Barat dan media Global South terkait krisis regulasi AI di Indo-Pasifik. Susun format ringkas 3 poin secara netral dan tidak memihak untuk mengidentifikasi perbedaan framing, asumsi geopolitik, serta rekomendasi kebijakan menjaga sentralitas ASEAN dan solusi damai.”',
       structuredResult:
         'Membedah kontras narasi kedua blok secara objektif serta menyoroti ruang manuver diplomasi bagi ASEAN.',
+      structuredOutput:
+        '“[AUDIT FRAMING MEDIA] Media Barat membingkai pembatasan chip sebagai ‘proteksi keamanan nasional’, dengan asumsi implisit bahwa inovasi harus dikendalikan blok aliansi. Sebaliknya, media Global South membingkainya sebagai ‘proteksionisme teknologi’. Implikasi bagi ASEAN: Indonesia perlu menjaga Sentralitas ASEAN agar kawasan tidak dijadikan arena proksi regulasi.”',
       metrics: ['Audit Asumsi Blok', 'Sentralitas ASEAN', 'Objektivitas Tinggi'],
     },
     {
@@ -116,11 +129,33 @@ const COPILOT_EXAMPLES = {
       naive: '“Buatkan pidato tentang kerja sama AI.”',
       naiveResult:
         'Nada generik dan klise; kehilangan wibawa diplomatik serta tidak menyentuh isu ketimpangan akses teknologi.',
+      naiveOutput:
+        '“Selamat pagi hadirin sekalian. Kecerdasan buatan adalah teknologi yang sangat penting bagi masa depan kita. Oleh karena itu, mari kita bekerja sama agar AI dapat memberikan manfaat positif bagi seluruh umat manusia di dunia.”',
       structured:
-        '“Susun draf intervensi pembuka (2 menit) untuk forum CIFP 2026 dengan nada diplomatis, tegas, dan inklusif. Tekankan pentingnya demokratisasi literasi AI bagi negara berkembang agar tatanan dunia baru tidak meninggalkan siapa pun.”',
+        '“Bertindaklah sebagai Utusan Khusus Presiden RI dan Ketua Delegasi RI. Susun draf intervensi pembuka maksimal 2 menit (1 paragraf ringkas) untuk forum CIFP 2026 terkait tatanan dunia baru dan kedaulatan AI di ASEAN & Global South dengan nada diplomatis, tegas, dan inklusif. Tekankan prinsip Politik Bebas-Aktif, demokratisasi literasi AI, dan kesepakatan bersama.”',
       structuredResult:
         'Menghasilkan naskah intervensi berwibawa dengan pesan kuat tentang keadilan akses AI bagi Global South.',
+      structuredOutput:
+        '“Yang Mulia para delegasi CIFP 2026, arsitektur dunia baru tidak boleh dibangun di atas kesenjangan algoritma. Berpijak pada amanat Politik Bebas-Aktif, Indonesia menyerukan demokratisasi literasi dan infrastruktur AI bagi seluruh negara berkembang—agar negara-negara Global South berdiri sebagai pencipta berdaulat, bukan sekadar pasar pasif.”',
       metrics: ['Retorika Diplomatik', 'Suara Global South', 'Durasi Presisi 120d'],
+    },
+    {
+      id: 'interview',
+      code: '04 // CAREER INTERVIEW',
+      label: 'Wawancara AI',
+      fullLabel: 'Simulasi Wawancara Kerja & Karier',
+      naive: '“Bantu saya latihan wawancara kerja untuk jadi diplomat atau daftar beasiswa luar negeri.”',
+      naiveResult:
+        'Menghasilkan daftar pertanyaan HR klise (“Apa kelebihan dan kelemahan Anda?”) tanpa menguji ketajaman analisis geopolitik maupun struktur jawaban STAR.',
+      naiveOutput:
+        '“Tentu! Berikut 3 pertanyaan latihan wawancara: (1) Ceritakan tentang diri Anda. (2) Mengapa Anda tertarik melamar posisi ini atau beasiswa ini? (3) Apa kelebihan dan kelemahan terbesar Anda dalam bekerja sama dengan tim?”',
+      structured:
+        '“Bertindaklah sebagai Panelis Senior Seleksi Diplomat Kemlu RI & Beasiswa Internasional. Ajukan 1 pertanyaan singkat dan tegas berupa studi kasus krisis geopolitik Indo-Pasifik terkait kedaulatan AI dan perlindungan data pribadi (UU PDP). Setelah saya menjawab, berikan evaluasi kritis menggunakan format metode STAR (Situation, Task, Action, Result) berdasarkan prinsip Bebas-Aktif dan contoh perbaikan kalimat yang berwibawa.”',
+      structuredResult:
+        'Menciptakan simulasi wawancara interaktif yang realistis, menguji nalar kebijakan luar negeri, sekaligus memberikan coaching terukur berbasis metode STAR.',
+      structuredOutput:
+        '“[PANELIS SELEKSI]: ‘Jika Anda ditugaskan di Perwakilan RI saat terjadi sengketa kabel bawah laut & blokade cloud di kawasan, langkah konkret apa yang Anda usulkan dalam 48 jam pertama?’ — [EVALUASI STAR]: Jawaban Anda sudah memuat Situation & Task, namun bagian Action perlu diperkuat dengan rujukan mekanisme ASEAN Digital Ministers’ Meeting (ADGMIN) dan pelindungan UU PDP.”',
+      metrics: ['Simulasi Panelis Kemlu/LPDP', 'Evaluasi Metode STAR', 'Coaching Karier Real-Time'],
     },
   ],
   en: [
@@ -132,10 +167,14 @@ const COPILOT_EXAMPLES = {
       naive: '“Summarize the new world order issue and Indonesia’s role.”',
       naiveResult:
         'Produces a generic, surface-level summary that repeats textbook multipolarity definitions without mapping Indonesia’s strategic leverage.',
+      naiveOutput:
+        '“The global order is shifting toward multipolarity as emerging economies grow. Indonesia, as the largest country in Southeast Asia, should cooperate with all nations to maintain peace and support economic growth in the coming years.”',
       structured:
-        '“Act as a Senior Indonesian Foreign Policy Analyst. Analyze the following draft resolution through the lens of Indonesia’s Independent & Active (Bebas-Aktif) doctrine. Produce a 3-point Policy Brief covering: (1) Strategic opportunities for Indonesia & the Global South, (2) Bloc-dependency risks, and (3) Actionable recommendations for the Indonesian delegation.”',
+        '“Act as a Senior Foreign Policy Analyst for the Indonesian Delegation. Analyze the following UN draft resolution on the Next World Order and AI sovereignty through the lens of Indonesia’s Independent & Active (Bebas-Aktif) doctrine. Produce a concise, firm 3-point Policy Brief covering: (1) Strategic opportunities for Indonesia & the Global South, (2) Bloc-dependency risks, and (3) Actionable policy recommendation for consensus.”',
       structuredResult:
         'Delivers an executive-ready Policy Brief (Opportunities, Risks, Recommendations) directly anchored in the Bebas-Aktif doctrine.',
+      structuredOutput:
+        '“[KEMLU RI POLICY BRIEF] (1) Strategic Opportunity: Position ASEAN & the Global South as indispensable neutral hubs in the global AI and critical minerals supply chain. (2) Bloc Risk: Exclusive alignment with proprietary tech standards threatens national data sovereignty (UU PDP). (3) Delegation Recommendation: Champion open interoperability and AI talent capacity-building without military-tech bloc preconditions.”',
       metrics: ['RI Doctrine Context', 'Bloc Risk Mitigation', 'Plenary-Ready'],
     },
     {
@@ -146,10 +185,14 @@ const COPILOT_EXAMPLES = {
       naive: '“What does this news article say about tech regulation?”',
       naiveResult:
         'Merely paraphrases the surface text while missing underlying geopolitical assumptions and great-power narrative framing.',
+      naiveOutput:
+        '“This news article discusses new regulations restricting exports of advanced chips and AI technology. Some countries support these rules for security reasons, while others argue they will slow down global trade.”',
       structured:
-        '“Compare these two dispatches from Western and Global South outlets. Identify divergences in framing, unspoken geopolitical assumptions, and their strategic implications for ASEAN Centrality.”',
+        '“Act as a Senior Foreign Policy Analyst and Diplomatic Counsel for the Indonesian Delegation. Compare these two dispatches from Western Bloc and Global South outlets on Indo-Pacific AI treaty tensions. In a concise, neutral, non-aligned 3-point format, identify framing divergences, unspoken geopolitical assumptions, and a policy recommendation to uphold ASEAN Centrality and de-escalation.”',
       structuredResult:
         'Objectively deconstructs competing bloc narratives and highlights concrete diplomatic maneuvering space for ASEAN.',
+      structuredOutput:
+        '“[MEDIA FRAMING AUDIT] Western outlets frame semiconductor export controls as ‘national security guardrails,’ assuming frontier AI governance belongs to alliance blocs. Global South outlets frame them as ‘digital containment.’ Implication for ASEAN: Indonesia must uphold ASEAN Centrality to prevent Southeast Asia from becoming a regulatory proxy theater.”',
       metrics: ['Bloc Framing Audit', 'ASEAN Centrality', 'High Objectivity'],
     },
     {
@@ -160,11 +203,33 @@ const COPILOT_EXAMPLES = {
       naive: '“Write a speech about international AI cooperation.”',
       naiveResult:
         'Sounds cliché and generic; lacks diplomatic gravitas and fails to address global disparities in technology access.',
+      naiveOutput:
+        '“Good morning everyone. Artificial intelligence is a very important technology for our future. Therefore, let us all work together so that AI can bring positive benefits to people all around the world.”',
       structured:
-        '“Draft a 2-minute opening intervention for CIFP 2026 in an authoritative, diplomatic, and inclusive tone. Emphasize democratizing AI literacy across developing nations so the Next World Order leaves no country behind.”',
+        '“Act as Presidential Envoy and Head of the Indonesian Delegation. Draft a concise 2-minute opening intervention (1 paragraph) for CIFP 2026 on the Next World Order and AI sovereignty across ASEAN & the Global South in an authoritative, diplomatic tone. Emphasize Indonesia’s Independent and Active (Bebas-Aktif) doctrine, democratizing AI literacy, and multilateral consensus.”',
       structuredResult:
         'Produces a compelling diplomatic intervention championing equitable AI access for the Global South.',
+      structuredOutput:
+        '“Excellencies and distinguished delegates at CIFP 2026, the Next World Order must not be erected upon an algorithmic divide. Guided by our constitutional Independent and Active doctrine, Indonesia calls for the democratization of AI literacy and sovereign compute across developing nations—ensuring the Global South stands as co-architects of the digital future, not passive consumers.”',
       metrics: ['Diplomatic Rhetoric', 'Global South Voice', 'Precision 120s Pacing'],
+    },
+    {
+      id: 'interview',
+      code: '04 // CAREER INTERVIEW',
+      label: 'AI Interview',
+      fullLabel: 'Career & Scholarship Interview',
+      naive: '“Help me practice for a diplomat job interview or international scholarship.”',
+      naiveResult:
+        'Generates generic HR clichés (“What are your strengths and weaknesses?”) without testing geopolitical rigor or structured STAR responses.',
+      naiveOutput:
+        '“Sure! Here are 3 practice interview questions: (1) Tell me about yourself. (2) Why are you applying for this position or scholarship? (3) What are your biggest strengths and weaknesses when working in a team?”',
+      structured:
+        '“Act as a Senior Selection Panelist and Diplomatic Counsel for the Indonesian Delegation & International Scholarships. Ask me 1 high-stakes, concise case-study question on an Indo-Pacific crisis involving AI sovereignty and data protection (PDP). After I respond, critique my answer using the structured STAR framework (Situation, Task, Action, Result) anchored in the Independent & Active (Bebas-Aktif) doctrine and provide refined phrasing.”',
+      structuredResult:
+        'Creates a realistic, high-pressure panel interview simulation that tests foreign policy reasoning and delivers actionable STAR-method coaching.',
+      structuredOutput:
+        '“[PANELIST QUESTION]: ‘If posted to an Indonesian Mission during a regional subsea cable & cloud blockade crisis, what concrete steps would you propose in the first 48 hours?’ — [STAR CRITIQUE]: Your response clearly established Situation & Task, but your Action step will be much stronger if anchored in the ASEAN Digital Ministers’ Meeting (ADGMIN) mechanism and Indonesia’s UU PDP data sovereignty mandate.”',
+      metrics: ['Kemlu/Scholarship Panel', 'STAR Method Critique', 'Real-Time Career Coaching'],
     },
   ],
 } as const
@@ -278,13 +343,22 @@ const DiplomaticSituationMonitor = memo(function DiplomaticSituationMonitor({ la
 
 export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
   const { lang } = useLanguage()
-  const { passport, stampCount, setPassportOpen } = usePlayer()
+  const { passport, stampCount, setPassportOpen, setQrModalOpen } = usePlayer()
   const en = lang === 'en'
   const [activeCopilot, setActiveCopilot] = useState(0)
+  const [showLiveOutput, setShowLiveOutput] = useState(true)
+  const [sandboxOpen, setSandboxOpen] = useState(false)
+  const [sandboxPrompt, setSandboxPrompt] = useState('')
   const [topLeaders, setTopLeaders] = useState<ScoreEntry[]>([])
   const examples = COPILOT_EXAMPLES[lang]
   const example = examples[activeCopilot]
   const sessionTagLabel = formatSessionTag(currentSessionTag(), lang)
+  const defaultMission = useMemo(() => getPromptMissions(lang)[0], [lang])
+  const effectiveSandboxPrompt = sandboxPrompt || example.structured.replace(/^[“"]|[”"]$/g, '')
+  const sandboxEval = useMemo(
+    () => evaluatePrompt(effectiveSandboxPrompt, defaultMission, lang),
+    [effectiveSandboxPrompt, defaultMission, lang],
+  )
 
   useEffect(() => {
     let mounted = true
@@ -362,6 +436,14 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
               >
                 <Zap className="h-4 w-4 shrink-0 text-[#AD2B17]" strokeWidth={1.75} />
                 <span>{en ? 'Play Speed Trivia (60s)' : 'Main Speed Trivia (60 Detik)'}</span>
+              </button>
+              <button
+                type="button"
+                onClick={() => setQrModalOpen(true)}
+                className="inline-flex min-h-12 w-full items-center justify-center gap-2 rounded-xl border border-[#C89D54]/50 bg-black/35 px-4 py-3.5 text-sm font-bold tracking-tight text-[#C89D54] backdrop-blur-xs transition hover:bg-black/55 active:scale-[0.98] sm:w-auto sm:text-base"
+              >
+                <QrCode className="h-4 w-4 shrink-0" strokeWidth={2} />
+                <span>{en ? 'Scan QR Code' : 'Scan QR Code'}</span>
               </button>
             </div>
           </div>
@@ -897,44 +979,51 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
         </div>
       </section>
 
-      {/* AI DIPLOMATIC CO-PILOT WORKBENCH */}
+      {/* AI DIPLOMATIC CO-PILOT & MINI LIVE DEMO WORKBENCH */}
       <section className="glass overflow-hidden">
         <div className="border-b border-zinc-200/80 p-5 dark:border-white/[0.08] sm:p-8">
           <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
             <div className="space-y-1.5 sm:space-y-2">
-              <div className="flex items-center gap-2">
+              <div className="flex flex-wrap items-center gap-2">
                 <FileTerminal className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />
                 <span className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-[#AD2B17] sm:text-xs">
-                  {en ? 'PROMPTING CASE STUDY // NAII METHOD' : 'STUDI KASUS PROMPTING // METODE NAII'}
+                  {en
+                    ? 'MINI LIVE DEMO AI // POLICY & CAREER CO-PILOT'
+                    : 'MINI LIVE DEMO AI // CO-PILOT KEBIJAKAN & KARIER'}
                 </span>
               </div>
               <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
                 {en
-                  ? 'AI as a Foreign Policy Analyst Co-Pilot'
-                  : 'AI Sebagai Co-Pilot Analis Kebijakan Luar Negeri'}
+                  ? 'AI as a Foreign Policy Analyst & Career Interview Co-Pilot'
+                  : 'AI Sebagai Co-Pilot Analis Kebijakan & Simulasi Wawancara Karier'}
               </h2>
               <p className="max-w-[65ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
                 {en ? (
                   <>
-                    Tap a scenario below to compare a generic unstructured prompt against the structured analytical
-                    framework taught for free at <b>www.naii.co</b>:
+                    Interactive demonstration station: select a scenario below (including{' '}
+                    <b>Diplomat &amp; Scholarship Career Mock Interview</b>) to compare a generic prompt against the
+                    structured NAII framework taught for free at <b>www.naii.co</b>:
                   </>
                 ) : (
                   <>
-                    Ketuk salah satu skenario di bawah untuk membandingkan hasil <i>prompt</i> biasa dengan kerangka
-                    terstruktur yang diajarkan gratis di <b>www.naii.co</b>:
+                    Stasiun demonstrasi interaktif: pilih salah satu skenario di bawah (termasuk{' '}
+                    <b>Simulasi Wawancara Kerja Diplomat &amp; Beasiswa</b>) untuk membandingkan <i>prompt</i> biasa
+                    dengan metode terstruktur yang diajarkan gratis di <b>www.naii.co</b>:
                   </>
                 )}
               </p>
             </div>
 
-            {/* Mobile-Friendly 3-Grid / Segmented Task Switcher */}
-            <div className="grid grid-cols-3 gap-1 rounded-2xl border border-zinc-200 bg-zinc-100/80 p-1 dark:border-white/10 dark:bg-black/40 sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
+            {/* Mobile-Friendly 2x2 Grid / Desktop Segmented 4-Tab Switcher */}
+            <div className="grid grid-cols-2 gap-1 rounded-2xl border border-zinc-200 bg-zinc-100/80 p-1 dark:border-white/10 dark:bg-black/40 sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
               {examples.map((item, idx) => (
                 <button
                   key={item.id}
                   type="button"
-                  onClick={() => setActiveCopilot(idx)}
+                  onClick={() => {
+                    setActiveCopilot(idx)
+                    setSandboxPrompt('')
+                  }}
                   className={`rounded-xl px-2.5 py-2 text-center text-xs font-bold tracking-tight transition sm:px-3.5 ${
                     activeCopilot === idx
                       ? 'bg-[#AD2B17] text-white shadow-xs'
@@ -978,6 +1067,17 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 {example.naiveResult}
               </p>
             </div>
+
+            {showLiveOutput && (
+              <div className="rounded-xl border border-rose-500/20 bg-rose-500/[0.04] p-3.5 dark:bg-rose-500/[0.06]">
+                <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
+                  {en ? 'SIMULATED AI RESPONSE (UNSTRUCTURED):' : 'SIMULASI RESPONS AI (TANPA KERANGKA):'}
+                </p>
+                <p className="mt-1 font-serif text-xs italic leading-relaxed text-zinc-700 dark:text-zinc-300">
+                  {example.naiveOutput}
+                </p>
+              </div>
+            )}
           </div>
 
           {/* RIGHT: STRUCTURED NAII DOCTRINE */}
@@ -1011,9 +1111,162 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 ))}
               </div>
             </div>
+
+            {showLiveOutput && (
+              <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/[0.06] p-3.5 dark:bg-emerald-500/[0.08]">
+                <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
+                  {en ? 'SIMULATED AI RESPONSE (NAII METHOD):' : 'SIMULASI RESPONS AI (METODE NAII):'}
+                </p>
+                <p className="mt-1 font-serif text-xs italic leading-relaxed text-zinc-900 dark:text-zinc-100">
+                  {example.structuredOutput}
+                </p>
+              </div>
+            )}
           </div>
         </div>
+
+        {/* LIVE DEMO ACTION BAR & INTERACTIVE SANDBOX (NO TIMER — FOR BOOTH LAPTOP/TABLET DEMO) */}
+        <div className="border-t border-zinc-200/80 bg-zinc-50/70 p-4 dark:border-white/[0.08] dark:bg-black/30 sm:px-8 sm:py-5">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={() => setShowLiveOutput((v) => !v)}
+                className="btn-secondary !px-3.5 !py-2 !text-xs"
+              >
+                <Play className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={2} />
+                {showLiveOutput
+                  ? en
+                    ? 'Hide Simulated AI Response'
+                    : 'Sembunyikan Simulasi Output AI'
+                  : en
+                    ? 'Simulate Live AI Response'
+                    : 'Simulasikan Respons AI Live'}
+              </button>
+
+              <button
+                type="button"
+                onClick={() => setSandboxOpen((v) => !v)}
+                className="btn-primary !px-4 !py-2 !text-xs"
+              >
+                <FileTerminal className="h-3.5 w-3.5" strokeWidth={2} />
+                {sandboxOpen
+                  ? en
+                    ? 'Close Live Prompt Sandbox'
+                    : 'Tutup Sandbox Demo Prompt'
+                  : en
+                    ? 'Try Interactive Live Prompt Demo (No Timer)'
+                    : 'Coba Demo Ketik Prompt Langsung (Tanpa Timer)'}
+              </button>
+            </div>
+
+            <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+              {en
+                ? 'BOOTH DEMO STATION // 4 NAII PILLARS: ROLE · CONTEXT · CONSTRAINT · OBJECTIVE'
+                : 'STASIUN DEMO BOOTH // 4 PILAR NAII: PERAN · KONTEKS · BATASAN · TUJUAN'}
+            </span>
+          </div>
+
+          {sandboxOpen && (
+            <div className="mt-4 grid gap-4 rounded-2xl border border-[#AD2B17]/30 bg-white p-4 dark:border-white/15 dark:bg-[#0B0908] sm:p-6 lg:grid-cols-[1.15fr_0.85fr]">
+              <div className="space-y-2.5">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <label
+                    htmlFor="home-live-sandbox"
+                    className="font-mono text-xs font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]"
+                  >
+                    {en
+                      ? 'LIVE PROMPT SANDBOX (EDIT OR TYPE YOUR OWN):'
+                      : 'SANDBOX DEMO PROMPT (UBAH ATAU KETIK INSTRUKSI ANDA):'}
+                  </label>
+                  <div className="flex items-center gap-2.5 font-mono text-[11px] font-semibold">
+                    <button
+                      type="button"
+                      onClick={() => setSandboxPrompt(example.naive.replace(/^[“"]|[”"]$/g, ''))}
+                      className="text-rose-600 underline hover:opacity-80 dark:text-rose-400"
+                    >
+                      {en ? 'Load Naive (Grade C)' : 'Uji Prompt Biasa'}
+                    </button>
+                    <span className="text-zinc-300 dark:text-zinc-700">|</span>
+                    <button
+                      type="button"
+                      onClick={() => setSandboxPrompt('')}
+                      className="text-[#AD2B17] underline hover:opacity-80 dark:text-[#C89D54]"
+                    >
+                      {en ? 'Load NAII (Grade S)' : 'Muat Metode NAII'}
+                    </button>
+                  </div>
+                </div>
+
+                <textarea
+                  id="home-live-sandbox"
+                  rows={5}
+                  value={effectiveSandboxPrompt}
+                  onChange={(e) => setSandboxPrompt(e.target.value)}
+                  className="field resize-none font-mono text-xs leading-relaxed sm:text-sm"
+                />
+
+                <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-black/40">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                    {en ? 'LIVE GENERATED AI PREVIEW:' : 'PRATINJAU RESPONS AI DARI PROMPT DI ATAS:'}
+                  </p>
+                  <p className="mt-1 font-serif text-xs italic leading-relaxed text-zinc-800 dark:text-zinc-200">
+                    {sandboxEval.grade === 'S' || sandboxEval.grade === 'A'
+                      ? example.structuredOutput
+                      : sandboxEval.grade === 'B'
+                        ? `${example.structuredOutput} ${
+                            en
+                              ? '(Tip: Complete the remaining NAII pillar to unlock full Grade S precision.)'
+                              : '(Tips: Lengkapi pilar NAII yang kurang untuk mencapai presisi penuh Grade S.)'
+                          }`
+                        : example.naiveOutput}
+                  </p>
+                </div>
+              </div>
+
+              <div className="space-y-3 rounded-xl border border-zinc-200/80 bg-zinc-50/80 p-4 dark:border-white/10 dark:bg-black/35">
+                <div className="flex items-center justify-between border-b border-zinc-200 pb-2.5 dark:border-white/10">
+                  <span className="font-mono text-xs font-bold uppercase text-zinc-800 dark:text-zinc-200">
+                    {en ? '4-PILLAR QUALITY METER' : 'METERAN KUALITAS 4 PILAR NAII'}
+                  </span>
+                  <span className="chip !border-[#AD2B17]/40 !bg-[#AD2B17] !text-white font-bold">
+                    GRADE {sandboxEval.grade} · {sandboxEval.score}/100
+                  </span>
+                </div>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  {(
+                    [
+                      ['role', sandboxEval.pillars.role, '#AD2B17'],
+                      ['context', sandboxEval.pillars.context, '#C89D54'],
+                      ['constraint', sandboxEval.pillars.constraint, '#0284C7'],
+                      ['objective', sandboxEval.pillars.objective, '#059669'],
+                    ] as const
+                  ).map(([key, p, colorHex]) => (
+                    <div
+                      key={key}
+                      className="rounded-xl border border-zinc-200 bg-white p-2.5 dark:border-white/10 dark:bg-black/40"
+                    >
+                      <div className="flex items-center justify-between font-mono text-[11px] font-bold">
+                        <span style={{ color: colorHex }}>{p.name}</span>
+                        <span className="text-zinc-900 dark:text-white">{p.score}/25</span>
+                      </div>
+                      <p className="mt-1 text-[10px] text-zinc-500 dark:text-zinc-400">{p.feedback}</p>
+                    </div>
+                  ))}
+                </div>
+
+                <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {sandboxEval.feedback}
+                </p>
+              </div>
+            </div>
+          )}
+        </div>
       </section>
+
+      {/* DUAL QR CODE SHOWCASE: PLAY ON SMARTPHONE & ACCESS WWW.NAII.CO */}
+      <BoothQrShowcase onExpand={() => setQrModalOpen(true)} />
 
       {/* INSTITUTIONAL CONVERSION BANNER: NAII × CIFP 2026 */}
       <section className="glass relative overflow-hidden p-5 sm:p-8 lg:p-10">

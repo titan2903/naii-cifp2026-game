@@ -52,7 +52,7 @@ const AUTO_ADVANCE_MS = 8500
 const LETTERS = ['A', 'B', 'C', 'D']
 
 export function QuizGame({ config }: { config: QuizConfig }) {
-  const { player, unlockStamp2, stampCount, passportOpen, setPassportOpen } = usePlayer()
+  const { player, unlockStamp2, stampCount, passportOpen, setPassportOpen, qrModalOpen } = usePlayer()
   const { lang } = useLanguage()
   const en = lang === 'en'
   const durationMs = config.secondsPerQuestion * 1000
@@ -172,7 +172,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
   // Dukungan keyboard (kiosk): angka 1–4 / A–D untuk menjawab, Enter untuk lanjut
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (passportOpen) return
+      if (passportOpen || qrModalOpen) return
       const tag = (e.target as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA') return
       if (phase === 'question' && current) {
@@ -184,7 +184,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase, current, answer, getElapsedMs, next, passportOpen])
+  }, [phase, current, answer, getElapsedMs, next, passportOpen, qrModalOpen])
 
   // ── INTRO ──
   if (phase === 'intro') {

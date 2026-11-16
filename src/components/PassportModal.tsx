@@ -9,6 +9,7 @@ import {
   Gift,
   KeyRound,
   Lock,
+  QrCode,
   ShieldCheck,
   Sparkles,
   Stamp,
@@ -48,6 +49,7 @@ function PassportModalContent() {
     passport,
     stampCount,
     setPassportOpen,
+    setQrModalOpen,
     unlockStamp3,
     markTicketClaimed,
   } = usePlayer()
@@ -301,15 +303,29 @@ function PassportModalContent() {
                 </p>
               ) : (
                 <form onSubmit={handleUnlockStamp3} className="space-y-2 pt-1">
-                  <a
-                    href={NAII_URL}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="inline-flex w-full items-center justify-between rounded-lg border border-[#AD2B17]/30 bg-white px-2.5 py-1.5 font-mono text-[11px] font-bold text-[#AD2B17] hover:bg-zinc-50 dark:bg-black/50 dark:text-[#C89D54]"
-                  >
-                    <span>1. {en ? 'Open www.naii.co' : 'Buka www.naii.co'}</span>
-                    <ArrowUpRight className="h-3.5 w-3.5" />
-                  </a>
+                  <div className="flex items-center gap-1.5">
+                    <a
+                      href={NAII_URL}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="inline-flex flex-1 items-center justify-between rounded-lg border border-[#AD2B17]/30 bg-white px-2.5 py-1.5 font-mono text-[11px] font-bold text-[#AD2B17] hover:bg-zinc-50 dark:bg-black/50 dark:text-[#C89D54]"
+                    >
+                      <span>1. {en ? 'Open www.naii.co' : 'Buka www.naii.co'}</span>
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                    </a>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setPassportOpen(false)
+                        setQrModalOpen(true)
+                      }}
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#C89D54]/50 bg-[#C89D54]/15 px-2.5 py-1.5 font-mono text-[11px] font-bold text-[#9A6F22] hover:bg-[#C89D54]/25 dark:text-[#C89D54]"
+                      title={en ? 'Show QR Code' : 'Tampilkan QR Code'}
+                    >
+                      <QrCode className="h-3.5 w-3.5" />
+                      <span>QR</span>
+                    </button>
+                  </div>
 
                   <div>
                     <div className="flex items-center justify-between gap-1">

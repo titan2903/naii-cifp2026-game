@@ -5,6 +5,7 @@ import {
   Globe2,
   Languages,
   Moon,
+  QrCode,
   ShieldAlert,
   Stamp,
   Sun,
@@ -23,6 +24,7 @@ import { backendMode } from '../lib/storage'
 import { currentSessionTag, formatSessionTag } from '../lib/utils'
 import { NaiiLogo, NaiiStarMark } from './NaiiBrand'
 import { PassportModal } from './PassportModal'
+import { QrCodeModal } from './QrCodeModal'
 
 const NAV_ITEMS: Array<{
   route: Route
@@ -100,7 +102,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
 }
 
 export function Shell({ children, currentRoute = 'home' }: { children: ReactNode; currentRoute?: Route }) {
-  const { player, clearPlayer, stampCount, setPassportOpen } = usePlayer()
+  const { player, clearPlayer, stampCount, setPassportOpen, qrModalOpen, setQrModalOpen } = usePlayer()
   const { theme, toggleTheme } = useTheme()
   const { lang, toggleLang } = useLanguage()
   const en = lang === 'en'
@@ -177,8 +179,23 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
             })}
           </nav>
 
-          {/* RIGHT ACTIONS: PASSPORT BADGE + DELEGATE BADGE + LANGUAGE SWITCH + THEME SWITCH */}
+          {/* RIGHT ACTIONS: QR BUTTON + PASSPORT BADGE + DELEGATE BADGE + LANGUAGE SWITCH + THEME SWITCH */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => setQrModalOpen(true)}
+              className="btn-secondary !px-2.5 !py-1.5 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:!px-3 sm:!py-2"
+              title={
+                en
+                  ? 'Show QR Codes for Smartphone & www.naii.co'
+                  : 'Tampilkan QR Code untuk Main di HP & www.naii.co'
+              }
+              aria-label={en ? 'Show QR Codes' : 'Tampilkan QR Code'}
+            >
+              <QrCode className="h-4 w-4 text-[#AD2B17] dark:text-[#C89D54]" strokeWidth={2} />
+              <span className="hidden sm:inline">QR</span>
+            </button>
+
             <button
               type="button"
               onClick={() => setPassportOpen(true)}
@@ -337,6 +354,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
       {/* PASPOR STEMPEL 3 MISI & TIKET KLAIM MERCHANDISE MODAL */}
       <PassportModal />
+      <QrCodeModal open={qrModalOpen} onClose={() => setQrModalOpen(false)} />
     </div>
   )
 }
