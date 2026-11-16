@@ -10,7 +10,9 @@ import {
   Lightbulb,
   RotateCcw,
   Sparkles,
+  Stamp,
   Swords,
+  Ticket,
   Trophy,
   User,
 } from 'lucide-react'
@@ -49,7 +51,7 @@ export function PromptBattleScreen() {
 }
 
 function PromptBattleFlow() {
-  const { player } = usePlayer()
+  const { player, unlockStamp2, stampCount, setPassportOpen } = usePlayer()
   const { lang } = useLanguage()
   const en = lang === 'en'
 
@@ -65,7 +67,8 @@ function PromptBattleFlow() {
   const [leaderboardRank, setLeaderboardRank] = useState<number | null>(null)
 
   // Duel inputs
-  const [player2Name, setPlayer2Name] = useState('Delegasi Sahabat')
+  const [player2Name, setPlayer2Name] = useState('')
+  const p2DisplayName = player2Name.trim() || (en ? 'Challenger Envoy' : 'Delegasi Sahabat')
   const [p1Prompt, setP1Prompt] = useState('')
   const [p2Prompt, setP2Prompt] = useState('')
   const [p1Eval, setP1Eval] = useState<PromptEvaluation | null>(null)
@@ -121,17 +124,26 @@ function PromptBattleFlow() {
     setPhase('result')
     window.scrollTo({ top: 0, behavior: 'smooth' })
 
+    const elapsedMs = getElapsedMs()
+    const timeSec = Math.round(elapsedMs / 100) / 10
+    const remainingRatio = Math.max(0, (BATTLE_DURATION_MS - elapsedMs) / BATTLE_DURATION_MS)
+    const toArenaPoints = (evalScore: number) => {
+      const speedBonus = evalScore >= 50 ? Math.round(150 * remainingRatio) : 0
+      return Math.min(750, Math.round(evalScore * 6 + speedBonus))
+    }
+
     if (mode === 'solo') {
       const evaluation = evaluatePrompt(soloPrompt, activeMission, lang)
       setSoloEval(evaluation)
+      const arenaPoints = toArenaPoints(evaluation.score)
+      unlockStamp2('battle', arenaPoints)
 
       if (player) {
-        const timeSec = Math.round(getElapsedMs() / 100) / 10
         const saved = await submitScore({
           player_name: player.name,
           institution: player.institution || (en ? 'Delegate' : 'Umum'),
           game: 'battle',
-          score: evaluation.score,
+          score: arenaPoints,
           correct_count: Object.values(evaluation.pillars).filter((p) => p.score >= 21).length,
           total_questions: 4,
           time_seconds: timeSec,
@@ -161,6 +173,7 @@ function PromptBattleFlow() {
       const evaluation2 = evaluatePrompt(p2Prompt, activeMission, lang)
       setP1Eval(evaluation1)
       setP2Eval(evaluation2)
+      unlockStamp2('battle', toArenaPoints(Math.max(evaluation1.score, evaluation2.score)))
 
       confetti({
         particleCount: 150,
@@ -169,7 +182,7 @@ function PromptBattleFlow() {
         colors: ['#AD2B17', '#C89D54', '#ffffff'],
       })
     }
-  }, [mode, soloPrompt, p1Prompt, p2Prompt, activeMission, lang, player, en, getElapsedMs])
+  }, [mode, soloPrompt, p1Prompt, p2Prompt, activeMission, lang, player, en, getElapsedMs, unlockStamp2])
 
   useEffect(() => {
     finishBattleRef.current = () => {
@@ -359,7 +372,9 @@ function PromptBattleFlow() {
           {mode === 'duel' && (
             <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
               <div className="rounded-xl border border-zinc-200 bg-white p-3 dark:border-white/10 dark:bg-white/[0.04]">
-                <p className="font-mono text-xs font-bold uppercase text-[#AD2B17]">DELEGASI #01 (ANDA)</p>
+                <p className="font-mono text-xs font-bold uppercase text-[#AD2B17]">
+                  {en ? 'DELEGATE #01 (YOU)' : 'DELEGASI #01 (ANDA)'}
+                </p>
                 <p className="mt-1 text-sm font-extrabold text-zinc-900 dark:text-white">
                   {player?.name} {player?.institution ? `(${player.institution})` : ''}
                 </p>
@@ -601,7 +616,7 @@ function PromptBattleFlow() {
                       {en ? 'GOLD PODIUM // DELEGATE 2' : 'PODIUM EMAS // DELEGASI 2'}
                     </p>
                     <p className="truncate text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                      {player2Name}
+                      {p2DisplayName}
                     </p>
                   </div>
                 </div>
@@ -745,7 +760,9 @@ function PromptBattleFlow() {
 
             {savedEntry && (
               <div className="rounded-xl border border-emerald-500/30 bg-emerald-500/10 p-3.5 text-xs text-emerald-900 dark:text-emerald-200">
-                {en ? 'Score saved to the ' : 'Skor Anda berhasil dicatat pada Leaderboard '}
+                {en ? 'Arena Score (' : 'Skor Arena ('}
+                <strong className="font-mono">{savedEntry.score} PTS</strong>
+                {en ? ') saved to the ' : ') berhasil dicatat pada Leaderboard '}
                 <strong className="font-mono">{formatSessionTag(savedEntry.session_tag, lang)}</strong>
                 {leaderboardRank ? ` #${leaderboardRank}` : ''}!
               </div>
@@ -759,6 +776,29 @@ function PromptBattleFlow() {
                 <Trophy className="h-4 w-4" strokeWidth={1.75} /> {en ? 'View Leaderboard' : 'Cek Papan Peringkat'}
               </a>
             </div>
+            <button
+              type="button"
+              onClick={() => setPassportOpen(true)}
+              className="flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:text-sm"
+            >
+              <span className="flex items-center gap-2">
+                {stampCount === 3 ? (
+                  <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                ) : (
+                  <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                )}
+                <span>
+                  {stampCount === 3
+                    ? en
+                      ? 'All 3 Stamps Complete! Open Merchandise Claim Ticket'
+                      : '3/3 Stempel Lengkap! Buka Tiket Klaim Merchandise'
+                    : en
+                      ? `Stamp #02 Collected! Open Mission Passport (${stampCount}/3)`
+                      : `Stempel #02 Terkumpul! Buka Paspor Misi & Klaim Hadiah (${stampCount}/3)`}
+                </span>
+              </span>
+              <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+            </button>
           </div>
 
           {/* RIGHT: COURSES & RECOMMENDATIONS */}
@@ -799,8 +839,8 @@ function PromptBattleFlow() {
                     : `Kemenangan Diraih oleh ${player?.name}!`
                   : p2Eval.score > p1Eval.score
                     ? en
-                      ? `Victory for ${player2Name}!`
-                      : `Kemenangan Diraih oleh ${player2Name}!`
+                      ? `Victory for ${p2DisplayName}!`
+                      : `Kemenangan Diraih oleh ${p2DisplayName}!`
                     : en
                       ? 'Diplomatic Consensus: Deadlock Tie!'
                       : 'Konsensus Diplomatik: Hasil Imbang!'}
@@ -890,7 +930,7 @@ function PromptBattleFlow() {
                       P2
                     </span>
                     <p className="font-extrabold text-zinc-900 dark:text-white">
-                      {player2Name} {p2Eval.score > p1Eval.score && '🏆'}
+                      {p2DisplayName} {p2Eval.score > p1Eval.score && '🏆'}
                     </p>
                   </div>
                   <span className="font-mono text-2xl font-extrabold text-[#AD2B17] dark:text-[#C89D54]">
@@ -938,6 +978,26 @@ function PromptBattleFlow() {
             <div className="flex flex-wrap justify-center gap-3">
               <button onClick={startBattle} className="btn-primary min-h-12 !px-8">
                 <RotateCcw className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Play Another Duel' : 'Tanding Duel Lagi'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setPassportOpen(true)}
+                className="inline-flex min-h-12 items-center gap-2 rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-6 py-3 text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:text-sm"
+              >
+                {stampCount === 3 ? (
+                  <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                ) : (
+                  <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                )}
+                <span>
+                  {stampCount === 3
+                    ? en
+                      ? 'Open Merchandise Ticket (3/3)'
+                      : 'Buka Tiket Klaim Merchandise (3/3)'
+                    : en
+                      ? `Open Mission Passport (${stampCount}/3)`
+                      : `Buka Paspor Misi & Klaim (${stampCount}/3)`}
+                </span>
               </button>
               <a href={ROUTE_PATHS.home} className="btn-secondary min-h-12 !px-6">
                 {en ? 'Back to Main Pavilion' : 'Kembali ke Beranda'}

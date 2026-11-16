@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { startOfToday, uuid } from './utils'
+import { uuid } from './utils'
 import type { NewScore, Player, ScoreEntry, SimulationResult } from '../types'
 
 /**
@@ -81,27 +81,25 @@ export function sortScores(list: ScoreEntry[]): ScoreEntry[] {
   )
 }
 
-/** Skor hari ini (cloud + pending lokal, atau lokal saja). */
+/** Seluruh skor delegasi (cloud + pending lokal, atau lokal saja). */
 export async function fetchTodayScores(): Promise<ScoreEntry[]> {
-  const since = startOfToday().toISOString()
-  const localToday = readJson<ScoreEntry[]>(LS_SCORES, []).filter((e) => e.created_at >= since)
+  const localScores = readJson<ScoreEntry[]>(LS_SCORES, [])
 
-  if (!supabase) return localToday
+  if (!supabase) return localScores
 
   try {
     const { data, error } = await supabase
       .from('leaderboard')
       .select('id, player_name, institution, game, score, correct_count, total_questions, time_seconds, session_tag, created_at')
-      .gte('created_at', since)
       .order('score', { ascending: false })
       .limit(1000)
     if (error) throw error
     const byId = new Map<string, ScoreEntry>()
     for (const e of data as ScoreEntry[]) byId.set(e.id, e)
-    for (const e of getPending()) if (e.created_at >= since) byId.set(e.id, e)
+    for (const e of getPending()) byId.set(e.id, e)
     return [...byId.values()]
   } catch {
-    return localToday
+    return localScores
   }
 }
 

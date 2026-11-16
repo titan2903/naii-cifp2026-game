@@ -9,6 +9,8 @@ import {
   Lightbulb,
   RotateCcw,
   ShieldAlert,
+  Stamp,
+  Ticket,
   Trophy,
   XCircle,
 } from 'lucide-react'
@@ -50,7 +52,7 @@ const AUTO_ADVANCE_MS = 8500
 const LETTERS = ['A', 'B', 'C', 'D']
 
 export function QuizGame({ config }: { config: QuizConfig }) {
-  const { player } = usePlayer()
+  const { player, unlockStamp2, stampCount, passportOpen, setPassportOpen } = usePlayer()
   const { lang } = useLanguage()
   const en = lang === 'en'
   const durationMs = config.secondsPerQuestion * 1000
@@ -115,8 +117,9 @@ export function QuizGame({ config }: { config: QuizConfig }) {
       const currentRoundId = roundIdRef.current
       setPhase('result')
       window.scrollTo({ top: 0, behavior: 'smooth' })
-      if (!player) return
       const score = all.reduce((s, a) => s + a.points, 0)
+      unlockStamp2(config.game, score)
+      if (!player) return
       const saved = await submitScore({
         player_name: player.name,
         institution: player.institution || (en ? 'Public Delegate' : 'Umum'),
@@ -146,7 +149,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
         })
       }
     },
-    [player, config.game, en],
+    [player, config.game, en, unlockStamp2],
   )
 
   const next = useCallback(() => {
@@ -169,6 +172,9 @@ export function QuizGame({ config }: { config: QuizConfig }) {
   // Dukungan keyboard (kiosk): angka 1–4 / A–D untuk menjawab, Enter untuk lanjut
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
+      if (passportOpen) return
+      const tag = (e.target as HTMLElement | null)?.tagName
+      if (tag === 'INPUT' || tag === 'TEXTAREA') return
       if (phase === 'question' && current) {
         const n = Number(e.key) - 1
         const l = LETTERS.indexOf(e.key.toUpperCase())
@@ -178,7 +184,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
-  }, [phase, current, answer, getElapsedMs, next])
+  }, [phase, current, answer, getElapsedMs, next, passportOpen])
 
   // ── INTRO ──
   if (phase === 'intro') {
@@ -266,6 +272,29 @@ export function QuizGame({ config }: { config: QuizConfig }) {
               <Trophy className="h-4 w-4" strokeWidth={1.75} /> {en ? 'View Standings' : 'Cek Peringkat'}
             </a>
           </div>
+          <button
+            type="button"
+            onClick={() => setPassportOpen(true)}
+            className="mt-2.5 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:mt-3 sm:text-sm"
+          >
+            <span className="flex items-center gap-2">
+              {stampCount === 3 ? (
+                <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+              ) : (
+                <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+              )}
+              <span>
+                {stampCount === 3
+                  ? en
+                    ? 'All 3 Stamps Complete! Open Merchandise Claim Ticket'
+                    : '3/3 Stempel Lengkap! Buka Tiket Klaim Merchandise'
+                  : en
+                    ? `Stamp #02 Collected! Open Mission Passport (${stampCount}/3)`
+                    : `Stempel #02 Terkumpul! Buka Paspor Misi & Klaim Hadiah (${stampCount}/3)`}
+              </span>
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+          </button>
           <a href={ROUTE_PATHS.home} className="btn-secondary mt-2.5 min-h-11 w-full sm:mt-3">
             {en ? 'Back to Main Pavilion' : 'Kembali ke Paviliun Utama'}
           </a>

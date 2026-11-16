@@ -6,8 +6,10 @@ import {
   Languages,
   Moon,
   ShieldAlert,
+  Stamp,
   Sun,
   Swords,
+  Ticket,
   Trophy,
   UserRound,
   UserRoundX,
@@ -20,6 +22,7 @@ import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { backendMode } from '../lib/storage'
 import { currentSessionTag, formatSessionTag } from '../lib/utils'
 import { NaiiLogo, NaiiStarMark } from './NaiiBrand'
+import { PassportModal } from './PassportModal'
 
 const NAV_ITEMS: Array<{
   route: Route
@@ -97,7 +100,7 @@ export function Logo({ compact = false }: { compact?: boolean }) {
 }
 
 export function Shell({ children, currentRoute = 'home' }: { children: ReactNode; currentRoute?: Route }) {
-  const { player, clearPlayer } = usePlayer()
+  const { player, clearPlayer, stampCount, setPassportOpen } = usePlayer()
   const { theme, toggleTheme } = useTheme()
   const { lang, toggleLang } = useLanguage()
   const en = lang === 'en'
@@ -174,8 +177,35 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
             })}
           </nav>
 
-          {/* RIGHT ACTIONS: DELEGATE BADGE + LANGUAGE SWITCH + THEME SWITCH */}
+          {/* RIGHT ACTIONS: PASSPORT BADGE + DELEGATE BADGE + LANGUAGE SWITCH + THEME SWITCH */}
           <div className="flex items-center gap-1.5 sm:gap-2">
+            <button
+              type="button"
+              onClick={() => setPassportOpen(true)}
+              className={`inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 font-mono text-xs font-bold transition active:scale-95 sm:px-3 sm:py-2 ${
+                stampCount === 3
+                  ? 'border-[#C89D54] bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-[0_0_16px_rgba(200,157,84,0.4)]'
+                  : 'border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
+              }`}
+              title={
+                en
+                  ? 'Open Diplomatic Mission Passport & Claim Merchandise Ticket'
+                  : 'Buka Paspor Stempel 3 Misi & Tiket Klaim Merchandise'
+              }
+            >
+              {stampCount === 3 ? (
+                <Ticket className="h-3.5 w-3.5 shrink-0 text-[#C89D54]" strokeWidth={2} />
+              ) : (
+                <Stamp className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
+              )}
+              <span className="hidden sm:inline">
+                {stampCount === 3 ? (en ? 'Claim Ticket' : 'Tiket Klaim') : en ? 'Passport' : 'Paspor'}
+              </span>
+              <span className="rounded bg-black/15 px-1.5 py-0.2 text-[10px] dark:bg-white/15">
+                {stampCount}/3
+              </span>
+            </button>
+
             {player && (
               <button
                 onClick={clearPlayer}
@@ -304,6 +334,9 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
           })}
         </div>
       </nav>
+
+      {/* PASPOR STEMPEL 3 MISI & TIKET KLAIM MERCHANDISE MODAL */}
+      <PassportModal />
     </div>
   )
 }

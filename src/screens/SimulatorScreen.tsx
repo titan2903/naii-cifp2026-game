@@ -12,7 +12,9 @@ import {
   RotateCcw,
   Share2,
   Sparkles,
+  Stamp,
   Terminal,
+  Ticket,
 } from 'lucide-react'
 import { CourseCta } from '../components/CourseCta'
 import { NaiiStarMark } from '../components/NaiiBrand'
@@ -115,7 +117,7 @@ export function SimulatorScreen() {
 }
 
 function SimulatorFlow() {
-  const { player } = usePlayer()
+  const { player, unlockStamp1, stampCount, setPassportOpen } = usePlayer()
   const { lang } = useLanguage()
   const en = lang === 'en'
 
@@ -191,6 +193,7 @@ function SimulatorFlow() {
     if (!scenario || !selectedOption || !player) return
     const res = evaluateDecision(scenario, selectedOption, customNote, lang)
     setSubmitted(true)
+    unlockStamp1(res.persona.title, res.score)
     void savePersona(player, res)
     window.scrollTo({ top: 0, behavior: 'smooth' })
     if (res.score >= 85) {
@@ -683,6 +686,31 @@ function SimulatorFlow() {
               <Share2 className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Share Card' : 'Bagikan Kartu'}
             </button>
           </div>
+
+          {/* PASSPORT STAMP #01 & MERCHANDISE CLAIM TRIGGER */}
+          <button
+            type="button"
+            onClick={() => setPassportOpen(true)}
+            className="mt-2.5 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:text-sm"
+          >
+            <span className="flex items-center gap-2">
+              {stampCount === 3 ? (
+                <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+              ) : (
+                <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+              )}
+              <span>
+                {stampCount === 3
+                  ? en
+                    ? 'All 3 Stamps Complete! Open Merchandise Claim Ticket'
+                    : '3/3 Stempel Lengkap! Buka Tiket Klaim Merchandise'
+                  : en
+                    ? `Stamp #01 Collected! Open Mission Passport (${stampCount}/3)`
+                    : `Stempel #01 Terkumpul! Buka Paspor Misi & Klaim Hadiah (${stampCount}/3)`}
+              </span>
+            </span>
+            <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+          </button>
           {shareStatusKey && (
             <p className="mt-2.5 text-center font-mono text-xs font-semibold text-[#AD2B17] dark:text-[#C89D54]">
               {shareStatusKey === 'downloaded'

@@ -13,13 +13,16 @@ import {
   Scale,
   ShieldAlert,
   Sparkles,
+  Stamp,
   Swords,
+  Ticket,
   Trophy,
   X,
   Zap,
 } from 'lucide-react'
 import { NaiiLogo, NaiiStarMark, NaiiWatermark } from '../components/NaiiBrand'
 import { useLanguage, type Lang } from '../context/LanguageContext'
+import { usePlayer } from '../context/PlayerContext'
 import { NAII_URL } from '../data/personas'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { fetchTodayScores, sortScores } from '../lib/storage'
@@ -275,6 +278,7 @@ const DiplomaticSituationMonitor = memo(function DiplomaticSituationMonitor({ la
 
 export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
   const { lang } = useLanguage()
+  const { passport, stampCount, setPassportOpen } = usePlayer()
   const en = lang === 'en'
   const [activeCopilot, setActiveCopilot] = useState(0)
   const [topLeaders, setTopLeaders] = useState<ScoreEntry[]>([])
@@ -367,68 +371,158 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
         </div>
       </section>
 
-      {/* QUICK 3-STEP ONBOARDING STRIP (Zero Confusion for Smartphone Visitors) */}
-      <section aria-label={en ? 'Quick How-To Guide' : 'Panduan Singkat Bermain'} className="glass p-4 sm:p-6">
+      {/* PASPOR STEMPEL 3 MISI & TIKET KLAIM MERCHANDISE RESMI NAII */}
+      <section
+        aria-label={en ? 'Diplomatic Passport 3 Missions' : 'Paspor Stempel 3 Misi'}
+        className="glass border-[#C89D54]/40 p-4 sm:p-6"
+      >
+        <div className="mb-4 flex flex-col justify-between gap-2.5 border-b border-zinc-200/80 pb-3.5 dark:border-white/10 sm:flex-row sm:items-center">
+          <div className="flex flex-wrap items-center gap-2">
+            <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[10px] font-bold tracking-wider uppercase text-white sm:text-[11px]">
+              <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
+              {en ? 'BOOTH QUEST // 3 MISSION STAMPS' : 'PASPOR STEMPEL 3 MISI // BOOTH NAII'}
+            </span>
+            <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
+              {en
+                ? 'Collect 3 Stamps to unlock your Official NAII Merchandise Ticket!'
+                : 'Kumpulkan 3 Stempel untuk membuka Tiket Klaim Merchandise Resmi NAII!'}
+            </span>
+          </div>
+
+          <button
+            type="button"
+            onClick={() => setPassportOpen(true)}
+            className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition active:scale-95 ${
+              stampCount === 3
+                ? 'bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-md ring-1 ring-[#C89D54]'
+                : 'border border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
+            }`}
+          >
+            {stampCount === 3 ? <Ticket className="h-4 w-4 text-[#C89D54]" /> : <Stamp className="h-4 w-4" />}
+            <span>
+              {stampCount === 3
+                ? en
+                  ? 'Open Merchandise Ticket (3/3)'
+                  : 'Buka Tiket Klaim Merchandise (3/3)'
+                : en
+                  ? `Open Mission Passport (${stampCount}/3)`
+                  : `Buka Paspor & Tiket Klaim (${stampCount}/3)`}
+            </span>
+            <ArrowRight className="h-3.5 w-3.5" />
+          </button>
+        </div>
+
         <div className="grid grid-cols-1 gap-3 divide-y divide-zinc-200/80 dark:divide-white/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
-          <div className="flex items-start gap-3 pt-1 first:pt-0 sm:px-3 sm:pt-0 first:sm:pl-0">
-            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[#AD2B17] font-mono text-xs font-bold text-white">
-              01
+          <button
+            type="button"
+            onClick={() => (passport.stamp1.unlocked ? setPassportOpen(true) : navigate('simulator'))}
+            className="flex items-start gap-3 pt-1 text-left transition hover:opacity-85 first:pt-0 sm:px-3 sm:pt-0 first:sm:pl-0"
+          >
+            <span
+              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
+                passport.stamp1.unlocked
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-[#AD2B17] text-white'
+              }`}
+            >
+              {passport.stamp1.unlocked ? '✓' : '01'}
             </span>
             <div>
               <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Choose a Mission Below' : 'Pilih Misi di Bawah'}
+                {en ? 'Stamp 01: Persona Card' : 'Stempel 01: Kartu Persona'}
               </p>
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {en ? (
+                {passport.stamp1.unlocked ? (
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                    ✓ {passport.stamp1.personaTitle} ({passport.stamp1.score}/100)
+                  </span>
+                ) : en ? (
                   <>
-                    Play <b>Crisis Simulator</b>, <b>Speed Trivia</b>, <b>Real vs AI</b>, or <b>Prompt Battle</b> right on your phone.
+                    Complete 1 crisis in <b>AI Crisis Simulator</b> to get your Persona Card.
                   </>
                 ) : (
                   <>
-                    Mainkan <b>Crisis Simulator</b>, <b>Speed Trivia</b>, <b>Real vs AI</b>, atau <b>Prompt Battle</b> langsung dari ponsel.
+                    Selesaikan 1 skenario di <b>AI Crisis Simulator</b> &amp; raih Kartu Persona.
                   </>
                 )}
               </p>
             </div>
-          </div>
+          </button>
 
-          <div className="flex items-start gap-3 pt-3 sm:px-4 sm:pt-0">
-            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-zinc-200 font-mono text-xs font-bold text-zinc-800 dark:bg-white/10 dark:text-white">
-              02
+          <button
+            type="button"
+            onClick={() => (passport.stamp2.unlocked ? setPassportOpen(true) : navigate('trivia'))}
+            className="flex items-start gap-3 pt-3 text-left transition hover:opacity-85 sm:px-4 sm:pt-0"
+          >
+            <span
+              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
+                passport.stamp2.unlocked
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-zinc-200 text-zinc-800 dark:bg-white/10 dark:text-white'
+              }`}
+            >
+              {passport.stamp2.unlocked ? '✓' : '02'}
             </span>
             <div>
               <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Register Name & Institution Once' : 'Isi Nama & Kampus Sekali'}
+                {en ? 'Stamp 02: Arena Challenge' : 'Stempel 02: Tantangan Arena'}
               </p>
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {en
-                  ? 'Your delegate profile is saved automatically across all games without re-entering.'
-                  : 'Identitas delegasi otomatis tersimpan untuk seluruh permainan tanpa perlu daftar ulang.'}
-              </p>
-            </div>
-          </div>
-
-          <div className="flex items-start gap-3 pt-3 sm:px-3 sm:pt-0 last:sm:pr-0">
-            <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg bg-[#C89D54]/25 font-mono text-xs font-bold text-[#9A6F22] dark:text-[#C89D54]">
-              03
-            </span>
-            <div>
-              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Download IG Card & Claim Prizes' : 'Unduh Kartu IG & Klaim Hadiah'}
-              </p>
-              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {en ? (
+                {passport.stamp2.unlocked ? (
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                    ✓ {passport.stamp2.game?.toUpperCase()} ({passport.stamp2.score} PTS)
+                  </span>
+                ) : en ? (
                   <>
-                    Save your <b>Persona Card PNG</b> for IG Story &amp; reach the <b>Top 3 Leaderboard</b> each break!
+                    Play 1 round of <b>Speed Trivia</b>, <b>Real vs AI</b>, or <b>Prompt Battle</b>.
                   </>
                 ) : (
                   <>
-                    Simpan <b>Kartu Persona PNG</b> ke IG Story &amp; raih <b>Top 3 Leaderboard</b> di sesi break!
+                    Mainkan 1 ronde <b>Speed Trivia</b>, <b>Real vs AI</b>, atau <b>Prompt Battle</b>.
                   </>
                 )}
               </p>
             </div>
-          </div>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setPassportOpen(true)}
+            className="flex items-start gap-3 pt-3 text-left transition hover:opacity-85 sm:px-3 sm:pt-0 last:sm:pr-0"
+          >
+            <span
+              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
+                passport.stamp3.unlocked
+                  ? 'bg-emerald-600 text-white'
+                  : 'bg-[#C89D54]/25 text-[#9A6F22] dark:text-[#C89D54]'
+              }`}
+            >
+              {passport.stamp3.unlocked ? '✓' : '03'}
+            </span>
+            <div>
+              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
+                {en ? 'Stamp 03: Booth Code & Claim' : 'Stempel 03: Kode Booth & Klaim'}
+              </p>
+              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
+                {passport.stamp3.unlocked ? (
+                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                    ✓{' '}
+                    {stampCount === 3
+                      ? `${en ? 'Ticket Unlocked:' : 'Tiket Aktif:'} ${passport.ticketCode}`
+                      : `${en ? 'Code Verified:' : 'Kode Terverifikasi:'} ${passport.stamp3.codeUsed} (${stampCount}/3)`}
+                  </span>
+                ) : en ? (
+                  <>
+                    Explore <b>www.naii.co</b> &amp; enter Booth Code to issue your <b>Merchandise Ticket</b>!
+                  </>
+                ) : (
+                  <>
+                    Buka <b>www.naii.co</b> &amp; masukkan Kode Booth untuk terbitkan <b>Tiket Klaim Merchandise</b>!
+                  </>
+                )}
+              </p>
+            </div>
+          </button>
         </div>
       </section>
 

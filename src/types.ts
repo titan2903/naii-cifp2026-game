@@ -125,3 +125,27 @@ export interface PromptEvaluation {
   feedback: string
 }
 
+export interface PassportState {
+  ticketCode: string
+  stamp1: {
+    unlocked: boolean
+    personaTitle?: string
+    score?: number
+    stampedAt?: string
+  }
+  stamp2: {
+    unlocked: boolean
+    game?: GameId
+    score?: number
+    stampedAt?: string
+  }
+  stamp3: {
+    unlocked: boolean
+    codeUsed?: string
+    stampedAt?: string
+  }
+  claimedByStaff?: boolean
+  claimedAt?: string
+}
+
+
