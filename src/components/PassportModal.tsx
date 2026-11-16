@@ -5,15 +5,15 @@ import {
   ArrowUpRight,
   Award,
   CheckCircle2,
-  Compass,
   Gift,
-  KeyRound,
   Lock,
   QrCode,
+  ShieldAlert,
   ShieldCheck,
   Sparkles,
   Stamp,
   Ticket,
+  UserCheck,
   X,
   Zap,
 } from 'lucide-react'
@@ -23,17 +23,12 @@ import { NAII_URL } from '../data/personas'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { NaiiLogo, NaiiWatermark } from './NaiiBrand'
 
-const VALID_CODES = new Set([
-  'NAII2026',
-  'CIFP2026',
-  'BEBASAKTIF',
-  'BEBAS-AKTIF',
-  'NUSANTARA',
-  'NAII',
-  '3',
-  'TIGA',
-  'THREE',
-])
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+
+function formatStampScore(gameLabel?: string, score?: number): string {
+  if (score == null) return ''
+  return gameLabel?.startsWith('Simulator') ? `${score}/100` : `${score} PTS`
+}
 
 export function PassportModal() {
   const { passport, passportOpen } = usePlayer()
@@ -50,13 +45,14 @@ function PassportModalContent() {
     stampCount,
     setPassportOpen,
     setQrModalOpen,
-    unlockStamp3,
+    verifyNaiiAccountByStaff,
     markTicketClaimed,
   } = usePlayer()
 
-  const [codeInput, setCodeInput] = useState('')
   const [emailInput, setEmailInput] = useState(player?.email ?? '')
-  const [codeError, setCodeError] = useState(false)
+  const [emailConsent, setEmailConsent] = useState(Boolean(player?.consent && player?.email))
+  const [formError, setFormError] = useState<'email' | 'consent' | null>(null)
+  const [confirmNaiiVerify, setConfirmNaiiVerify] = useState(false)
   const [confirmStaffClaim, setConfirmStaffClaim] = useState(false)
 
   useEffect(() => {
@@ -67,17 +63,25 @@ function PassportModalContent() {
     return () => window.removeEventListener('keydown', onKeyDown)
   }, [setPassportOpen])
 
-  const allUnlocked = stampCount === 3
+  const allUnlocked = stampCount === 2
+  const trimmedEmail = emailInput.trim()
+  const needsEmailConsent = Boolean(trimmedEmail) && (trimmedEmail !== (player?.email ?? '') || !player?.consent)
 
-  const handleUnlockStamp3 = (e: FormEvent) => {
+  const handleConfirmNaiiAccount = (e: FormEvent) => {
     e.preventDefault()
-    const normalized = codeInput.trim().toUpperCase().replace(/\s+/g, '')
-    if (!VALID_CODES.has(normalized)) {
-      setCodeError(true)
+    if (trimmedEmail && !EMAIL_RE.test(trimmedEmail)) {
+      setFormError('email')
+      setConfirmNaiiVerify(false)
       return
     }
-    setCodeError(false)
-    unlockStamp3(normalized, emailInput.trim() || undefined)
+    if (trimmedEmail && needsEmailConsent && !emailConsent) {
+      setFormError('consent')
+      setConfirmNaiiVerify(false)
+      return
+    }
+    setFormError(null)
+    verifyNaiiAccountByStaff(trimmedEmail || undefined, trimmedEmail ? emailConsent || Boolean(player?.consent) : false)
+    setConfirmNaiiVerify(false)
     confetti({
       particleCount: 110,
       spread: 80,
@@ -96,7 +100,7 @@ function PassportModalContent() {
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 backdrop-blur-md animate-rise sm:p-6"
       role="dialog"
       aria-modal="true"
-      aria-label={en ? 'NAII Diplomatic Mission Passport' : 'Paspor Stempel 3 Misi NAII'}
+      aria-label={en ? 'NAII Booth Passport & Claim Ticket' : 'Paspor Misi & Tiket Klaim Merchandise NAII'}
       onClick={(e) => {
         if (e.target === e.currentTarget) setPassportOpen(false)
       }}
@@ -108,21 +112,21 @@ function PassportModalContent() {
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white">
                 <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
-                {en ? 'DIPLOMATIC PASSPORT // 3 MISSIONS' : 'PASPOR STEMPEL // 3 MISI BOOTH'}
+                {en ? 'BOOTH PASSPORT // 2 QUICK STEPS' : 'PASPOR BOOTH // 2 LANGKAH CEPAT'}
               </span>
               <span className="chip !border-[#C89D54]/50 !bg-[#C89D54]/15 !text-[#9A6F22] dark:!text-[#C89D54]">
-                {stampCount}/3 {en ? 'STAMPS COLLECTED' : 'STEMPEL TERKUMPUL'}
+                {stampCount}/2 {en ? 'STEPS COMPLETED' : 'MISI SELESAI'}
               </span>
             </div>
             <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
               {en
-                ? 'Collect 3 Mission Stamps & Claim Official NAII Merchandise'
-                : 'Kumpulkan 3 Stempel Misi & Klaim Merchandise Resmi NAII'}
+                ? 'Play 1 Short Game + Create a www.naii.co Account'
+                : 'Main 1 Game Singkat + Buat Akun www.naii.co'}
             </h2>
             <p className="text-xs text-zinc-600 dark:text-zinc-300 sm:text-sm">
               {en
-                ? 'Complete the 3 short booth missions below to unlock your Official NAII Merchandise Redemption Ticket.'
-                : 'Selesaikan 3 misi singkat di bawah ini untuk membuka Tiket Klaim Merchandise Resmi NAII di meja panitia.'}
+                ? 'Finish 1 game for Stamp #01 (FPCI Stamp & Tier 1 Sticker), then show your www.naii.co account screenshot to booth staff for your Tier 2 Official NAII Pin.'
+                : 'Selesaikan 1 game untuk Stempel #01 (Stamp FPCI & Stiker Tier 1), lalu tunjukkan screenshot akun www.naii.co ke panitia untuk Tiket Klaim Pin Resmi NAII (Tier 2).'}
             </p>
           </div>
 
@@ -136,23 +140,23 @@ function PassportModalContent() {
           </button>
         </div>
 
-        {/* 3 STAMPS GRID */}
-        <div className="mt-5 grid grid-cols-1 gap-3.5 sm:grid-cols-3 sm:gap-4">
-          {/* STAMP 01: AI CRISIS SIMULATOR */}
+        {/* 2 STAMPS GRID */}
+        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+          {/* STAMP 01: 1 SHORT GAME */}
           <div
-            className={`relative flex flex-col justify-between rounded-2xl border p-4 transition ${
+            className={`relative flex flex-col justify-between rounded-2xl border p-4 transition sm:p-5 ${
               passport.stamp1.unlocked
                 ? 'border-emerald-500/45 bg-emerald-500/[0.06] dark:border-emerald-400/35 dark:bg-emerald-500/[0.08]'
                 : 'border-zinc-200/90 bg-zinc-50/70 dark:border-white/10 dark:bg-black/35'
             }`}
           >
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
-                  {en ? 'STAMP 01 // PERSONA' : 'STEMPEL 01 // PERSONA'}
+                  {en ? 'STEP 01 // 1 SHORT GAME' : 'STEMPEL 01 // 1 GAME SINGKAT'}
                 </span>
                 {passport.stamp1.unlocked ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 font-mono text-[9px] font-bold text-white">
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-0.5 font-mono text-[10px] font-bold text-white">
                     <CheckCircle2 className="h-3 w-3" /> {en ? 'STAMPED' : 'TERCAP'}
                   </span>
                 ) : (
@@ -162,155 +166,109 @@ function PassportModalContent() {
                 )}
               </div>
 
-              <h3 className="text-sm font-extrabold text-zinc-900 dark:text-white">
-                {en ? 'Diplomatic Persona Card' : 'Kartu Persona Diplomat'}
+              <h3 className="text-base font-extrabold text-zinc-900 dark:text-white">
+                {en ? 'FPCI Stamp & Tier 1 Sticker' : 'Stamp FPCI & Stiker (Tier 1)'}
               </h3>
 
               <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
                 {passport.stamp1.unlocked ? (
                   <>
-                    {en ? 'Completed as ' : 'Tercapai sebagai '}
-                    <b className="text-zinc-900 dark:text-white">{passport.stamp1.personaTitle}</b> (
-                    {passport.stamp1.score}/100).
+                    {en ? 'Completed ' : 'Selesai memainkan '}
+                    <b className="text-zinc-900 dark:text-white">{passport.stamp1.gameLabel}</b> (
+                    {formatStampScore(passport.stamp1.gameLabel, passport.stamp1.score)}).{' '}
+                    <span className="font-semibold text-emerald-700 dark:text-emerald-300">
+                      {en
+                        ? 'Eligible for FPCI Stamp + Exclusive NAII Sticker!'
+                        : 'Berhak atas Stamp FPCI + Stiker Eksklusif NAII!'}
+                    </span>
                   </>
                 ) : en ? (
-                  'Take a stance in 1 crisis scenario in the Bebas-Aktif AI Crisis Simulator.'
+                  'Complete just 1 short game: Speed Trivia, Real vs AI Hallucination, or AI Crisis Simulator (~45 sec).'
                 ) : (
-                  'Ambil keputusan pada 1 skenario krisis di Bebas-Aktif AI Crisis Simulator.'
+                  'Cukup selesaikan 1 game singkat: Speed Trivia, Real vs AI Hallucination, atau AI Crisis Simulator (~45 detik).'
                 )}
               </p>
             </div>
 
-            <div className="mt-4 pt-2 border-t border-zinc-200/70 dark:border-white/10">
+            <div className="mt-4 border-t border-zinc-200/70 pt-3 dark:border-white/10">
               {passport.stamp1.unlocked ? (
-                <button
-                  type="button"
-                  onClick={() => goToRoute(ROUTE_PATHS.simulator)}
-                  className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-emerald-700 hover:underline dark:text-emerald-300"
-                >
-                  {en ? 'View Persona Simulator' : 'Buka Simulator'} <ArrowRight className="h-3.5 w-3.5" />
-                </button>
+                <div className="flex flex-wrap gap-2">
+                  <button
+                    type="button"
+                    onClick={() => goToRoute(ROUTE_PATHS.trivia)}
+                    className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-emerald-700 hover:underline dark:text-emerald-300"
+                  >
+                    {en ? 'Play Again for Top 3 Totebag' : 'Main Lagi (Kejar Totebag Top 3)'}{' '}
+                    <ArrowRight className="h-3.5 w-3.5" />
+                  </button>
+                </div>
               ) : (
-                <button
-                  type="button"
-                  onClick={() => goToRoute(ROUTE_PATHS.simulator)}
-                  className="btn-primary w-full !py-2 !text-xs"
-                >
-                  <Compass className="h-3.5 w-3.5" />
-                  {en ? 'Play Simulator' : 'Mainkan Simulator'}
-                </button>
+                <div className="grid grid-cols-2 gap-2">
+                  <button
+                    type="button"
+                    onClick={() => goToRoute(ROUTE_PATHS.trivia)}
+                    className="btn-primary !px-3 !py-2 !text-xs"
+                  >
+                    <Zap className="h-3.5 w-3.5" />
+                    Speed Trivia
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => goToRoute(ROUTE_PATHS.realvsai)}
+                    className="btn-secondary !px-3 !py-2 !text-xs"
+                  >
+                    <ShieldAlert className="h-3.5 w-3.5 text-[#AD2B17]" />
+                    Real vs AI
+                  </button>
+                </div>
               )}
             </div>
           </div>
 
-          {/* STAMP 02: COMPETITIVE ARENA */}
+          {/* STAMP 02: NAII.CO ACCOUNT VERIFIED BY STAFF (SCREENSHOT CHECK) */}
           <div
-            className={`relative flex flex-col justify-between rounded-2xl border p-4 transition ${
+            className={`relative flex flex-col justify-between rounded-2xl border p-4 transition sm:p-5 ${
               passport.stamp2.unlocked
-                ? 'border-emerald-500/45 bg-emerald-500/[0.06] dark:border-emerald-400/35 dark:bg-emerald-500/[0.08]'
-                : 'border-zinc-200/90 bg-zinc-50/70 dark:border-white/10 dark:bg-black/35'
-            }`}
-          >
-            <div className="space-y-2">
-              <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
-                  {en ? 'STAMP 02 // CHALLENGE' : 'STEMPEL 02 // TANTANGAN'}
-                </span>
-                {passport.stamp2.unlocked ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 font-mono text-[9px] font-bold text-white">
-                    <CheckCircle2 className="h-3 w-3" /> {en ? 'STAMPED' : 'TERCAP'}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center gap-1 font-mono text-[10px] text-zinc-400">
-                    <Lock className="h-3 w-3" /> {en ? 'LOCKED' : 'BELUM'}
-                  </span>
-                )}
-              </div>
-
-              <h3 className="text-sm font-extrabold text-zinc-900 dark:text-white">
-                {en ? 'Geopolitics × AI Arena' : 'Arena Geopolitik × AI'}
-              </h3>
-
-              <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-                {passport.stamp2.unlocked ? (
-                  <>
-                    {en ? 'Completed ' : 'Selesai '}
-                    <b className="uppercase text-zinc-900 dark:text-white">{passport.stamp2.game}</b>{' '}
-                    ({passport.stamp2.score} PTS).
-                  </>
-                ) : en ? (
-                  'Finish 1 round of Speed Trivia, Real vs AI, or 60s Prompt Battle.'
-                ) : (
-                  'Selesaikan 1 ronde Speed Trivia, Real vs AI, atau 60s Prompt Battle.'
-                )}
-              </p>
-            </div>
-
-            <div className="mt-4 pt-2 border-t border-zinc-200/70 dark:border-white/10">
-              {passport.stamp2.unlocked ? (
-                <button
-                  type="button"
-                  onClick={() => goToRoute(ROUTE_PATHS.trivia)}
-                  className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-emerald-700 hover:underline dark:text-emerald-300"
-                >
-                  {en ? 'Improve Score' : 'Tingkatkan Skor'} <ArrowRight className="h-3.5 w-3.5" />
-                </button>
-              ) : (
-                <button
-                  type="button"
-                  onClick={() => goToRoute(ROUTE_PATHS.trivia)}
-                  className="btn-primary w-full !py-2 !text-xs"
-                >
-                  <Zap className="h-3.5 w-3.5" />
-                  {en ? 'Play Speed Trivia' : 'Main Speed Trivia'}
-                </button>
-              )}
-            </div>
-          </div>
-
-          {/* STAMP 03: BOOTH SECRET CODE / NAII.CO EXPLORATION */}
-          <div
-            className={`relative flex flex-col justify-between rounded-2xl border p-4 transition ${
-              passport.stamp3.unlocked
                 ? 'border-emerald-500/45 bg-emerald-500/[0.06] dark:border-emerald-400/35 dark:bg-emerald-500/[0.08]'
                 : 'border-[#C89D54]/55 bg-[#C89D54]/[0.06] dark:border-[#C89D54]/40 dark:bg-[#C89D54]/[0.06]'
             }`}
           >
-            <div className="space-y-2">
+            <div className="space-y-2.5">
               <div className="flex items-center justify-between">
                 <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
-                  {en ? 'STAMP 03 // BOOTH HUNT' : 'STEMPEL 03 // KODE BOOTH'}
+                  {en ? 'STEP 02 // WWW.NAII.CO ACCOUNT' : 'STEMPEL 02 // AKUN WWW.NAII.CO'}
                 </span>
-                {passport.stamp3.unlocked ? (
-                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2 py-0.5 font-mono text-[9px] font-bold text-white">
-                    <CheckCircle2 className="h-3 w-3" /> {en ? 'STAMPED' : 'TERCAP'}
+                {passport.stamp2.unlocked ? (
+                  <span className="inline-flex items-center gap-1 rounded-full bg-emerald-600 px-2.5 py-0.5 font-mono text-[10px] font-bold text-white">
+                    <CheckCircle2 className="h-3 w-3" /> {en ? 'VERIFIED' : 'TERVERIFIKASI'}
                   </span>
                 ) : (
                   <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#9A6F22] dark:text-[#C89D54]">
-                    <KeyRound className="h-3 w-3" /> {en ? 'ENTER CODE' : 'ISI KODE'}
+                    <UserCheck className="h-3 w-3" /> {en ? 'STAFF VERIFY' : 'CEK PANITIA'}
                   </span>
                 )}
               </div>
 
-              <h3 className="text-sm font-extrabold text-zinc-900 dark:text-white">
-                {en ? 'Explore www.naii.co & Booth Code' : 'Eksplorasi www.naii.co & Kode Booth'}
+              <h3 className="text-base font-extrabold text-zinc-900 dark:text-white">
+                {en ? 'Free Account Verification (Tier 2 Pin)' : 'Verifikasi Akun naii.co (Pin Tier 2)'}
               </h3>
 
-              {passport.stamp3.unlocked ? (
+              {passport.stamp2.unlocked ? (
                 <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
-                  {en ? 'Verified with Booth Passcode: ' : 'Terverifikasi dengan Kode Sandi: '}
-                  <b className="font-mono text-zinc-900 dark:text-white">{passport.stamp3.codeUsed}</b>
+                  {en
+                    ? 'Your www.naii.co account has been verified by NAII booth staff!'
+                    : 'Akun www.naii.co Anda telah diverifikasi langsung oleh panitia booth NAII!'}
                 </p>
               ) : (
-                <form onSubmit={handleUnlockStamp3} className="space-y-2 pt-1">
+                <form onSubmit={handleConfirmNaiiAccount} className="space-y-2.5 pt-1">
                   <div className="flex items-center gap-1.5">
                     <a
                       href={NAII_URL}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex flex-1 items-center justify-between rounded-lg border border-[#AD2B17]/30 bg-white px-2.5 py-1.5 font-mono text-[11px] font-bold text-[#AD2B17] hover:bg-zinc-50 dark:bg-black/50 dark:text-[#C89D54]"
+                      className="inline-flex flex-1 items-center justify-between rounded-lg border border-[#AD2B17]/30 bg-white px-3 py-2 font-mono text-xs font-bold text-[#AD2B17] hover:bg-zinc-50 dark:bg-black/50 dark:text-[#C89D54]"
                     >
-                      <span>1. {en ? 'Open www.naii.co' : 'Buka www.naii.co'}</span>
+                      <span>1. {en ? 'Sign Up Free at www.naii.co' : 'Daftar Gratis di www.naii.co'}</span>
                       <ArrowUpRight className="h-3.5 w-3.5" />
                     </a>
                     <button
@@ -319,7 +277,7 @@ function PassportModalContent() {
                         setPassportOpen(false)
                         setQrModalOpen(true)
                       }}
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#C89D54]/50 bg-[#C89D54]/15 px-2.5 py-1.5 font-mono text-[11px] font-bold text-[#9A6F22] hover:bg-[#C89D54]/25 dark:text-[#C89D54]"
+                      className="inline-flex items-center gap-1 rounded-lg border border-[#C89D54]/50 bg-[#C89D54]/15 px-2.5 py-2 font-mono text-xs font-bold text-[#9A6F22] hover:bg-[#C89D54]/25 dark:text-[#C89D54]"
                       title={en ? 'Show QR Code' : 'Tampilkan QR Code'}
                     >
                       <QrCode className="h-3.5 w-3.5" />
@@ -327,69 +285,106 @@ function PassportModalContent() {
                     </button>
                   </div>
 
-                  <div>
-                    <div className="flex items-center justify-between gap-1">
-                      <label
-                        htmlFor="passport-booth-code"
-                        className="block font-mono text-[10px] text-zinc-600 dark:text-zinc-300"
-                      >
-                        {en ? '2. Booth Code:' : '2. Kode Sandi Booth:'}
-                      </label>
-                      <button
-                        type="button"
-                        onClick={() => {
-                          setCodeInput('NAII2026')
-                          setCodeError(false)
-                        }}
-                        className="font-mono text-[10px] font-bold text-[#AD2B17] underline hover:opacity-80 dark:text-[#C89D54]"
-                      >
-                        {en ? 'Use Hint: NAII2026' : 'Pakai: NAII2026'}
-                      </button>
-                    </div>
+                  <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
+                    2.{' '}
+                    {en
+                      ? 'Show your www.naii.co account screenshot to the booth staff, then let staff press the verification button below:'
+                      : 'Tunjukkan screenshot akun www.naii.co yang sudah dibuat ke panitia booth, lalu panitia menekan tombol verifikasi di bawah:'}
+                  </p>
+
+                  <div className="space-y-2">
                     <input
-                      id="passport-booth-code"
-                      type="text"
-                      value={codeInput}
+                      type="email"
+                      aria-label={en ? 'Registered www.naii.co email (optional)' : 'Email akun www.naii.co (opsional)'}
+                      value={emailInput}
                       onChange={(e) => {
-                        setCodeInput(e.target.value)
-                        setCodeError(false)
+                        const val = e.target.value
+                        setEmailInput(val)
+                        setFormError(null)
+                        if (val.trim() !== (player?.email ?? '')) {
+                          setEmailConsent(false)
+                        } else {
+                          setEmailConsent(Boolean(player?.consent))
+                        }
                       }}
-                      placeholder="NAII2026"
-                      className="field mt-1 !py-1.5 !px-2.5 font-mono !text-xs uppercase"
+                      placeholder={en ? 'Email registered on www.naii.co (optional)' : 'Email terdaftar di www.naii.co (opsional)'}
+                      className="field !py-1.5 !px-2.5 !text-xs"
                     />
-                    {codeError && (
-                      <p className="mt-0.5 text-[10px] font-semibold text-rose-600 dark:text-rose-400">
-                        {en ? 'Use code: NAII2026 or CIFP2026' : 'Gunakan kode: NAII2026 atau CIFP2026'}
+                    {trimmedEmail && needsEmailConsent && (
+                      <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-zinc-200/80 bg-zinc-50/80 p-2 text-[10px] leading-snug text-zinc-600 dark:border-white/10 dark:bg-black/30 dark:text-zinc-300">
+                        <input
+                          type="checkbox"
+                          checked={emailConsent}
+                          onChange={(e) => {
+                            setEmailConsent(e.target.checked)
+                            setFormError(null)
+                          }}
+                          className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#AD2B17]"
+                        />
+                        <span>
+                          {en
+                            ? 'Consent (UU PDP No. 27/2022): I agree to share my email for NAII learning info.'
+                            : 'Persetujuan UU PDP (No. 27/2022): Saya setuju email ini disimpan untuk info belajar gratis NAII.'}
+                        </span>
+                      </label>
+                    )}
+                    {formError === 'email' && (
+                      <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
+                        {en ? 'Enter a valid email address or leave blank.' : 'Masukkan format email valid atau kosongkan.'}
+                      </p>
+                    )}
+                    {formError === 'consent' && (
+                      <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
+                        {en
+                          ? 'Please check the UU PDP consent box before saving your email.'
+                          : 'Centang kotak persetujuan UU PDP terlebih dahulu jika mengisi email.'}
                       </p>
                     )}
                   </div>
 
-                  <div>
-                    <input
-                      type="email"
-                      aria-label={en ? 'Email for www.naii.co (optional)' : 'Email akun www.naii.co (opsional)'}
-                      value={emailInput}
-                      onChange={(e) => setEmailInput(e.target.value)}
-                      placeholder={en ? 'Email for www.naii.co (optional)' : 'Email akun www.naii.co (opsional)'}
-                      className="field !py-1.5 !px-2.5 !text-xs"
-                    />
-                    <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">
-                      {en
-                        ? 'Protected under UU PDP for free course access at www.naii.co.'
-                        : 'Dilindungi sesuai UU PDP untuk akses kursus gratis www.naii.co.'}
-                    </p>
-                  </div>
-
-                  <button type="submit" className="btn-primary w-full !py-2 !text-xs">
-                    <Stamp className="h-3.5 w-3.5" />
-                    {en ? 'Verify & Stamp #03' : 'Verifikasi & Cap Stempel #03'}
-                  </button>
+                  {confirmNaiiVerify ? (
+                    <div className="flex items-center gap-2 rounded-xl border border-emerald-500/40 bg-emerald-500/10 p-2">
+                      <button
+                        type="submit"
+                        className="flex-1 rounded-lg bg-emerald-600 px-3 py-2 font-mono text-[11px] font-bold text-white hover:bg-emerald-500"
+                      >
+                        {en ? 'Confirm Screenshot OK' : 'Konfirmasi Akun Valid'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => setConfirmNaiiVerify(false)}
+                        className="rounded-lg border border-zinc-300 bg-white px-2.5 py-2 font-mono text-[11px] text-zinc-700 dark:border-white/20 dark:bg-black/40 dark:text-zinc-200"
+                      >
+                        {en ? 'Cancel' : 'Batal'}
+                      </button>
+                    </div>
+                  ) : (
+                    <button
+                      type="button"
+                      onClick={() => {
+                        if (trimmedEmail && !EMAIL_RE.test(trimmedEmail)) {
+                          setFormError('email')
+                          return
+                        }
+                        if (trimmedEmail && needsEmailConsent && !emailConsent) {
+                          setFormError('consent')
+                          return
+                        }
+                        setFormError(null)
+                        setConfirmNaiiVerify(true)
+                      }}
+                      className="btn-primary w-full !py-2 !text-xs"
+                    >
+                      <ShieldCheck className="h-3.5 w-3.5" />
+                      {en ? 'Verify naii.co Account (Booth Staff)' : 'Verifikasi Akun naii.co (Panitia)'}
+                    </button>
+                  )}
                 </form>
               )}
             </div>
 
-            {passport.stamp3.unlocked && (
-              <div className="mt-4 pt-2 border-t border-zinc-200/70 dark:border-white/10">
+            {passport.stamp2.unlocked && (
+              <div className="mt-4 border-t border-zinc-200/70 pt-3 dark:border-white/10">
                 <a
                   href={NAII_URL}
                   target="_blank"
@@ -406,7 +401,7 @@ function PassportModalContent() {
         {/* OFFICIAL MERCHANDISE CLAIM TICKET SECTION */}
         <div className="mt-6">
           {allUnlocked ? (
-            /* FULL 3/3 OFFICIAL MERCHANDISE REDEMPTION TICKET */
+            /* FULL 2/2 OFFICIAL MERCHANDISE REDEMPTION TICKET */
             <div className="relative overflow-hidden rounded-2xl border-2 border-[#C89D54] bg-gradient-to-br from-[#3A0900] via-[#240600] to-[#0B0908] p-5 text-white shadow-[0_20px_50px_-12px_rgba(173,43,23,0.55)] sm:p-7">
               <NaiiWatermark className="absolute -bottom-16 -right-16 h-64 w-64" />
 
@@ -455,13 +450,10 @@ function PassportModalContent() {
 
                     <div className="flex flex-wrap gap-1.5 pt-1 font-mono text-[10px]">
                       <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
-                        ✓ {passport.stamp1.personaTitle ?? 'Persona'}
+                        ✓ {passport.stamp1.gameLabel} ({formatStampScore(passport.stamp1.gameLabel, passport.stamp1.score)})
                       </span>
                       <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
-                        ✓ {passport.stamp2.game?.toUpperCase()} ({passport.stamp2.score} PTS)
-                      </span>
-                      <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
-                        ✓ CODE: {passport.stamp3.codeUsed}
+                        ✓ {en ? 'www.naii.co Verified' : 'Akun naii.co Terverifikasi'}
                       </span>
                     </div>
                   </div>
@@ -475,7 +467,7 @@ function PassportModalContent() {
                       {passport.ticketCode}
                     </p>
                     <p className="mt-1 font-mono text-[10px] text-emerald-300">
-                      {en ? '3/3 STAMPS VERIFIED' : '3/3 STEMPEL LENGKAP'}
+                      {en ? '2/2 STEPS VERIFIED' : '2/2 LANGKAH LENGKAP'}
                     </p>
                   </div>
                 </div>
@@ -487,13 +479,13 @@ function PassportModalContent() {
                     <div>
                       <p className="font-bold text-white">
                         {en
-                          ? 'Tier 1 & Tier 2 Official NAII Merchandise Package'
-                          : 'Paket Merchandise Resmi NAII (Tier 1 & Tier 2)'}
+                          ? 'Tier 1 Sticker + FPCI Stamp & Tier 2 Official NAII Pin'
+                          : 'Tier 1 Stiker + Stamp FPCI & Tier 2 Pin Resmi NAII'}
                       </p>
                       <p className="mt-0.5 text-[11px] text-white/75">
                         {en
-                          ? 'Includes Exclusive "AI-Ready Diplomat" Sticker + Official NAII Merchandise (Totebag / Notebook / Lanyard / Pin) at the Booth Desk.'
-                          : 'Berhak atas Stiker Eksklusif "AI-Ready Diplomat" + Paket Merchandise Resmi NAII (Totebag / Notebook / Lanyard / Pin) di meja panitia.'}
+                          ? 'Top 3 on the Break Leaderboard earn an Official NAII Totebag (Tier 3), plus Exclusive NAII Calendar for VIPs.'
+                          : 'Top 3 Leaderboard tiap sesi break berhak atas Totebag Resmi NAII (Tier 3), serta Kalender NAII untuk tamu VIP.'}
                       </p>
                     </div>
                   </div>
@@ -515,7 +507,7 @@ function PassportModalContent() {
                           }}
                           className="rounded-xl bg-emerald-600 px-3 py-2 font-mono text-xs font-bold text-white hover:bg-emerald-500"
                         >
-                          {en ? 'Confirm Handover' : 'Ya, Tandai Sudah Diserahkan'}
+                          {en ? 'Confirm Pin Handover' : 'Ya, Pin Sudah Diserahkan'}
                         </button>
                         <button
                           type="button"
@@ -540,32 +532,36 @@ function PassportModalContent() {
               </div>
             </div>
           ) : (
-            /* PROGRESS BANNER WHEN < 3 STAMPS */
+            /* PROGRESS BANNER WHEN < 2 STAMPS */
             <div className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200/90 bg-zinc-50/90 p-4 dark:border-white/10 dark:bg-black/40 sm:flex-row sm:items-center sm:p-5">
               <div className="flex items-start gap-3">
                 <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-[#C89D54]">
-                  {stampCount >= 1 ? <Award className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
+                  {passport.stamp1.unlocked ? <Award className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
                 </div>
                 <div>
                   <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                    {stampCount >= 1
+                    {passport.stamp1.unlocked
                       ? en
-                        ? `Tier 1 Sticker Unlocked! Complete ${3 - stampCount} more stamp(s) for the Full Merchandise Ticket.`
-                        : `Stiker Tier 1 Terbuka! Lengkapi ${3 - stampCount} stempel lagi untuk membuka Tiket Klaim Merchandise Resmi NAII.`
-                      : en
-                        ? 'Complete all 3 missions above to generate your Official Merchandise Claim Ticket!'
-                        : 'Selesaikan ke-3 misi di atas untuk menerbitkan Tiket Klaim Merchandise Resmi NAII!'}
+                        ? 'Tier 1 Unlocked (FPCI Stamp + Sticker)! Complete Step #02 to claim your Tier 2 Official NAII Pin.'
+                        : 'Tier 1 Terbuka (Stamp FPCI + Stiker)! Lengkapi Stempel #02 untuk klaim Pin Resmi NAII (Tier 2).'
+                      : passport.stamp2.unlocked
+                        ? en
+                          ? 'www.naii.co Account Verified! Complete 1 short game (Step #01) to claim your Tier 1 Sticker & Tier 2 Pin.'
+                          : 'Akun www.naii.co Terverifikasi! Selesaikan 1 game singkat (Langkah #01) untuk klaim Stiker Tier 1 & Tiket Pin Tier 2.'
+                        : en
+                          ? 'Complete 1 short game + verify your www.naii.co account to unlock your Merchandise Ticket!'
+                          : 'Selesaikan 1 game singkat + verifikasi akun www.naii.co untuk menerbitkan Tiket Klaim Merchandise!'}
                   </p>
                   <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                     {en
-                      ? 'Ticket Code will activate automatically once Stamp 01, Stamp 02, and Stamp 03 are stamped.'
-                      : 'Kode Tiket Klaim akan aktif otomatis begitu Stempel 01, Stempel 02, dan Stempel 03 terkumpul.'}
+                      ? 'Ticket Code activates automatically once both steps are verified (Tier 1: Sticker · Tier 2: Pin · Tier 3 Top 3: Totebag).'
+                      : 'Kode Tiket aktif otomatis setelah 2 langkah terverifikasi (Tier 1: Stiker · Tier 2: Pin · Tier 3 Top 3: Totebag).'}
                   </p>
                 </div>
               </div>
 
               <div className="shrink-0 font-mono text-xs font-bold text-[#AD2B17] dark:text-[#C89D54]">
-                {stampCount}/3 {en ? 'STAMPS' : 'STEMPEL'}
+                {stampCount}/2 {en ? 'DONE' : 'SELESAI'}
               </div>
             </div>
           )}

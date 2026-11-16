@@ -9,7 +9,6 @@ import {
   RefreshCw,
   ShieldAlert,
   Sparkles,
-  Swords,
   Trophy,
   Tv,
   Zap,
@@ -23,13 +22,13 @@ import { backendMode, fetchTodayScores, sortScores, submitScore, subscribeScores
 import { currentSessionTag, formatSeconds, formatSessionTag, SESSION_TAGS } from '../lib/utils'
 import type { GameId, ScoreEntry } from '../types'
 
-type GameFilter = 'all' | GameId
+type GameFilter = 'all' | 'trivia' | 'realvsai'
 type SessionFilter = 'all' | (typeof SESSION_TAGS)[number]
 
 const DEMO_PLAYERS: Array<{ name: string; inst: string; game: GameId; score: number; correct: number; time: number }> = [
   { name: 'Mahendra Kusuma', inst: 'HI Universitas Indonesia', game: 'trivia', score: 718, correct: 5, time: 13.8 },
   { name: 'Kezia Pramudita', inst: 'FISIPOL Universitas Gadjah Mada', game: 'trivia', score: 694, correct: 5, time: 17.9 },
-  { name: 'Rendra Baskoro', inst: 'Diplomat Muda Kemlu RI', game: 'battle', score: 685, correct: 4, time: 42.1 },
+  { name: 'Rendra Baskoro', inst: 'Diplomat Muda Kemlu RI', game: 'realvsai', score: 685, correct: 5, time: 14.9 },
   { name: 'Tania Larasati', inst: 'STEI Institut Teknologi Bandung', game: 'realvsai', score: 679, correct: 5, time: 15.6 },
   { name: 'Bagaskara Putra', inst: 'HI Universitas Padjadjaran', game: 'trivia', score: 642, correct: 5, time: 22.4 },
   { name: 'Shafira Nadhifa', inst: 'FISIP Universitas Airlangga', game: 'realvsai', score: 625, correct: 5, time: 20.9 },
@@ -151,12 +150,12 @@ export function LeaderboardScreen() {
             {en ? (
               <>
                 The top three delegates in each break session (Morning, Midday, Afternoon) earn{' '}
-                <b>Official Nusantara AI Institute Grand Merchandise</b>.
+                <b>an Official NAII Totebag (Tier 3)</b>.
               </>
             ) : (
               <>
                 Tiga delegasi tertinggi pada setiap sesi break (Pagi, Siang, Sore) berhak meraih{' '}
-                <b>Grand Merchandise Resmi Nusantara AI Institute</b>.
+                <b>Totebag Resmi NAII (Tier 3)</b>.
               </>
             )}
           </p>
@@ -184,13 +183,12 @@ export function LeaderboardScreen() {
 
       {/* FILTER CONTROLS (Single-Row Friendly on Smartphone) */}
       <div className="flex flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
-        <div className="grid grid-cols-4 gap-1 rounded-2xl border border-zinc-200 bg-white/80 p-1 dark:border-white/10 dark:bg-white/[0.03] sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
+        <div className="grid grid-cols-3 gap-1 rounded-2xl border border-zinc-200 bg-white/80 p-1 dark:border-white/10 dark:bg-white/[0.03] sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
           {(
             [
               ['all', en ? 'All' : 'Semua', en ? 'All Instruments' : 'Semua Instrumen', Layers],
               ['trivia', 'Trivia', 'Speed Trivia', Zap],
               ['realvsai', 'Real/AI', 'Real vs AI', ShieldAlert],
-              ['battle', 'Battle', 'Prompt Battle', Swords],
             ] as const
           ).map(([id, shortLabel, fullLabel, Icon]) => (
             <button
@@ -263,15 +261,15 @@ export function LeaderboardScreen() {
           </h2>
           <p className="mx-auto mt-2 max-w-md text-sm leading-relaxed text-zinc-600 dark:text-zinc-400">
             {en
-              ? 'Play Speed Trivia, Real vs AI, or Prompt Battle to post the inaugural score on the leaderboard, or load demo delegate scores to preview the booth TV display.'
-              : 'Mainkan Speed Trivia, Real vs AI, atau Prompt Battle untuk mencatatkan skor perdana di papan peringkat, atau muat simulasi delegasi untuk pratinjau layar TV booth.'}
+              ? 'Play Speed Trivia or Real vs AI to post the inaugural score on the leaderboard, or load demo delegate scores to preview the booth TV display.'
+              : 'Mainkan Speed Trivia atau Real vs AI untuk mencatatkan skor perdana di papan peringkat, atau muat simulasi delegasi untuk pratinjau layar TV booth.'}
           </p>
           <div className="mt-6 flex flex-wrap justify-center gap-3">
             <a href={ROUTE_PATHS.trivia} className="btn-primary">
               <Zap className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Play Speed Trivia' : 'Mainkan Speed Trivia'}
             </a>
-            <a href={ROUTE_PATHS.battle} className="btn-secondary">
-              <Swords className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} /> {en ? 'Prompt Battle' : 'Duel Prompt'}
+            <a href={ROUTE_PATHS.realvsai} className="btn-secondary">
+              <ShieldAlert className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} /> Real vs AI
             </a>
             <button onClick={() => void seedDemoScores()} className="btn-secondary">
               <Sparkles className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />{' '}
@@ -303,7 +301,7 @@ export function LeaderboardScreen() {
                 <div className="my-6 flex items-start justify-between gap-4">
                   <div className="min-w-0">
                     <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-[#AD2B17] dark:text-[#C89D54]">
-                      GRAND MERCHANDISE CANDIDATE
+                      TIER 3 TOTEBAG CANDIDATE
                     </p>
                     <h2 className="mt-1 truncate text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
                       {champion.player_name}

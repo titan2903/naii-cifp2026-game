@@ -16,7 +16,6 @@ import {
   ShieldAlert,
   Sparkles,
   Stamp,
-  Swords,
   Ticket,
   Trophy,
   X,
@@ -114,11 +113,11 @@ const COPILOT_EXAMPLES = {
       naiveOutput:
         '“Artikel berita ini membahas tentang aturan baru pembatasan ekspor teknologi chip dan kecerdasan buatan. Beberapa negara mendukung aturan ini demi keamanan, sementara negara lain merasa keberatan karena dapat menghambat perdagangan global.”',
       structured:
-        '“Bertindaklah sebagai Analis Kebijakan Luar Negeri RI dan Juru Bicara Kemlu. Bandingkan dua artikel berita dari media Blok Barat dan media Global South terkait krisis regulasi AI di Indo-Pasifik. Susun format ringkas 3 poin secara netral dan tidak memihak untuk mengidentifikasi perbedaan framing, asumsi geopolitik, serta rekomendasi kebijakan menjaga sentralitas ASEAN dan solusi damai.”',
+        '“Bertindaklah sebagai Analis Kebijakan Luar Negeri RI dan Juru Bicara Kemlu. Bandingkan dua artikel berita dari media internasional mitra maju dan media Global South terkait krisis regulasi AI di Indo-Pasifik. Susun format ringkas 3 poin secara netral dan tidak memihak untuk mengidentifikasi perbedaan framing, asumsi geopolitik, serta rekomendasi kebijakan menjaga sentralitas ASEAN dan solusi damai.”',
       structuredResult:
-        'Membedah kontras narasi kedua blok secara objektif serta menyoroti ruang manuver diplomasi bagi ASEAN.',
+        'Membedah kontras narasi kedua kutub secara objektif serta menyoroti ruang manuver diplomasi bagi ASEAN.',
       structuredOutput:
-        '“[AUDIT FRAMING MEDIA] Media Barat membingkai pembatasan chip sebagai ‘proteksi keamanan nasional’, dengan asumsi implisit bahwa inovasi harus dikendalikan blok aliansi. Sebaliknya, media Global South membingkainya sebagai ‘proteksionisme teknologi’. Implikasi bagi ASEAN: Indonesia perlu menjaga Sentralitas ASEAN agar kawasan tidak dijadikan arena proksi regulasi.”',
+        '“[AUDIT FRAMING MEDIA] Media negara maju membingkai pembatasan chip sebagai ‘proteksi keamanan nasional’, dengan asumsi implisit bahwa inovasi harus dikendalikan blok aliansi. Sebaliknya, media Global South membingkainya sebagai ‘proteksionisme teknologi’. Implikasi bagi ASEAN: Indonesia perlu menjaga Sentralitas ASEAN agar kawasan tidak dijadikan arena proksi regulasi.”',
       metrics: ['Audit Asumsi Blok', 'Sentralitas ASEAN', 'Objektivitas Tinggi'],
     },
     {
@@ -138,24 +137,6 @@ const COPILOT_EXAMPLES = {
       structuredOutput:
         '“Yang Mulia para delegasi CIFP 2026, arsitektur dunia baru tidak boleh dibangun di atas kesenjangan algoritma. Berpijak pada amanat Politik Bebas-Aktif, Indonesia menyerukan demokratisasi literasi dan infrastruktur AI bagi seluruh negara berkembang—agar negara-negara Global South berdiri sebagai pencipta berdaulat, bukan sekadar pasar pasif.”',
       metrics: ['Retorika Diplomatik', 'Suara Global South', 'Durasi Presisi 120d'],
-    },
-    {
-      id: 'interview',
-      code: '04 // CAREER INTERVIEW',
-      label: 'Wawancara AI',
-      fullLabel: 'Simulasi Wawancara Kerja & Karier',
-      naive: '“Bantu saya latihan wawancara kerja untuk jadi diplomat atau daftar beasiswa luar negeri.”',
-      naiveResult:
-        'Menghasilkan daftar pertanyaan HR klise (“Apa kelebihan dan kelemahan Anda?”) tanpa menguji ketajaman analisis geopolitik maupun struktur jawaban STAR.',
-      naiveOutput:
-        '“Tentu! Berikut 3 pertanyaan latihan wawancara: (1) Ceritakan tentang diri Anda. (2) Mengapa Anda tertarik melamar posisi ini atau beasiswa ini? (3) Apa kelebihan dan kelemahan terbesar Anda dalam bekerja sama dengan tim?”',
-      structured:
-        '“Bertindaklah sebagai Panelis Senior Seleksi Diplomat Kemlu RI & Beasiswa Internasional. Ajukan 1 pertanyaan singkat dan tegas berupa studi kasus krisis geopolitik Indo-Pasifik terkait kedaulatan AI dan perlindungan data pribadi (UU PDP). Setelah saya menjawab, berikan evaluasi kritis menggunakan format metode STAR (Situation, Task, Action, Result) berdasarkan prinsip Bebas-Aktif dan contoh perbaikan kalimat yang berwibawa.”',
-      structuredResult:
-        'Menciptakan simulasi wawancara interaktif yang realistis, menguji nalar kebijakan luar negeri, sekaligus memberikan coaching terukur berbasis metode STAR.',
-      structuredOutput:
-        '“[PANELIS SELEKSI]: ‘Jika Anda ditugaskan di Perwakilan RI saat terjadi sengketa kabel bawah laut & blokade cloud di kawasan, langkah konkret apa yang Anda usulkan dalam 48 jam pertama?’ — [EVALUASI STAR]: Jawaban Anda sudah memuat Situation & Task, namun bagian Action perlu diperkuat dengan rujukan mekanisme ASEAN Digital Ministers’ Meeting (ADGMIN) dan pelindungan UU PDP.”',
-      metrics: ['Simulasi Panelis Kemlu/LPDP', 'Evaluasi Metode STAR', 'Coaching Karier Real-Time'],
     },
   ],
   en: [
@@ -188,11 +169,11 @@ const COPILOT_EXAMPLES = {
       naiveOutput:
         '“This news article discusses new regulations restricting exports of advanced chips and AI technology. Some countries support these rules for security reasons, while others argue they will slow down global trade.”',
       structured:
-        '“Act as a Senior Foreign Policy Analyst and Diplomatic Counsel for the Indonesian Delegation. Compare these two dispatches from Western Bloc and Global South outlets on Indo-Pacific AI treaty tensions. In a concise, neutral, non-aligned 3-point format, identify framing divergences, unspoken geopolitical assumptions, and a policy recommendation to uphold ASEAN Centrality and de-escalation.”',
+        '“Act as a Senior Foreign Policy Analyst and Diplomatic Counsel for the Indonesian Delegation. Compare these two dispatches from developed-economy and Global South outlets on Indo-Pacific AI treaty tensions. In a concise, neutral, non-aligned 3-point format, identify framing divergences, unspoken geopolitical assumptions, and a policy recommendation to uphold ASEAN Centrality and de-escalation.”',
       structuredResult:
-        'Objectively deconstructs competing bloc narratives and highlights concrete diplomatic maneuvering space for ASEAN.',
+        'Objectively deconstructs competing narratives and highlights concrete diplomatic maneuvering space for ASEAN.',
       structuredOutput:
-        '“[MEDIA FRAMING AUDIT] Western outlets frame semiconductor export controls as ‘national security guardrails,’ assuming frontier AI governance belongs to alliance blocs. Global South outlets frame them as ‘digital containment.’ Implication for ASEAN: Indonesia must uphold ASEAN Centrality to prevent Southeast Asia from becoming a regulatory proxy theater.”',
+        '“[MEDIA FRAMING AUDIT] Developed-economy outlets frame semiconductor export controls as ‘national security guardrails,’ assuming frontier AI governance belongs to selective alliances. Global South outlets frame them as ‘digital containment.’ Implication for ASEAN: Indonesia must uphold ASEAN Centrality to prevent Southeast Asia from becoming a regulatory proxy theater.”',
       metrics: ['Bloc Framing Audit', 'ASEAN Centrality', 'High Objectivity'],
     },
     {
@@ -212,24 +193,6 @@ const COPILOT_EXAMPLES = {
       structuredOutput:
         '“Excellencies and distinguished delegates at CIFP 2026, the Next World Order must not be erected upon an algorithmic divide. Guided by our constitutional Independent and Active doctrine, Indonesia calls for the democratization of AI literacy and sovereign compute across developing nations—ensuring the Global South stands as co-architects of the digital future, not passive consumers.”',
       metrics: ['Diplomatic Rhetoric', 'Global South Voice', 'Precision 120s Pacing'],
-    },
-    {
-      id: 'interview',
-      code: '04 // CAREER INTERVIEW',
-      label: 'AI Interview',
-      fullLabel: 'Career & Scholarship Interview',
-      naive: '“Help me practice for a diplomat job interview or international scholarship.”',
-      naiveResult:
-        'Generates generic HR clichés (“What are your strengths and weaknesses?”) without testing geopolitical rigor or structured STAR responses.',
-      naiveOutput:
-        '“Sure! Here are 3 practice interview questions: (1) Tell me about yourself. (2) Why are you applying for this position or scholarship? (3) What are your biggest strengths and weaknesses when working in a team?”',
-      structured:
-        '“Act as a Senior Selection Panelist and Diplomatic Counsel for the Indonesian Delegation & International Scholarships. Ask me 1 high-stakes, concise case-study question on an Indo-Pacific crisis involving AI sovereignty and data protection (PDP). After I respond, critique my answer using the structured STAR framework (Situation, Task, Action, Result) anchored in the Independent & Active (Bebas-Aktif) doctrine and provide refined phrasing.”',
-      structuredResult:
-        'Creates a realistic, high-pressure panel interview simulation that tests foreign policy reasoning and delivers actionable STAR-method coaching.',
-      structuredOutput:
-        '“[PANELIST QUESTION]: ‘If posted to an Indonesian Mission during a regional subsea cable & cloud blockade crisis, what concrete steps would you propose in the first 48 hours?’ — [STAR CRITIQUE]: Your response clearly established Situation & Task, but your Action step will be much stronger if anchored in the ASEAN Digital Ministers’ Meeting (ADGMIN) mechanism and Indonesia’s UU PDP data sovereignty mandate.”',
-      metrics: ['Kemlu/Scholarship Panel', 'STAR Method Critique', 'Real-Time Career Coaching'],
     },
   ],
 } as const
@@ -453,21 +416,21 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
         </div>
       </section>
 
-      {/* PASPOR STEMPEL 3 MISI & TIKET KLAIM MERCHANDISE RESMI NAII */}
+      {/* PASPOR STEMPEL 2 LANGKAH & TIKET KLAIM MERCHANDISE RESMI NAII */}
       <section
-        aria-label={en ? 'Diplomatic Passport 3 Missions' : 'Paspor Stempel 3 Misi'}
+        aria-label={en ? 'Booth Passport 2 Quick Steps' : 'Paspor Stempel 2 Langkah'}
         className="glass border-[#C89D54]/40 p-4 sm:p-6"
       >
         <div className="mb-4 flex flex-col justify-between gap-2.5 border-b border-zinc-200/80 pb-3.5 dark:border-white/10 sm:flex-row sm:items-center">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[10px] font-bold tracking-wider uppercase text-white sm:text-[11px]">
               <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
-              {en ? 'BOOTH QUEST // 3 MISSION STAMPS' : 'PASPOR STEMPEL 3 MISI // BOOTH NAII'}
+              {en ? 'BOOTH QUEST // 2 QUICK STEPS' : 'ALUR CEPAT // 2 LANGKAH KLAIM MERCH'}
             </span>
             <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
               {en
-                ? 'Collect 3 Stamps to unlock your Official NAII Merchandise Ticket!'
-                : 'Kumpulkan 3 Stempel untuk membuka Tiket Klaim Merchandise Resmi NAII!'}
+                ? '1 Short Game (FPCI Stamp & Sticker) + naii.co Account (Pin)!'
+                : '1 Game Singkat (Stamp FPCI & Stiker) + Akun naii.co (Pin Resmi NAII)!'}
             </span>
           </div>
 
@@ -475,92 +438,55 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
             type="button"
             onClick={() => setPassportOpen(true)}
             className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition active:scale-95 ${
-              stampCount === 3
+              stampCount === 2
                 ? 'bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-md ring-1 ring-[#C89D54]'
                 : 'border border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
             }`}
           >
-            {stampCount === 3 ? <Ticket className="h-4 w-4 text-[#C89D54]" /> : <Stamp className="h-4 w-4" />}
+            {stampCount === 2 ? <Ticket className="h-4 w-4 text-[#C89D54]" /> : <Stamp className="h-4 w-4" />}
             <span>
-              {stampCount === 3
+              {stampCount === 2
                 ? en
-                  ? 'Open Merchandise Ticket (3/3)'
-                  : 'Buka Tiket Klaim Merchandise (3/3)'
+                  ? 'Open Pin Claim Ticket (2/2)'
+                  : 'Buka Tiket Klaim Pin (2/2)'
                 : en
-                  ? `Open Mission Passport (${stampCount}/3)`
-                  : `Buka Paspor & Tiket Klaim (${stampCount}/3)`}
+                  ? `Open Booth Passport (${stampCount}/2)`
+                  : `Buka Paspor & Tiket Klaim (${stampCount}/2)`}
             </span>
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
 
-        <div className="grid grid-cols-1 gap-3 divide-y divide-zinc-200/80 dark:divide-white/10 sm:grid-cols-3 sm:divide-x sm:divide-y-0">
+        <div className="grid grid-cols-1 gap-3 divide-y divide-zinc-200/80 dark:divide-white/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
           <button
             type="button"
-            onClick={() => (passport.stamp1.unlocked ? setPassportOpen(true) : navigate('simulator'))}
+            onClick={() => (passport.stamp1.unlocked ? setPassportOpen(true) : navigate('trivia'))}
             className="flex items-start gap-3 pt-1 text-left transition hover:opacity-85 first:pt-0 sm:px-3 sm:pt-0 first:sm:pl-0"
           >
             <span
               className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
-                passport.stamp1.unlocked
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-[#AD2B17] text-white'
+                passport.stamp1.unlocked ? 'bg-emerald-600 text-white' : 'bg-[#AD2B17] text-white'
               }`}
             >
               {passport.stamp1.unlocked ? '✓' : '01'}
             </span>
             <div>
               <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Stamp 01: Persona Card' : 'Stempel 01: Kartu Persona'}
+                {en ? 'Step 01: Play 1 Short Game (FPCI Stamp & Sticker)' : 'Langkah 01: Main 1 Game Singkat (Stamp FPCI & Stiker)'}
               </p>
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
                 {passport.stamp1.unlocked ? (
                   <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-                    ✓ {passport.stamp1.personaTitle} ({passport.stamp1.score}/100)
+                    ✓ {passport.stamp1.gameLabel} ({passport.stamp1.score} PTS) ·{' '}
+                    {en ? 'Tier 1 Sticker Unlocked!' : 'Stiker Tier 1 Terbuka!'}
                   </span>
                 ) : en ? (
                   <>
-                    Complete 1 crisis in <b>AI Crisis Simulator</b> to get your Persona Card.
+                    Play just 1 game: <b>Speed Trivia</b>, <b>Real vs AI</b>, or <b>Crisis Simulator</b> (~45s).
                   </>
                 ) : (
                   <>
-                    Selesaikan 1 skenario di <b>AI Crisis Simulator</b> &amp; raih Kartu Persona.
-                  </>
-                )}
-              </p>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => (passport.stamp2.unlocked ? setPassportOpen(true) : navigate('trivia'))}
-            className="flex items-start gap-3 pt-3 text-left transition hover:opacity-85 sm:px-4 sm:pt-0"
-          >
-            <span
-              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
-                passport.stamp2.unlocked
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-zinc-200 text-zinc-800 dark:bg-white/10 dark:text-white'
-              }`}
-            >
-              {passport.stamp2.unlocked ? '✓' : '02'}
-            </span>
-            <div>
-              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Stamp 02: Arena Challenge' : 'Stempel 02: Tantangan Arena'}
-              </p>
-              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {passport.stamp2.unlocked ? (
-                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-                    ✓ {passport.stamp2.game?.toUpperCase()} ({passport.stamp2.score} PTS)
-                  </span>
-                ) : en ? (
-                  <>
-                    Play 1 round of <b>Speed Trivia</b>, <b>Real vs AI</b>, or <b>Prompt Battle</b>.
-                  </>
-                ) : (
-                  <>
-                    Mainkan 1 ronde <b>Speed Trivia</b>, <b>Real vs AI</b>, atau <b>Prompt Battle</b>.
+                    Cukup mainkan 1 game: <b>Speed Trivia</b>, <b>Real vs AI</b>, atau <b>Crisis Simulator</b> (~45 dtk).
                   </>
                 )}
               </p>
@@ -570,36 +496,36 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className="flex items-start gap-3 pt-3 text-left transition hover:opacity-85 sm:px-3 sm:pt-0 last:sm:pr-0"
+            className="flex items-start gap-3 pt-3 text-left transition hover:opacity-85 sm:px-4 sm:pt-0 last:sm:pr-0"
           >
             <span
               className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
-                passport.stamp3.unlocked
+                passport.stamp2.unlocked
                   ? 'bg-emerald-600 text-white'
                   : 'bg-[#C89D54]/25 text-[#9A6F22] dark:text-[#C89D54]'
               }`}
             >
-              {passport.stamp3.unlocked ? '✓' : '03'}
+              {passport.stamp2.unlocked ? '✓' : '02'}
             </span>
             <div>
               <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Stamp 03: Booth Code & Claim' : 'Stempel 03: Kode Booth & Klaim'}
+                {en ? 'Step 02: Create naii.co Account (Official Pin)' : 'Langkah 02: Buat Akun www.naii.co (Pin Resmi NAII)'}
               </p>
               <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {passport.stamp3.unlocked ? (
+                {passport.stamp2.unlocked ? (
                   <span className="font-semibold text-emerald-700 dark:text-emerald-300">
                     ✓{' '}
-                    {stampCount === 3
-                      ? `${en ? 'Ticket Unlocked:' : 'Tiket Aktif:'} ${passport.ticketCode}`
-                      : `${en ? 'Code Verified:' : 'Kode Terverifikasi:'} ${passport.stamp3.codeUsed} (${stampCount}/3)`}
+                    {stampCount === 2
+                      ? `${en ? 'Pin Ticket Active:' : 'Tiket Pin Aktif:'} ${passport.ticketCode}`
+                      : `${en ? 'Account Verified (Finish Step 01)' : 'Akun Terverifikasi (Lengkapi Langkah 01)'}`}
                   </span>
                 ) : en ? (
                   <>
-                    Explore <b>www.naii.co</b> &amp; enter Booth Code to issue your <b>Merchandise Ticket</b>!
+                    Sign up free at <b>www.naii.co</b> and show your account screenshot to booth staff to claim your <b>NAII Pin</b>!
                   </>
                 ) : (
                   <>
-                    Buka <b>www.naii.co</b> &amp; masukkan Kode Booth untuk terbitkan <b>Tiket Klaim Merchandise</b>!
+                    Daftar gratis di <b>www.naii.co</b>, lalu tunjukkan screenshot akun ke panitia untuk klaim <b>Pin Resmi NAII</b>!
                   </>
                 )}
               </p>
@@ -824,85 +750,16 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
             </div>
           </a>
 
-          {/* TILE 04 (7 COLS): 60-SECOND DIPLOMATIC PROMPT BATTLE */}
-          <a
-            href={ROUTE_PATHS.battle}
-            className="glass group relative flex flex-col justify-between overflow-hidden p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-7"
-          >
-            <div className="space-y-3.5 sm:space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white sm:px-3 sm:text-xs">
-                  <Swords className="h-3.5 w-3.5" strokeWidth={1.75} />
-                  {en ? 'MISSION 04 // 60s PROMPT BATTLE' : 'MISI 04 // DUEL PROMPT 60 DETIK'}
-                </span>
-                <span className="chip !border-[#C89D54]/50 !bg-[#C89D54]/10 !text-[#9A6F22] dark:!text-[#C89D54]">
-                  {en ? 'STAGE DUEL & SOLO' : 'DUEL PANGGUNG & SOLO'}
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-2xl">
-                  60-Second Diplomatic Prompt Battle
-                </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-2 sm:text-sm">
-                  {en ? (
-                    <>
-                      Special coffee break stage activation! Race against a 60-second timer to craft a policy-grade
-                      diplomatic prompt. Evaluated instantly across NAII's 4 Prompting Pillars: <b>Role</b>,{' '}
-                      <b>Context</b>, <b>Constraint</b>, and <b>Objective</b>.
-                    </>
-                  ) : (
-                    <>
-                      Aktivasi spesial panggung jam coffee break! Adu cepat susun <i>diplomatic prompt</i> berbobot
-                      kebijakan dalam 60 detik. Dinilai instan berdasarkan 4 Pilar NAII: <b>Peran</b>, <b>Konteks</b>,{' '}
-                      <b>Batasan</b>, dan <b>Tujuan</b>.
-                    </>
-                  )}
-                </p>
-              </div>
-
-              {/* 4 Pillars Mini-Tags */}
-              <div className="grid grid-cols-2 gap-2 font-mono text-[10px] sm:grid-cols-4 sm:text-[11px]">
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
-                  <p className="font-bold text-[#AD2B17]">{en ? 'ROLE' : 'PERAN'}</p>
-                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
-                </div>
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
-                  <p className="font-bold text-[#C89D54]">{en ? 'CONTEXT' : 'KONTEKS'}</p>
-                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
-                </div>
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
-                  <p className="font-bold text-sky-600 dark:text-sky-400">{en ? 'CONSTRAINT' : 'BATASAN'}</p>
-                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
-                </div>
-                <div className="rounded-xl border border-zinc-200 bg-zinc-50/90 p-2 text-center dark:border-white/10 dark:bg-black/35">
-                  <p className="font-bold text-emerald-600 dark:text-emerald-400">{en ? 'OBJECTIVE' : 'TUJUAN'}</p>
-                  <p className="mt-0.5 text-[9px] text-zinc-500 dark:text-zinc-400">25 PTS</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between border-t border-zinc-200/80 pt-3.5 dark:border-white/[0.08] sm:mt-6 sm:pt-4">
-              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                {en ? '60s Live Countdown' : 'Hitung Mundur 60 Detik'}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17]/10 px-3 py-1.5 text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/25 dark:text-white sm:bg-transparent sm:p-0 sm:text-sm">
-                {en ? 'Enter Arena' : 'Masuk Arena Duel'}
-                <ArrowRight className="h-4 w-4 text-[#AD2B17] transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
-              </span>
-            </div>
-          </a>
-
-          {/* TILE 05 (12 COLS): LIVE BOOTH LEADERBOARD */}
+          {/* TILE 04 (7 COLS): LIVE BOOTH LEADERBOARD */}
           <a
             href={ROUTE_PATHS.leaderboard}
-            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-12"
+            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-7"
           >
             <div className="space-y-3.5 sm:space-y-4">
               <div className="flex flex-wrap items-center justify-between gap-2">
                 <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-zinc-100 px-2.5 py-1 font-mono text-[11px] font-bold text-zinc-800 dark:border-white/15 dark:bg-white/10 dark:text-white sm:text-xs">
                   <Trophy className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
-                  {en ? 'MISSION 05 // LIVE STANDINGS' : 'MISI 05 // PAPAN PERINGKAT LIVE'}
+                  {en ? 'MISSION 04 // LIVE STANDINGS' : 'MISI 04 // PAPAN PERINGKAT LIVE'}
                 </span>
                 <span className="chip">
                   <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
@@ -917,15 +774,13 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
                   {en ? (
                     <>
-                      Track your standing in real time across all 3 competitive games (Speed Trivia, Real vs AI, and Prompt
-                      Battle). The top three delegates of every break session (Morning, Midday, Afternoon) win{' '}
-                      <b>Official NAII Grand Merchandise</b>.
+                      Track your standing in real time across Speed Trivia &amp; Real vs AI. The top three delegates of
+                      every break session (Morning, Midday, Afternoon) win an <b>Official NAII Totebag (Tier 3)</b>!
                     </>
                   ) : (
                     <>
-                      Pantau posisi skor Anda secara <i>real-time</i> di 3 permainan kompetitif (Speed Trivia, Real vs AI,
-                      dan Prompt Battle). Tiga delegasi terbaik di setiap sesi break (Pagi, Siang, Sore) berhak meraih{' '}
-                      <b>Grand Merchandise Resmi NAII</b>.
+                      Pantau posisi skor Anda secara <i>real-time</i> pada Speed Trivia &amp; Real vs AI. Tiga delegasi
+                      terbaik di setiap sesi break (Pagi, Siang, Sore) berhak meraih <b>Totebag Resmi NAII (Tier 3)</b>!
                     </>
                   )}
                 </p>
@@ -988,34 +843,33 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 <FileTerminal className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />
                 <span className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-[#AD2B17] sm:text-xs">
                   {en
-                    ? 'MINI LIVE DEMO AI // POLICY & CAREER CO-PILOT'
-                    : 'MINI LIVE DEMO AI // CO-PILOT KEBIJAKAN & KARIER'}
+                    ? 'MINI LIVE DEMO AI // POLICY & DIPLOMACY CO-PILOT'
+                    : 'MINI LIVE DEMO AI // CO-PILOT KEBIJAKAN & DIPLOMASI'}
                 </span>
               </div>
               <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
                 {en
-                  ? 'AI as a Foreign Policy Analyst & Career Interview Co-Pilot'
-                  : 'AI Sebagai Co-Pilot Analis Kebijakan & Simulasi Wawancara Karier'}
+                  ? 'AI as a Foreign Policy & Diplomacy Co-Pilot'
+                  : 'AI Sebagai Co-Pilot Analis Kebijakan & Diplomasi'}
               </h2>
               <p className="max-w-[65ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
                 {en ? (
                   <>
-                    Interactive demonstration station: select a scenario below (including{' '}
-                    <b>Diplomat &amp; Scholarship Career Mock Interview</b>) to compare a generic prompt against the
-                    structured NAII framework taught for free at <b>www.naii.co</b>:
+                    Interactive demonstration station: select a foreign policy scenario below to compare a generic
+                    prompt against the structured NAII framework taught for free at <b>www.naii.co</b>:
                   </>
                 ) : (
                   <>
-                    Stasiun demonstrasi interaktif: pilih salah satu skenario di bawah (termasuk{' '}
-                    <b>Simulasi Wawancara Kerja Diplomat &amp; Beasiswa</b>) untuk membandingkan <i>prompt</i> biasa
-                    dengan metode terstruktur yang diajarkan gratis di <b>www.naii.co</b>:
+                    Stasiun demonstrasi interaktif: pilih salah satu skenario kebijakan luar negeri di bawah untuk
+                    membandingkan <i>prompt</i> biasa dengan metode terstruktur yang diajarkan gratis di{' '}
+                    <b>www.naii.co</b>:
                   </>
                 )}
               </p>
             </div>
 
-            {/* Mobile-Friendly 2x2 Grid / Desktop Segmented 4-Tab Switcher */}
-            <div className="grid grid-cols-2 gap-1 rounded-2xl border border-zinc-200 bg-zinc-100/80 p-1 dark:border-white/10 dark:bg-black/40 sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
+            {/* Mobile-Friendly Grid / Desktop Segmented 3-Tab Switcher */}
+            <div className="grid grid-cols-3 gap-1 rounded-2xl border border-zinc-200 bg-zinc-100/80 p-1 dark:border-white/10 dark:bg-black/40 sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
               {examples.map((item, idx) => (
                 <button
                   key={item.id}

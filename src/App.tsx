@@ -7,7 +7,6 @@ import { useHashRoute } from './hooks/useHashRoute'
 import { useIdleReset } from './hooks/useIdleReset'
 import { HomeScreen } from './screens/HomeScreen'
 import { LeaderboardScreen } from './screens/LeaderboardScreen'
-import { PromptBattleScreen } from './screens/PromptBattleScreen'
 import { RealVsAiScreen } from './screens/RealVsAiScreen'
 import { SimulatorScreen } from './screens/SimulatorScreen'
 import { TriviaScreen } from './screens/TriviaScreen'
@@ -33,7 +32,6 @@ function BoothRouter() {
       {route === 'simulator' && <SimulatorScreen />}
       {route === 'trivia' && <TriviaScreen />}
       {route === 'realvsai' && <RealVsAiScreen />}
-      {route === 'battle' && <PromptBattleScreen />}
       {route === 'leaderboard' && <LeaderboardScreen />}
     </Shell>
   )

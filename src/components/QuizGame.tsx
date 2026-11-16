@@ -52,7 +52,7 @@ const AUTO_ADVANCE_MS = 8500
 const LETTERS = ['A', 'B', 'C', 'D']
 
 export function QuizGame({ config }: { config: QuizConfig }) {
-  const { player, unlockStamp2, stampCount, passportOpen, setPassportOpen, qrModalOpen } = usePlayer()
+  const { player, unlockGameStamp, stampCount, passportOpen, setPassportOpen, qrModalOpen } = usePlayer()
   const { lang } = useLanguage()
   const en = lang === 'en'
   const durationMs = config.secondsPerQuestion * 1000
@@ -118,7 +118,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
       setPhase('result')
       window.scrollTo({ top: 0, behavior: 'smooth' })
       const score = all.reduce((s, a) => s + a.points, 0)
-      unlockStamp2(config.game, score)
+      unlockGameStamp(config.game === 'trivia' ? 'Speed Trivia' : 'Real vs AI', score)
       if (!player) return
       const saved = await submitScore({
         player_name: player.name,
@@ -149,7 +149,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
         })
       }
     },
-    [player, config.game, en, unlockStamp2],
+    [player, config.game, en, unlockGameStamp],
   )
 
   const next = useCallback(() => {
@@ -257,8 +257,8 @@ export function QuizGame({ config }: { config: QuizConfig }) {
                 <span className="mt-1.5 flex items-center justify-center gap-1.5 font-bold text-[#AD2B17] dark:text-[#C89D54]">
                   <Award className="h-4 w-4 shrink-0" strokeWidth={1.75} />
                   {en
-                    ? 'You made the Top 3 Podium — claim your Grand Merchandise at the break announcement!'
-                    : 'Anda masuk Podium Top 3 — klaim Grand Merchandise saat pengumuman sesi break!'}
+                    ? 'You made the Top 3 Podium — claim your Official NAII Totebag at the break announcement!'
+                    : 'Anda masuk Podium Top 3 — klaim Totebag Resmi NAII saat pengumuman sesi break!'}
                 </span>
               )}
             </div>
@@ -278,19 +278,19 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             className="mt-2.5 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:mt-3 sm:text-sm"
           >
             <span className="flex items-center gap-2">
-              {stampCount === 3 ? (
+              {stampCount === 2 ? (
                 <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
               ) : (
                 <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
               )}
               <span>
-                {stampCount === 3
+                {stampCount === 2
                   ? en
-                    ? 'All 3 Stamps Complete! Open Merchandise Claim Ticket'
-                    : '3/3 Stempel Lengkap! Buka Tiket Klaim Merchandise'
+                    ? '2/2 Complete! Open Pin Claim Ticket'
+                    : '2/2 Lengkap! Buka Tiket Klaim Pin Resmi NAII'
                   : en
-                    ? `Stamp #02 Collected! Open Mission Passport (${stampCount}/3)`
-                    : `Stempel #02 Terkumpul! Buka Paspor Misi & Klaim Hadiah (${stampCount}/3)`}
+                    ? `Stamp #01 Unlocked (FPCI Stamp + Sticker)! Verify naii.co Account (${stampCount}/2)`
+                    : `Stempel #01 Terbuka (Stamp FPCI + Stiker)! Verifikasi Akun naii.co (${stampCount}/2)`}
               </span>
             </span>
             <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />

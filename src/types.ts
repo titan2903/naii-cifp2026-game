@@ -33,11 +33,11 @@ export interface QuizItem {
 }
 
 export type Bloc =
-  | 'Blok Barat'
-  | 'Tiongkok & Mitra Timur'
+  | 'Mitra Barat'
+  | 'Poros Mitra Timur'
   | 'Global South & ASEAN'
-  | 'Western Bloc'
-  | 'China & Eastern Partners'
+  | 'Western Partners'
+  | 'Eastern Partners'
 export type Stance = 'positif' | 'netral' | 'waspada'
 
 export interface WorldReaction {
@@ -129,19 +129,13 @@ export interface PassportState {
   ticketCode: string
   stamp1: {
     unlocked: boolean
-    personaTitle?: string
+    gameLabel?: string
     score?: number
     stampedAt?: string
   }
   stamp2: {
     unlocked: boolean
-    game?: GameId
-    score?: number
-    stampedAt?: string
-  }
-  stamp3: {
-    unlocked: boolean
-    codeUsed?: string
+    verifiedByStaff?: boolean
     stampedAt?: string
   }
   claimedByStaff?: boolean

@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react'
 
-export type Route = 'home' | 'simulator' | 'trivia' | 'realvsai' | 'battle' | 'leaderboard'
+export type Route = 'home' | 'simulator' | 'trivia' | 'realvsai' | 'leaderboard'
 
 const ROUTES: Record<string, Route> = {
   '': 'home',
@@ -8,8 +8,6 @@ const ROUTES: Record<string, Route> = {
   '/simulator': 'simulator',
   '/trivia': 'trivia',
   '/real-vs-ai': 'realvsai',
-  '/battle': 'battle',
-  '/prompt-battle': 'battle',
   '/leaderboard': 'leaderboard',
 }
 
@@ -18,7 +16,6 @@ export const ROUTE_PATHS: Record<Route, string> = {
   simulator: '#/simulator',
   trivia: '#/trivia',
   realvsai: '#/real-vs-ai',
-  battle: '#/battle',
   leaderboard: '#/leaderboard',
 }
 

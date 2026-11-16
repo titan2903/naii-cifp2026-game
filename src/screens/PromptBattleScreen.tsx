@@ -51,7 +51,7 @@ export function PromptBattleScreen() {
 }
 
 function PromptBattleFlow() {
-  const { player, unlockStamp2, stampCount, setPassportOpen } = usePlayer()
+  const { player, unlockGameStamp, stampCount, setPassportOpen } = usePlayer()
   const { lang } = useLanguage()
   const en = lang === 'en'
 
@@ -136,7 +136,7 @@ function PromptBattleFlow() {
       const evaluation = evaluatePrompt(soloPrompt, activeMission, lang)
       setSoloEval(evaluation)
       const arenaPoints = toArenaPoints(evaluation.score)
-      unlockStamp2('battle', arenaPoints)
+      unlockGameStamp('Prompt Battle', arenaPoints)
 
       if (player) {
         const saved = await submitScore({
@@ -173,7 +173,7 @@ function PromptBattleFlow() {
       const evaluation2 = evaluatePrompt(p2Prompt, activeMission, lang)
       setP1Eval(evaluation1)
       setP2Eval(evaluation2)
-      unlockStamp2('battle', toArenaPoints(Math.max(evaluation1.score, evaluation2.score)))
+      unlockGameStamp('Prompt Battle', toArenaPoints(Math.max(evaluation1.score, evaluation2.score)))
 
       confetti({
         particleCount: 150,
@@ -182,7 +182,7 @@ function PromptBattleFlow() {
         colors: ['#AD2B17', '#C89D54', '#ffffff'],
       })
     }
-  }, [mode, soloPrompt, p1Prompt, p2Prompt, activeMission, lang, player, en, getElapsedMs, unlockStamp2])
+  }, [mode, soloPrompt, p1Prompt, p2Prompt, activeMission, lang, player, en, getElapsedMs, unlockGameStamp])
 
   useEffect(() => {
     finishBattleRef.current = () => {

@@ -39,9 +39,9 @@ export const REAL_VS_AI_STATEMENTS: QuizItem[] = [
   ),
   item(
     'r4',
-    'Indonesia memiliki UU Perlindungan Data Pribadi yang mengatur hak warga atas datanya, termasuk dalam pemrosesan otomatis.',
+    'Indonesia memiliki UU Pelindungan Data Pribadi (UU PDP) yang mengatur hak warga atas datanya, termasuk dalam pemrosesan otomatis.',
     true,
-    'UU No. 27 Tahun 2022 tentang PDP menjadi tonggak penting kedaulatan data di Indonesia.',
+    'UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi menjadi tonggak penting kedaulatan data di Indonesia.',
   ),
   item(
     'r5',

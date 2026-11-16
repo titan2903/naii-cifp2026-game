@@ -145,8 +145,8 @@ export function evaluatePrompt(
       : 'Luar biasa! Prompt berstandar analis diplomatik. Keempat pilar NAII (Peran, Konteks, Batasan, Tujuan) terpenuhi dengan tajam dan terstruktur.'
   } else if (grade === 'A') {
     feedback = en
-      ? 'Strong prompt! To reach Grade S (Grand Merchandise level), add sharper format boundaries (e.g., "strictly 1 paragraph") and explicit doctrine terms.'
-      : 'Prompt sudah sangat baik! Untuk menembus Grade S (level Grand Merchandise), pertegas batasan format (misal: "maksimal 1 paragraf") dan doktrin Bebas-Aktif.'
+      ? 'Strong prompt! To reach Grade S, add sharper format boundaries (e.g., "strictly 1 paragraph") and explicit doctrine terms.'
+      : 'Prompt sudah sangat baik! Untuk menembus Grade S, pertegas batasan format (misal: "maksimal 1 paragraf") dan doktrin Bebas-Aktif.'
   } else if (grade === 'B') {
     feedback = en
       ? 'Promising start. Strengthen your prompt by clearly establishing the persona ("Act as...") and specific ASEAN / Global South context.'

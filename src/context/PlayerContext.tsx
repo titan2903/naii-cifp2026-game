@@ -1,9 +1,10 @@
 import { createContext, useCallback, useContext, useMemo, useState, type ReactNode } from 'react'
 import { saveLead } from '../lib/storage'
-import type { GameId, PassportState, Player } from '../types'
+import type { PassportState, Player } from '../types'
 
 const KEY = 'naii-cifp26:player'
-const PASSPORT_KEY = 'naii-cifp26:passport'
+const PASSPORT_KEY = 'naii-cifp26:passport-v2'
+const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
 function generateTicketCode(): string {
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
@@ -19,7 +20,6 @@ function createInitialPassport(): PassportState {
     ticketCode: generateTicketCode(),
     stamp1: { unlocked: false },
     stamp2: { unlocked: false },
-    stamp3: { unlocked: false },
     claimedByStaff: false,
   }
 }
@@ -34,9 +34,8 @@ interface PlayerCtx {
   setPassportOpen: (open: boolean) => void
   qrModalOpen: boolean
   setQrModalOpen: (open: boolean) => void
-  unlockStamp1: (personaTitle: string, score: number) => void
-  unlockStamp2: (game: GameId, score: number) => void
-  unlockStamp3: (codeUsed: string, email?: string) => void
+  unlockGameStamp: (gameLabel: string, score: number) => void
+  verifyNaiiAccountByStaff: (email?: string, consented?: boolean) => void
   markTicketClaimed: () => void
 }
 
@@ -56,7 +55,7 @@ function loadPassport(): PassportState {
     const raw = localStorage.getItem(PASSPORT_KEY)
     if (raw) {
       const parsed = JSON.parse(raw) as PassportState
-      if (parsed && parsed.ticketCode && parsed.stamp1 && parsed.stamp2 && parsed.stamp3) {
+      if (parsed && parsed.ticketCode && parsed.stamp1 && parsed.stamp2) {
         return parsed
       }
     }
@@ -112,14 +111,14 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     }
   }, [])
 
-  const unlockStamp1 = useCallback((personaTitle: string, score: number) => {
+  const unlockGameStamp = useCallback((gameLabel: string, score: number) => {
     setPassportState((prev) => {
       const isBetter = prev.stamp1.score === undefined || score >= prev.stamp1.score
       const next: PassportState = {
         ...prev,
         stamp1: {
           unlocked: true,
-          personaTitle: isBetter ? personaTitle : (prev.stamp1.personaTitle ?? personaTitle),
+          gameLabel: isBetter ? gameLabel : (prev.stamp1.gameLabel ?? gameLabel),
           score: isBetter ? score : prev.stamp1.score,
           stampedAt: prev.stamp1.stampedAt ?? new Date().toISOString(),
         },
@@ -129,45 +128,30 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const unlockStamp2 = useCallback((game: GameId, score: number) => {
-    setPassportState((prev) => {
-      const isBetter = prev.stamp2.score === undefined || score >= prev.stamp2.score
-      const next: PassportState = {
-        ...prev,
-        stamp2: {
-          unlocked: true,
-          game: isBetter ? game : prev.stamp2.game,
-          score: isBetter ? score : prev.stamp2.score,
-          stampedAt: prev.stamp2.stampedAt ?? new Date().toISOString(),
-        },
-      }
-      persistPassport(next)
-      return next
-    })
-  }, [])
-
-  const unlockStamp3 = useCallback(
-    (codeUsed: string, email?: string) => {
+  const verifyNaiiAccountByStaff = useCallback(
+    (email?: string, consented?: boolean) => {
       setPassportState((prev) => {
         const next: PassportState = {
           ...prev,
-          stamp3: {
+          stamp2: {
             unlocked: true,
-            codeUsed,
-            stampedAt: prev.stamp3.stampedAt ?? new Date().toISOString(),
+            verifiedByStaff: true,
+            stampedAt: prev.stamp2.stampedAt ?? new Date().toISOString(),
           },
         }
         persistPassport(next)
         return next
       })
-      if (email && email.includes('@')) {
+      const trimmedEmail = email?.trim() ?? ''
+      const hasExplicitConsent = Boolean(consented || (player?.consent && trimmedEmail === (player?.email ?? '')))
+      if (trimmedEmail && EMAIL_RE.test(trimmedEmail) && hasExplicitConsent) {
         const basePlayer: Player = player ?? {
           name: 'Delegasi CIFP',
           institution: 'CIFP 2026',
-          email,
+          email: trimmedEmail,
           consent: true,
         }
-        const updatedPlayer: Player = { ...basePlayer, email, consent: true }
+        const updatedPlayer: Player = { ...basePlayer, email: trimmedEmail, consent: true }
         setState(updatedPlayer)
         try {
           localStorage.setItem(KEY, JSON.stringify(updatedPlayer))
@@ -175,7 +159,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
         } catch {
           /* abaikan */
         }
-        void saveLead(updatedPlayer, 'passport-stamp3-claim')
+        void saveLead(updatedPlayer, 'passport-naii-account')
       }
     },
     [player],
@@ -193,10 +177,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
     })
   }, [])
 
-  const stampCount =
-    (passport.stamp1.unlocked ? 1 : 0) +
-    (passport.stamp2.unlocked ? 1 : 0) +
-    (passport.stamp3.unlocked ? 1 : 0)
+  const stampCount = (passport.stamp1.unlocked ? 1 : 0) + (passport.stamp2.unlocked ? 1 : 0)
 
   const value = useMemo(
     () => ({
@@ -209,9 +190,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       setPassportOpen,
       qrModalOpen,
       setQrModalOpen,
-      unlockStamp1,
-      unlockStamp2,
-      unlockStamp3,
+      unlockGameStamp,
+      verifyNaiiAccountByStaff,
       markTicketClaimed,
     }),
     [
@@ -222,9 +202,8 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       stampCount,
       passportOpen,
       qrModalOpen,
-      unlockStamp1,
-      unlockStamp2,
-      unlockStamp3,
+      unlockGameStamp,
+      verifyNaiiAccountByStaff,
       markTicketClaimed,
     ],
   )

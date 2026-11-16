@@ -13,34 +13,34 @@ export const SCENARIOS: Scenario[] = [
     id: 'ai-divide',
     code: 'SKENARIO 01',
     title: 'The Great AI Divide',
-    subtitle: 'Perang Dingin Semikonduktor & Blokade AI',
+    subtitle: 'Kompetisi Semikonduktor & Akses Teknologi AI',
     context:
-      'Amerika Serikat dan Tiongkok memberlakukan pembatasan ekspor chip dan model AI tingkat lanjut. Negara Global South, termasuk anggota ASEAN, terancam tertinggal dan dipaksa memilih blok.',
+      'Dua kekuatan besar teknologi dunia memberlakukan pembatasan ekspor semikonduktor dan model AI tingkat lanjut. Negara Global South, termasuk anggota ASEAN, terancam tertinggal dan menghadapi tekanan untuk memilih keberpihakan.',
     question:
-      'Sebagai Ketua Delegasi RI yang menganut politik Bebas-Aktif, langkah strategis apa yang Anda ajukan di KTT Internasional untuk menjaga akses teknologi tanpa terseret aliansi blok?',
+      'Sebagai Ketua Delegasi RI yang menganut politik Bebas-Aktif, langkah strategis apa yang Anda ajukan di KTT Internasional untuk menjaga akses teknologi tanpa terseret polarisasi kekuatan?',
     options: [
       {
         id: 'A',
         text: 'Menggalang koalisi Global South & ASEAN untuk membangun infrastruktur Open-Source AI bersama yang netral.',
         dims: { bebas: 88, aktif: 86, teknologi: 80 },
         insight:
-          'Langkah klasik "Bebas-Aktif": Indonesia tidak memilih blok, tetapi memimpin terbentuknya poros ketiga berbasis kolaborasi teknologi terbuka.',
+          'Langkah klasik "Bebas-Aktif": Indonesia tidak memihak kutub mana pun, tetapi memimpin terbentuknya poros kolaborasi teknologi terbuka.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'netral', text: 'Mencermati inisiatif ini, namun terbuka bila standar keamanan & transparansi dijaga.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'netral', text: 'Menyambut sikap non-blok, menawarkan kontribusi riset tanpa syarat politik.' },
-          { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Antusias! India, Brasil, dan Afrika Selatan siap bergabung dalam konsorsium.' },
+          { bloc: 'Mitra Barat', stance: 'netral', text: 'Mencermati inisiatif ini, namun terbuka bila standar keamanan & transparansi dijaga.' },
+          { bloc: 'Poros Mitra Timur', stance: 'netral', text: 'Menyambut sikap non-blok, menawarkan kontribusi riset tanpa syarat politik.' },
+          { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Antusias! Negara-negara mitra berkembang siap bergabung dalam konsorsium.' },
         ],
       },
       {
         id: 'B',
-        text: 'Diplomasi ekonomi dua arah: membuka investasi pusat data dari kedua blok dengan syarat transfer ilmu bagi talenta lokal.',
+        text: 'Diplomasi ekonomi dua arah: membuka investasi pusat data dari berbagai mitra global dengan syarat transfer ilmu bagi talenta lokal.',
         dims: { bebas: 82, aktif: 70, teknologi: 80 },
         insight:
           'Pragmatis dan menguntungkan secara ekonomi. Kuncinya ada pada negosiasi syarat transfer pengetahuan agar Indonesia tidak sekadar menjadi lokasi server.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'positif', text: 'Raksasa teknologi AS siap berinvestasi, tetapi meminta jaminan perlindungan IP.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'positif', text: 'Siap membangun pusat data dan program beasiswa talenta digital.' },
-          { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Menilai Indonesia cerdik, namun khawatir persaingan investasi antarnegara ASEAN.' },
+          { bloc: 'Mitra Barat', stance: 'positif', text: 'Perusahaan teknologi Barat siap berinvestasi, dengan meminta jaminan perlindungan IP.' },
+          { bloc: 'Poros Mitra Timur', stance: 'positif', text: 'Siap membangun pusat data dan program beasiswa talenta digital.' },
+          { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Menilai Indonesia cerdik, namun mencermati persaingan investasi antarnegara ASEAN.' },
         ],
       },
       {
@@ -50,8 +50,8 @@ export const SCENARIOS: Scenario[] = [
         insight:
           'Visioner dan berprinsip, tetapi proses traktat PBB memakan waktu bertahun-tahun. Perlu langkah teknis jangka pendek agar talenta lokal tidak tertinggal.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'waspada', text: 'Khawatir traktat membatasi kontrol ekspor demi keamanan nasional mereka.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'netral', text: 'Mendukung prinsipnya, namun hati-hati soal mekanisme pengawasan.' },
+          { bloc: 'Mitra Barat', stance: 'waspada', text: 'Khawatir traktat membatasi kebijakan kontrol ekspor demi keamanan nasional mereka.' },
+          { bloc: 'Poros Mitra Timur', stance: 'netral', text: 'Mendukung prinsipnya, namun hati-hati soal mekanisme pengawasan.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Mendukung penuh sebagai perjuangan keadilan pembangunan.' },
         ],
       },
@@ -65,7 +65,7 @@ export const SCENARIOS: Scenario[] = [
     context:
       'Perusahaan teknologi multinasional melatih model AI dengan jutaan data publik dan budaya masyarakat Asia Tenggara tanpa kompensasi, berisiko melanggar privasi warga.',
     question:
-      'Bagaimana posisi diplomasi Indonesia untuk menyeimbangkan keterbukaan inovasi global dengan perlindungan kedaulatan data nasional (UU PDP)?',
+      'Bagaimana posisi diplomasi Indonesia untuk menyeimbangkan keterbukaan inovasi global dengan pelindungan kedaulatan data nasional (UU PDP)?',
     options: [
       {
         id: 'A',
@@ -74,8 +74,8 @@ export const SCENARIOS: Scenario[] = [
         insight:
           'Memanfaatkan sentralitas ASEAN sebagai daya tawar kolektif — 680 juta penduduk jauh lebih didengar daripada negosiasi bilateral.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'netral', text: 'Menghormati, membandingkannya dengan pendekatan GDPR Uni Eropa.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'netral', text: 'Mendukung prinsip kedaulatan data, sejalan dengan kebijakan domestik mereka.' },
+          { bloc: 'Mitra Barat', stance: 'netral', text: 'Menghormati, membandingkannya dengan pendekatan tata kelola data modern.' },
+          { bloc: 'Poros Mitra Timur', stance: 'netral', text: 'Mendukung prinsip kedaulatan data, sejalan dengan regulasi domestik mereka.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Sebagian besar anggota ASEAN mendukung; beberapa meminta masa transisi.' },
         ],
       },
@@ -84,10 +84,10 @@ export const SCENARIOS: Scenario[] = [
         text: 'Memberi insentif bagi perusahaan AI global yang bermitra dengan institusi pendidikan lokal untuk melatih talenta dalam negeri.',
         dims: { bebas: 72, aktif: 70, teknologi: 84 },
         insight:
-          'Pendekatan "carrot" yang membangun SDM. Namun tanpa kerangka hukum regional, perlindungan data warga masih rentan.',
+          'Pendekatan "carrot" yang membangun SDM. Namun tanpa kerangka hukum regional, pelindungan data warga masih rentan.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'positif', text: 'Perusahaan teknologi menyambut baik dan siap membuka program akademi AI.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'positif', text: 'Menawarkan kemitraan kampus dan laboratorium riset bersama.' },
+          { bloc: 'Mitra Barat', stance: 'positif', text: 'Perusahaan teknologi menyambut baik dan siap membuka program akademi AI.' },
+          { bloc: 'Poros Mitra Timur', stance: 'positif', text: 'Menawarkan kemitraan kampus dan laboratorium riset bersama.' },
           { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Mengapresiasi, tetapi menunggu bukti dampak nyata bagi privasi warga.' },
         ],
       },
@@ -98,8 +98,8 @@ export const SCENARIOS: Scenario[] = [
         insight:
           'Kuat dalam menjaga identitas dan kedaulatan budaya digital, namun cenderung inward-looking. Perlu diangkat ke forum regional agar berdampak global.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'waspada', text: 'Khawatir standar nasional yang unik menambah beban kepatuhan bisnis.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'netral', text: 'Menghormati sebagai urusan domestik Indonesia.' },
+          { bloc: 'Mitra Barat', stance: 'waspada', text: 'Khawatir standar nasional yang unik menambah beban kepatuhan bisnis.' },
+          { bloc: 'Poros Mitra Timur', stance: 'netral', text: 'Menghormati sebagai urusan domestik Indonesia.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Negara dengan keragaman bahasa tertarik mengadopsi model serupa.' },
         ],
       },
@@ -122,8 +122,8 @@ export const SCENARIOS: Scenario[] = [
         insight:
           'Respons cepat, kolektif, dan berbasis teknologi. Verifikasi forensik meruntuhkan narasi palsu sebelum eskalasi terjadi.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'positif', text: 'Menawarkan dukungan alat deteksi deepfake dan intelijen siber.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'positif', text: 'Mendukung penyelesaian di dalam kerangka ASEAN tanpa intervensi luar.' },
+          { bloc: 'Mitra Barat', stance: 'positif', text: 'Menawarkan dukungan alat deteksi deepfake dan intelijen siber.' },
+          { bloc: 'Poros Mitra Timur', stance: 'positif', text: 'Mendukung penyelesaian di dalam kerangka ASEAN tanpa intervensi luar.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Negara tetangga lega — pernyataan bersama terbit dalam 6 jam.' },
         ],
       },
@@ -134,8 +134,8 @@ export const SCENARIOS: Scenario[] = [
         insight:
           'Menenangkan situasi dan membangun ketahanan publik jangka panjang, tetapi tanpa verifikasi teknis, rumor bisa terus beredar.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'netral', text: 'Mendukung de-eskalasi, menunggu klarifikasi resmi.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'netral', text: 'Menyerukan semua pihak menahan diri.' },
+          { bloc: 'Mitra Barat', stance: 'netral', text: 'Mendukung de-eskalasi, menunggu klarifikasi resmi.' },
+          { bloc: 'Poros Mitra Timur', stance: 'netral', text: 'Menyerukan semua pihak menahan diri.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Mengapresiasi kepemimpinan Indonesia yang menenangkan.' },
         ],
       },
@@ -146,8 +146,8 @@ export const SCENARIOS: Scenario[] = [
         insight:
           'Solusi struktural yang mencegah krisis serupa di masa depan, namun kurang menjawab kebutuhan respons dalam 24 jam pertama.',
         reactions: [
-          { bloc: 'Blok Barat', stance: 'positif', text: 'Mendukung standar watermarking, sejalan dengan inisiatif industri mereka.' },
-          { bloc: 'Tiongkok & Mitra Timur', stance: 'netral', text: 'Setuju prinsipnya, ingin standar tidak didominasi satu pihak.' },
+          { bloc: 'Mitra Barat', stance: 'positif', text: 'Mendukung standar watermarking, sejalan dengan inisiatif industri mereka.' },
+          { bloc: 'Poros Mitra Timur', stance: 'netral', text: 'Setuju prinsipnya, ingin standar tidak didominasi satu pihak.' },
           { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Butuh dukungan kapasitas teknis agar bisa menerapkannya.' },
         ],
       },
@@ -160,33 +160,33 @@ export const SCENARIOS_EN: Scenario[] = [
     id: 'ai-divide',
     code: 'SCENARIO 01',
     title: 'The Great AI Divide',
-    subtitle: 'Semiconductor Cold War & AI Export Blockade',
+    subtitle: 'Semiconductor Competition & AI Technology Access',
     context:
-      'The United States and China impose strict export controls on advanced AI chips and frontier models. Global South nations, including ASEAN members, risk technological marginalization and pressure to pick sides.',
+      'Major competing technology powers impose strict export controls on advanced semiconductors and frontier AI models. Global South nations, including ASEAN members, risk technological marginalization and pressure to pick sides.',
     question:
-      'As Head of the Indonesian Delegation upholding an Independent & Active foreign policy, what strategic initiative do you table at the International Summit to secure technological access without aligning with either bloc?',
+      'As Head of the Indonesian Delegation upholding an Independent & Active foreign policy, what strategic initiative do you table at the International Summit to secure technological access without aligning with either pole?',
     options: [
       {
         id: 'A',
         text: 'Mobilize a Global South & ASEAN coalition to build shared, neutral Open-Source AI infrastructure.',
         dims: { bebas: 88, aktif: 86, teknologi: 80 },
         insight:
-          'A textbook "Independent & Active" move: Indonesia refuses bloc alignment and instead leads a third pole anchored in open technological collaboration.',
+          'A textbook "Independent & Active" move: Indonesia refuses polarization and instead leads a collaborative pole anchored in open technological partnership.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'netral', text: 'Monitors the initiative closely, remaining open if safety and transparency standards are upheld.' },
-          { bloc: 'China & Eastern Partners', stance: 'netral', text: 'Welcomes the non-aligned stance and offers research contributions without political strings.' },
-          { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Enthusiastic! India, Brazil, and South Africa pledge to join the consortium.' },
+          { bloc: 'Western Partners', stance: 'netral', text: 'Monitors the initiative closely, remaining open if safety and transparency standards are upheld.' },
+          { bloc: 'Eastern Partners', stance: 'netral', text: 'Welcomes the non-aligned stance and offers research contributions without political strings.' },
+          { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Enthusiastic! Partner nations across the Global South pledge to join the consortium.' },
         ],
       },
       {
         id: 'B',
-        text: 'Dual-track economic diplomacy: welcome data center investments from both blocs, conditioned on mandatory knowledge transfer for local talent.',
+        text: 'Dual-track economic diplomacy: welcome data center investments from diverse global partners, conditioned on mandatory knowledge transfer for local talent.',
         dims: { bebas: 82, aktif: 70, teknologi: 80 },
         insight:
           'Economically pragmatic. The decisive factor lies in enforcing strict knowledge-transfer clauses so Indonesia becomes a creator, not merely a server host.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'positif', text: 'US tech giants are ready to invest, requesting strong IP protection guarantees.' },
-          { bloc: 'China & Eastern Partners', stance: 'positif', text: 'Ready to build hyperscale data centers and fund digital talent scholarships.' },
+          { bloc: 'Western Partners', stance: 'positif', text: 'Western tech firms are ready to invest, requesting strong IP protection guarantees.' },
+          { bloc: 'Eastern Partners', stance: 'positif', text: 'Ready to build hyperscale data centers and fund digital talent scholarships.' },
           { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Views Indonesia as savvy, though watchful of intra-ASEAN investment competition.' },
         ],
       },
@@ -197,8 +197,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'Visionary and principled, yet UN treaty negotiations take years. Indonesia still needs near-term technical pathways so domestic talent does not fall behind.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'waspada', text: 'Concerned the treaty could constrain national-security export controls.' },
-          { bloc: 'China & Eastern Partners', stance: 'netral', text: 'Supports the general principle while remaining cautious on verification mechanisms.' },
+          { bloc: 'Western Partners', stance: 'waspada', text: 'Concerned the treaty could constrain national-security export controls.' },
+          { bloc: 'Eastern Partners', stance: 'netral', text: 'Supports the general principle while remaining cautious on verification mechanisms.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Strongly backs the proposal as a milestone for developmental justice.' },
         ],
       },
@@ -221,8 +221,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'Leverages ASEAN Centrality for collective bargaining power — a market of 680 million people commands far greater leverage than bilateral talks alone.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'netral', text: 'Respects the regulatory clarity, comparing it to the European Union’s GDPR approach.' },
-          { bloc: 'China & Eastern Partners', stance: 'netral', text: 'Supports the principle of data sovereignty, aligning with their own domestic doctrine.' },
+          { bloc: 'Western Partners', stance: 'netral', text: 'Respects the regulatory clarity, comparing it to modern data-protection frameworks.' },
+          { bloc: 'Eastern Partners', stance: 'netral', text: 'Supports the principle of data sovereignty, aligning with their own domestic regulations.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Most ASEAN member states endorse the framework; a few request phased transition timelines.' },
         ],
       },
@@ -233,8 +233,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'A constructive "carrot" approach that accelerates human capital, though citizen data remains vulnerable without a binding regional legal framework.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'positif', text: 'Global tech firms welcome the partnership and commit to launching AI academies.' },
-          { bloc: 'China & Eastern Partners', stance: 'positif', text: 'Offers joint university laboratories and engineering fellowships.' },
+          { bloc: 'Western Partners', stance: 'positif', text: 'Global tech firms welcome the partnership and commit to launching AI academies.' },
+          { bloc: 'Eastern Partners', stance: 'positif', text: 'Offers joint university laboratories and engineering fellowships.' },
           { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Appreciates the talent focus while awaiting concrete safeguards for citizen privacy.' },
         ],
       },
@@ -245,8 +245,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'Strong on safeguarding digital cultural sovereignty, though somewhat inward-looking. Elevating it to a regional forum would amplify its global impact.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'waspada', text: 'Concerned bespoke national rules may increase cross-border compliance friction.' },
-          { bloc: 'China & Eastern Partners', stance: 'netral', text: 'Respects the measure as Indonesia’s sovereign domestic affair.' },
+          { bloc: 'Western Partners', stance: 'waspada', text: 'Concerned bespoke national rules may increase cross-border compliance friction.' },
+          { bloc: 'Eastern Partners', stance: 'netral', text: 'Respects the measure as Indonesia’s sovereign domestic affair.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Linguistically diverse nations express strong interest in adopting a similar model.' },
         ],
       },
@@ -269,8 +269,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'Rapid, collective, and technically grounded. Joint forensic verification dismantles fabricated narratives before military escalation can occur.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'positif', text: 'Offers deepfake detection tools and cyber threat intelligence support.' },
-          { bloc: 'China & Eastern Partners', stance: 'positif', text: 'Endorses ASEAN-led resolution without external military intervention.' },
+          { bloc: 'Western Partners', stance: 'positif', text: 'Offers deepfake detection tools and cyber threat intelligence support.' },
+          { bloc: 'Eastern Partners', stance: 'positif', text: 'Endorses ASEAN-led resolution without external military intervention.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Neighboring capitals are relieved — a joint communiqué is issued within 6 hours.' },
         ],
       },
@@ -281,8 +281,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'Calms immediate tensions and builds long-term societal resilience, though without rapid technical verification, rumors may linger.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'netral', text: 'Supports de-escalation while awaiting authoritative forensic clarification.' },
-          { bloc: 'China & Eastern Partners', stance: 'netral', text: 'Echoes calls for all parties to exercise maximum restraint.' },
+          { bloc: 'Western Partners', stance: 'netral', text: 'Supports de-escalation while awaiting authoritative forensic clarification.' },
+          { bloc: 'Eastern Partners', stance: 'netral', text: 'Echoes calls for all parties to exercise maximum restraint.' },
           { bloc: 'Global South & ASEAN', stance: 'positif', text: 'Commends Indonesia’s steady and calming diplomatic leadership.' },
         ],
       },
@@ -293,8 +293,8 @@ export const SCENARIOS_EN: Scenario[] = [
         insight:
           'A vital structural solution to prevent future crises, though less focused on defusing the immediate 24-hour flashpoint.',
         reactions: [
-          { bloc: 'Western Bloc', stance: 'positif', text: 'Backs provenance and watermarking standards aligned with global industry norms.' },
-          { bloc: 'China & Eastern Partners', stance: 'netral', text: 'Agrees in principle, provided technical standards are not monopolized by one bloc.' },
+          { bloc: 'Western Partners', stance: 'positif', text: 'Backs provenance and watermarking standards aligned with global industry norms.' },
+          { bloc: 'Eastern Partners', stance: 'netral', text: 'Agrees in principle, provided technical standards are not monopolized by one pole.' },
           { bloc: 'Global South & ASEAN', stance: 'netral', text: 'Supports the protocol but requests technical capacity-building assistance.' },
         ],
       },

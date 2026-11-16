@@ -133,7 +133,7 @@ export const TRIVIA_QUESTIONS: QuizItem[] = [
     category: 'Indonesia & NAII',
     prompt: 'Regulasi nasional yang menjadi landasan utama perlindungan data warga — termasuk untuk sistem AI — adalah…',
     options: [
-      'UU No. 27 Tahun 2022 tentang Perlindungan Data Pribadi (UU PDP)',
+      'UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP)',
       'UU Lalu Lintas dan Angkutan Jalan',
       'UU Perdagangan Bebas ASEAN',
       'UU Pemerintahan Daerah',

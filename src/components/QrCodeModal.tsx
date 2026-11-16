@@ -49,9 +49,9 @@ export const QrCodeSvg = memo(function QrCodeSvg({
 
 const GAME_DEEP_LINKS = [
   { id: 'home', label: { id: 'Beranda', en: 'Main Hub' }, suffix: '' },
-  { id: 'simulator', label: { id: 'Simulator', en: 'Simulator' }, suffix: '#/simulator' },
   { id: 'trivia', label: { id: 'Speed Trivia', en: 'Speed Trivia' }, suffix: '#/trivia' },
-  { id: 'battle', label: { id: 'Prompt Battle', en: 'Prompt Battle' }, suffix: '#/battle' },
+  { id: 'realvsai', label: { id: 'Real vs AI', en: 'Real vs AI' }, suffix: '#/real-vs-ai' },
+  { id: 'simulator', label: { id: 'Simulator', en: 'Simulator' }, suffix: '#/simulator' },
 ] as const
 
 export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => void }) {
@@ -104,7 +104,7 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
                 {en ? 'ZERO-TYPING SMARTPHONE ACCESS' : 'AKSES INSTAN TANPA KETIK URL'}
               </span>
               <span className="chip !border-[#C89D54]/45 !bg-[#C89D54]/10 !text-[#9A6F22] dark:!text-[#C89D54]">
-                {en ? 'BOOTH CODE: NAII2026' : 'KODE SANDI BOOTH: NAII2026'}
+                {en ? '2 STEPS TO CLAIM PIN' : '2 LANGKAH KLAIM PIN'}
               </span>
             </div>
             <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
@@ -214,7 +214,7 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
                   {en ? 'QR 02 // 20+ FREE AI COURSES' : 'QR 02 // 20+ KURSUS AI GRATIS'}
                 </span>
                 <span className="font-mono text-[10px] font-bold text-[#9A6F22] dark:text-[#C89D54]">
-                  STAMP #03 PORTAL
+                  STEP #02 · TIER 2 PIN
                 </span>
               </div>
 
@@ -225,13 +225,13 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
               <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
                 {en ? (
                   <>
-                    Scan to explore <b>AI Literacy</b>, <b>AI for Business</b>, and <b>AI Technicals</b>. Use Booth Code{' '}
-                    <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">NAII2026</b> for Stamp #03!
+                    Scan to sign up for free (<b>AI Literacy</b>, <b>AI for Business</b>, <b>AI Technicals</b>) and show
+                    your account screenshot to booth staff for Stamp #02!
                   </>
                 ) : (
                   <>
-                    Scan untuk akses jalur <b>AI Literacy</b>, <b>AI for Business</b>, dan <b>AI Technical</b>. Gunakan
-                    Kode Booth <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">NAII2026</b> untuk Stempel #03!
+                    Scan untuk daftar akun gratis (<b>AI Literacy</b>, <b>AI for Business</b>, <b>AI Technical</b>), lalu
+                    tunjukkan screenshot akun ke panitia untuk Stempel #02!
                   </>
                 )}
               </p>
@@ -301,7 +301,7 @@ export function BoothQrShowcase({ onExpand }: { onExpand?: () => void }) {
               {en ? 'SCAN & PLAY // ZERO TYPING' : 'SCAN & MAINKAN // TANPA KETIK URL'}
             </span>
             <span className="chip !border-[#C89D54]/45 !bg-[#C89D54]/10 !text-[#9A6F22] dark:!text-[#C89D54]">
-              {en ? 'BOOTH PASSCODE: NAII2026' : 'KODE SANDI BOOTH: NAII2026'}
+              {en ? 'STAMP FPCI · STICKER · PIN · TOTEBAG' : 'STAMP FPCI · STIKER · PIN · TOTEBAG'}
             </span>
           </div>
           <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
@@ -350,8 +350,8 @@ export function BoothQrShowcase({ onExpand }: { onExpand?: () => void }) {
             </h3>
             <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
               {en
-                ? 'Play AI Crisis Simulator, Speed Trivia, Real vs AI, and Prompt Battle directly from your phone.'
-                : 'Mainkan AI Crisis Simulator, Speed Trivia, Real vs AI, dan Prompt Battle langsung dari browser HP Anda.'}
+                ? 'Play Speed Trivia, Real vs AI Hallucination, or AI Crisis Simulator directly from your phone (~45 sec).'
+                : 'Mainkan Speed Trivia, Real vs AI Hallucination, atau AI Crisis Simulator langsung dari browser HP Anda (~45 detik).'}
             </p>
             <p className="font-mono text-[11px] font-bold text-[#AD2B17] dark:text-[#C89D54]">
               naii-cifp2026-game.vercel.app
@@ -380,8 +380,8 @@ export function BoothQrShowcase({ onExpand }: { onExpand?: () => void }) {
             </h3>
             <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
               {en
-                ? 'Access free AI Literacy, AI for Business, and AI Technical tracks + unlock Mission Stamp #03.'
-                : 'Akses gratis jalur AI Literacy, AI for Business, dan AI Technical sekaligus membuka Stempel Misi #03.'}
+                ? 'Sign up free for AI Literacy, AI for Business, and AI Technical tracks + show screenshot for Stamp #02 (Pin).'
+                : 'Daftar gratis jalur AI Literacy, AI for Business, dan AI Technical + tunjukkan screenshot untuk Stempel #02 (Pin).'}
             </p>
             <p className="font-mono text-[11px] font-bold text-zinc-900 dark:text-white">
               www.naii.co
