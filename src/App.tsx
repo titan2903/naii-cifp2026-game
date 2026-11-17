@@ -20,6 +20,15 @@ function BoothRouter() {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [route])
 
+  // Kunci scroll latar belakang saat modal Paspor atau QR terbuka di smartphone
+  useEffect(() => {
+    const locked = passportOpen || qrModalOpen
+    document.body.classList.toggle('overflow-hidden', locked)
+    return () => {
+      document.body.classList.remove('overflow-hidden')
+    }
+  }, [passportOpen, qrModalOpen])
+
   // Reset otomatis hanya jika pengunjung belum membuka stamp dan tidak sedang membuka modal (mencegah Stamp #01 terhapus saat daftar ke www.naii.co)
   useIdleReset(
     route !== 'home' && route !== 'leaderboard' && stampCount === 0 && !passportOpen && !qrModalOpen,

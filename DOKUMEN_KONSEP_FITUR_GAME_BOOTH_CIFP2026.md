@@ -97,7 +97,7 @@ Begitu Langkah #01 & #02 terverifikasi (`2/2 LANGKAH LENGKAP`), bagian bawah Pas
 
 1. **Live Leaderboard dengan Mode Layar TV Fullscreen:**
    * Menampilkan Podium Juara #1, #2, #3 dan tabel peringkat delegasi secara *real-time* (menggunakan Supabase Realtime — begitu pengunjung selesai main *Speed Trivia* atau *Real vs AI* di HP, skor langsung muncul di TV booth dengan efek *highlight*).
-   * Dilengkapi filter instrumen (**Semua**, **Speed Trivia**, **Real vs AI**) dalam tampilan terpadu **All Sessions** agar papan peringkat lebih fokus dan mudah dibaca di layar TV booth.
+   * Dilengkapi filter instrumen (**Semua**, **Speed Trivia**, **Real vs AI**) dan filter sesi sesuai rundown resmi CIFP 2026 (**Break Pagi 11:25–12:00**, **Break Siang 13:15–14:00**, **Break Sore 15:15–16:00 WIB**).
    * Memiliki tombol **"Muat Simulasi Skor TV Booth"** untuk pengisian tampilan awal sebelum pintu hall dibuka.
 2. **Dwibahasa Penuh (*Bilingual ID / EN Instant Switch*):**
    * Seluruh antarmuka, 3 skenario krisis, 15 soal trivia, 12 klaim fakta vs AI, hingga gambar PNG Kartu Persona yang diunduh mendukung **Bahasa Indonesia (ID)** dan **Bahasa Inggris (EN)** secara instan.

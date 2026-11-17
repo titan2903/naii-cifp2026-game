@@ -26,18 +26,20 @@ export function uuid(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
 }
 
+export const SESSION_TAGS = ['Break Pagi', 'Break Siang', 'Break Sore'] as const
+
+export type SessionTag = (typeof SESSION_TAGS)[number]
+
 /** Label sesi break diselaraskan dengan rundown resmi cifp.center (CIFP 2026 WIB):
  *  - Break 1 (Pagi): 11:25–12:00 WIB (setelah Opening Plenary 09:30–11:25) -> s.d. 12:05
  *  - Break 2 (Siang): 13:15–14:00 WIB (setelah Session 1 12:00–13:15) -> 12:05–14:05
  *  - Break 3 (Sore): 15:15–16:00 WIB (setelah Session 2 14:00–15:15, hingga Closing 19:25) -> >= 14:05 */
-export function currentSessionTag(date = new Date()): string {
+export function currentSessionTag(date = new Date()): SessionTag {
   const minutes = date.getHours() * 60 + date.getMinutes()
   if (minutes < 12 * 60 + 5) return 'Break Pagi'
   if (minutes < 14 * 60 + 5) return 'Break Siang'
   return 'Break Sore'
 }
-
-export const SESSION_TAGS = ['Break Pagi', 'Break Siang', 'Break Sore'] as const
 
 const SESSION_WINDOW_MAP: Record<string, { full: string; short: string }> = {
   'Break Pagi': { full: '11:25–12:00 WIB', short: '11:25' },

@@ -20,7 +20,7 @@ import { coursesForQuiz } from '../data/personas'
 import { useCountdown } from '../hooks/useCountdown'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { fetchTodayScores, sortScores, submitScore } from '../lib/storage'
-import { currentSessionTag, pickRandom } from '../lib/utils'
+import { currentSessionTag, formatSessionTag, pickRandom } from '../lib/utils'
 import type { GameId, QuizItem, ScoreEntry } from '../types'
 import { CourseCta } from './CourseCta'
 import { TimerBar } from './TimerBar'
@@ -249,14 +249,16 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           {entry && (
             <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs text-zinc-700 dark:border-white/10 dark:bg-black/40 dark:text-zinc-300 sm:mt-5">
               {en ? 'Score recorded on the ' : 'Skor tercatat pada Leaderboard '}
-              <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">ALL SESSIONS</b>
+              <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">
+                {formatSessionTag(entry.session_tag, lang)}
+              </b>
               {en ? ' Leaderboard.' : '.'}{' '}
               {rank !== null && rank <= 3 && (
                 <span className="mt-1.5 flex items-center justify-center gap-1.5 font-bold text-[#AD2B17] dark:text-[#C89D54]">
                   <Award className="h-4 w-4 shrink-0" strokeWidth={1.75} />
                   {en
-                    ? 'You made the Top 3 Podium — claim your Official NAII Totebag!'
-                    : 'Anda masuk Podium Top 3 — berhak meraih Totebag Resmi NAII!'}
+                    ? 'You made the Top 3 Podium — claim your Official NAII Totebag at the break announcement!'
+                    : 'Anda masuk Podium Top 3 — klaim Totebag Resmi NAII saat pengumuman sesi break!'}
                 </span>
               )}
             </div>

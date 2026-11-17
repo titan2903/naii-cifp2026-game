@@ -30,7 +30,7 @@ import { getPromptMissions } from '../data/promptBattle'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { evaluatePrompt } from '../lib/evaluatePrompt'
 import { fetchTodayScores, sortScores } from '../lib/storage'
-import { formatSeconds, formatStampScore } from '../lib/utils'
+import { currentSessionTag, formatSeconds, formatSessionTag, formatStampScore } from '../lib/utils'
 import type { ScoreEntry } from '../types'
 
 const LIVE_DISPATCHES = {
@@ -315,6 +315,7 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
   const [topLeaders, setTopLeaders] = useState<ScoreEntry[]>([])
   const examples = COPILOT_EXAMPLES[lang]
   const example = examples[activeCopilot]
+  const sessionTagLabel = formatSessionTag(currentSessionTag(), lang)
   const defaultMission = useMemo(() => getPromptMissions(lang)[0], [lang])
   const effectiveSandboxPrompt = sandboxPrompt || example.structured.replace(/^[“"]|[”"]$/g, '')
   const sandboxEval = useMemo(
@@ -326,7 +327,9 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
     let mounted = true
     void fetchTodayScores().then((scores) => {
       if (mounted) {
-        setTopLeaders(sortScores(scores).slice(0, 3))
+        const tag = currentSessionTag()
+        const sessionScores = scores.filter((s) => s.session_tag === tag)
+        setTopLeaders(sortScores(sessionScores).slice(0, 3))
       }
     })
     return () => {
@@ -783,7 +786,7 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 </span>
                 <span className="chip">
                   <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
-                  ALL SESSIONS
+                  {en ? 'SESSION' : 'SESI'}: {sessionTagLabel}
                 </span>
               </div>
 
@@ -794,13 +797,15 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
                   {en ? (
                     <>
-                      Track your standing in real time across Speed Trivia &amp; Real vs AI. The top three delegates in{' '}
-                      <b>All Sessions</b> win an <b>Official NAII Totebag (Tier 3)</b>!
+                      Track your standing in real time across Speed Trivia &amp; Real vs AI. The top three delegates of
+                      every break session (11:25–12:00 · 13:15–14:00 · 15:15–16:00 WIB) win an{' '}
+                      <b>Official NAII Totebag (Tier 3)</b>!
                     </>
                   ) : (
                     <>
                       Pantau posisi skor Anda secara <i>real-time</i> pada Speed Trivia &amp; Real vs AI. Tiga delegasi
-                      teratas pada klasemen <b>All Sessions</b> berhak meraih <b>Totebag Resmi NAII (Tier 3)</b>!
+                      terbaik di setiap sesi break (11:25–12:00 · 13:15–14:00 · 15:15–16:00 WIB) berhak meraih{' '}
+                      <b>Totebag Resmi NAII (Tier 3)</b>!
                     </>
                   )}
                 </p>
@@ -832,8 +837,8 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                   <div className="flex items-center justify-between gap-2 py-1 font-mono text-[11px] text-zinc-600 dark:text-zinc-400 sm:text-xs">
                     <span className="truncate">
                       {en
-                        ? 'All Sessions leaderboard is ready for its first high score.'
-                        : 'Papan skor All Sessions siap menerima rekor perdana.'}
+                        ? `${sessionTagLabel} is ready for its first high score.`
+                        : `Sesi ${sessionTagLabel} siap menerima rekor perdana.`}
                     </span>
                     <span className="shrink-0 font-bold text-[#AD2B17]">{en ? 'CLAIM #1' : 'KLAIM #1'}</span>
                   </div>

@@ -20,6 +20,7 @@ import { usePlayer } from '../context/PlayerContext'
 import { useTheme } from '../context/ThemeContext'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { backendMode } from '../lib/storage'
+import { currentSessionTag, formatSessionTag } from '../lib/utils'
 import { NaiiLogo, NaiiStarMark } from './NaiiBrand'
 import { PassportModal } from './PassportModal'
 import { QrCodeModal } from './QrCodeModal'
@@ -98,6 +99,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
   const { lang, toggleLang } = useLanguage()
   const [confirmClear, setConfirmClear] = useState(false)
   const en = lang === 'en'
+  const sessionTag = formatSessionTag(currentSessionTag(), lang)
 
   useEffect(() => {
     if (!confirmClear) return
@@ -130,7 +132,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
             <span className="text-zinc-400">
-              <strong className="text-white">ALL SESSIONS</strong>
+              {en ? 'SESSION' : 'SESI'} <strong className="text-white">{sessionTag}</strong>
             </span>
             <span className="hidden text-zinc-600 sm:inline">·</span>
             <a
