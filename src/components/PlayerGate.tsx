@@ -22,20 +22,21 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
   const submit = (e: FormEvent) => {
     e.preventDefault()
     const n = name.trim()
+    const em = email.trim()
     if (n.length < 2) {
       return setErrorKey('name')
     }
-    if (email && !EMAIL_RE.test(email.trim())) {
+    if (!em || !EMAIL_RE.test(em)) {
       return setErrorKey('email')
     }
-    if (email && !consent) {
+    if (!consent) {
       return setErrorKey('consent')
     }
     setPlayer({
       name: n.slice(0, 40),
       institution: institution.trim().slice(0, 60),
-      email: email.trim(),
-      consent,
+      email: em,
+      consent: true,
     })
   }
 
@@ -68,6 +69,9 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
             }}
             placeholder={en ? 'e.g., Mahendra Kusuma' : 'Contoh: Mahendra Kusuma'}
             maxLength={40}
+            required
+            aria-required="true"
+            aria-invalid={errorKey === 'name'}
             autoFocus
           />
           <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
@@ -97,13 +101,17 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
 
         <div className="flex flex-col gap-2">
           <label htmlFor="delegate-email" className="text-xs font-bold uppercase tracking-wider text-zinc-700 dark:text-zinc-300">
-            {en ? 'Email (Optional — Free Course Access at www.naii.co)' : 'Email (Opsional — Akses Modul Gratis www.naii.co)'}
+            {en ? 'Email * (Free Program & Course Access)' : 'Email * (Info Program & Kursus Gratis)'}
           </label>
           <input
             id="delegate-email"
             className="field"
             type="email"
             inputMode="email"
+            autoComplete="email"
+            required
+            aria-required="true"
+            aria-invalid={errorKey === 'email'}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
@@ -113,24 +121,25 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
           />
         </div>
 
-        {email && (
-          <label className="flex items-start gap-3 rounded-xl border border-zinc-300 bg-zinc-50 p-3.5 text-xs leading-relaxed text-zinc-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">
-            <input
-              type="checkbox"
-              checked={consent}
-              onChange={(e) => {
-                setConsent(e.target.checked)
-                if (errorKey) setErrorKey(null)
-              }}
-              className="mt-0.5 h-4 w-4 accent-[#AD2B17]"
-            />
-            <span>
-              {en
-                ? 'I consent to Nusantara AI Institute (NAII) storing my email to send free AI course access, in compliance with Indonesia’s Personal Data Protection Law (Law No. 27/2022 · UU PDP). Your email remains strictly private and is never shown on public screens.'
-                : 'Saya menyetujui penyimpanan email oleh Nusantara AI Institute (NAII) untuk pengiriman akses kursus AI gratis, sesuai UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP). Email bersifat privat dan tidak pernah ditampilkan di layar publik.'}
-            </span>
-          </label>
-        )}
+        <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-300 bg-zinc-50 p-3.5 text-xs leading-relaxed text-zinc-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">
+          <input
+            type="checkbox"
+            checked={consent}
+            required
+            aria-required="true"
+            aria-invalid={errorKey === 'consent'}
+            onChange={(e) => {
+              setConsent(e.target.checked)
+              if (errorKey) setErrorKey(null)
+            }}
+            className="mt-0.5 h-4 w-4 shrink-0 accent-[#AD2B17]"
+          />
+          <span>
+            {en
+              ? 'I agree to let NAII use my data for program & course info under UU PDP No. 27/2022. Email remains private. *'
+              : 'Saya setuju data saya digunakan NAII untuk info program & kursus sesuai UU No. 27 Tahun 2022 (UU PDP). Email bersifat privat. *'}
+          </span>
+        </label>
 
         {errorKey && (
           <p role="alert" className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2.5 text-xs font-semibold text-rose-700 dark:text-rose-300">
@@ -141,10 +150,10 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
               : errorKey === 'email'
                 ? en
                   ? 'Please enter a valid email address.'
-                  : 'Format alamat email belum valid.'
+                  : 'Masukkan alamat email yang valid.'
                 : en
-                  ? 'Please check the Personal Data Protection (UU PDP) consent box to save your email.'
-                  : 'Mohon centang persetujuan pelindungan data (UU PDP) untuk menyimpan email.'}
+                  ? 'Please check the UU PDP consent box to continue.'
+                  : 'Mohon centang kotak persetujuan UU PDP untuk melanjutkan.'}
           </p>
         )}
 

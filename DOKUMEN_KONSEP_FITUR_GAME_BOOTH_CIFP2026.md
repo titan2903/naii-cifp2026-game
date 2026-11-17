@@ -116,7 +116,7 @@ Begitu Langkah #01 & #02 terverifikasi (`2/2 LANGKAH LENGKAP`), bagian bawah Pas
    * Jika koneksi internet di The Kasablanka Hall melambat, aplikasi tetap berjalan menggunakan penyimpanan lokal (`localStorage`) dan menyinkronkan skor ke Supabase saat sinyal stabil.
    * Pada tablet booth, jika idle 3 menit, aplikasi otomatis mereset profil pemain dan kembali ke halaman utama (tidak berlaku pada layar TV Leaderboard).
 6. **Kepatuhan Privasi Data (UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi / UU PDP):**
-   * Input email bersifat sukarela dengan persetujuan eksplisit, dan diamankan dengan kebijakan *Row Level Security (RLS) Insert-Only* di Supabase.
+   * Input email dan checkbox persetujuan eksplisit sesuai UU No. 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP) wajib diisi saat registrasi awal, dan diamankan dengan kebijakan *Row Level Security (RLS) Insert-Only* di Supabase sehingga email bersifat privat.
 
 ---
 
