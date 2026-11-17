@@ -13,8 +13,8 @@ export function RealVsAiScreen() {
       game: 'realvsai',
       title: 'Real Diplomacy or AI Hallucination?',
       badge: en
-        ? 'INSTRUMENT 03 // ARCHIVAL FACT VS AI HALLUCINATION · 10 SEC/CLAIM'
-        : 'INSTRUMEN 03 // VERIFIKASI ARSIP VS HALUSINASI AI · 10 DETIK/KLAIM',
+        ? 'GAME 02 // ARCHIVAL FACT VS AI HALLUCINATION · 10 SEC/CLAIM'
+        : 'GAME 02 // VERIFIKASI ARSIP VS HALUSINASI AI · 10 DETIK/KLAIM',
       description: en
         ? 'In an era of synthetic disinformation, can you distinguish authentic diplomatic history and binding international treaties from plausible-sounding AI hallucinations?'
         : 'Di era disinformasi sintetis, mampukah Anda membedakan fakta sejarah dan traktat diplomasi internasional yang sah dari kutipan fabrikasi (halusinasi) AI?',

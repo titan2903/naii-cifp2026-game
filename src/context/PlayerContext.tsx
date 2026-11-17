@@ -2,7 +2,7 @@ import { createContext, useCallback, useContext, useMemo, useState, type ReactNo
 import { saveLead } from '../lib/storage'
 import type { PassportState, Player } from '../types'
 
-const KEY = 'naii-cifp26:player'
+const KEY = 'naii-cifp26:player-v2'
 const PASSPORT_KEY = 'naii-cifp26:passport-v2'
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
 
@@ -44,7 +44,24 @@ const Ctx = createContext<PlayerCtx | null>(null)
 function loadPlayer(): Player | null {
   try {
     const raw = localStorage.getItem(KEY) ?? sessionStorage.getItem(KEY)
-    return raw ? (JSON.parse(raw) as Player) : null
+    if (!raw) return null
+    const parsed = JSON.parse(raw) as Partial<Player>
+    if (
+      parsed &&
+      typeof parsed.name === 'string' &&
+      parsed.name.trim().length >= 2 &&
+      typeof parsed.email === 'string' &&
+      EMAIL_RE.test(parsed.email.trim()) &&
+      parsed.consent === true
+    ) {
+      return {
+        name: parsed.name,
+        institution: typeof parsed.institution === 'string' ? parsed.institution : '',
+        email: parsed.email.trim(),
+        consent: true,
+      }
+    }
+    return null
   } catch {
     return null
   }
@@ -145,21 +162,23 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       const trimmedEmail = email?.trim() ?? ''
       const hasExplicitConsent = Boolean(consented || (player?.consent && trimmedEmail === (player?.email ?? '')))
       if (trimmedEmail && EMAIL_RE.test(trimmedEmail) && hasExplicitConsent) {
-        const basePlayer: Player = player ?? {
-          name: 'Delegasi CIFP',
-          institution: 'CIFP 2026',
-          email: trimmedEmail,
-          consent: true,
+        if (player) {
+          const updatedPlayer: Player = { ...player, email: trimmedEmail, consent: true }
+          setState(updatedPlayer)
+          try {
+            localStorage.setItem(KEY, JSON.stringify(updatedPlayer))
+            sessionStorage.setItem(KEY, JSON.stringify(updatedPlayer))
+          } catch {
+            /* abaikan */
+          }
+          void saveLead(updatedPlayer, 'passport-naii-account')
+        } else {
+          // Jangan tulis player placeholder agar RequirePlayer tetap meminta nama & instansi asli sebelum main game.
+          void saveLead(
+            { name: 'Delegasi CIFP', institution: 'CIFP 2026', email: trimmedEmail, consent: true },
+            'passport-naii-account',
+          )
         }
-        const updatedPlayer: Player = { ...basePlayer, email: trimmedEmail, consent: true }
-        setState(updatedPlayer)
-        try {
-          localStorage.setItem(KEY, JSON.stringify(updatedPlayer))
-          sessionStorage.setItem(KEY, JSON.stringify(updatedPlayer))
-        } catch {
-          /* abaikan */
-        }
-        void saveLead(updatedPlayer, 'passport-naii-account')
       }
     },
     [player],

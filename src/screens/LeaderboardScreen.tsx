@@ -19,7 +19,7 @@ import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { backendMode, fetchTodayScores, sortScores, submitScore, subscribeScores } from '../lib/storage'
-import { currentSessionTag, formatSeconds, formatSessionTag, formatSessionWindow, SESSION_TAGS } from '../lib/utils'
+import { currentSessionTag, formatSeconds, formatSessionTag, formatSessionWindow, SESSION_TAGS, type SessionTag } from '../lib/utils'
 import type { GameId, ScoreEntry } from '../types'
 
 type GameFilter = 'all' | 'trivia' | 'realvsai'
@@ -41,10 +41,25 @@ export function LeaderboardScreen() {
 
   const [scores, setScores] = useState<ScoreEntry[]>([])
   const [gameFilter, setGameFilter] = useState<GameFilter>('all')
+  const [activeSessionTag, setActiveSessionTag] = useState<SessionTag>(() => currentSessionTag())
   const [sessionFilter, setSessionFilter] = useState<SessionFilter>(() => currentSessionTag())
   const [flashId, setFlashId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const flashTimerRef = useRef<number | null>(null)
+  const activeSessionRef = useRef<SessionTag>(activeSessionTag)
+
+  useEffect(() => {
+    const timer = window.setInterval(() => {
+      const next = currentSessionTag()
+      const prev = activeSessionRef.current
+      if (next !== prev) {
+        activeSessionRef.current = next
+        setActiveSessionTag(next)
+        setSessionFilter((curr) => (curr === prev ? next : curr))
+      }
+    }, 30_000)
+    return () => window.clearInterval(timer)
+  }, [])
 
   const reload = useCallback(async () => {
     setLoading(true)
@@ -132,7 +147,7 @@ export function LeaderboardScreen() {
               <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
               {en ? 'SESSION' : 'SESI'}:{' '}
               <strong className="text-zinc-900 dark:text-white">
-                {formatSessionTag(currentSessionTag(), lang)} · {formatSessionWindow(currentSessionTag())}
+                {formatSessionTag(activeSessionTag, lang)} · {formatSessionWindow(activeSessionTag)}
               </strong>
             </span>
             <span className="chip">

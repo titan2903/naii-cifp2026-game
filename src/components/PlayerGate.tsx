@@ -42,7 +42,7 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
 
   return (
     <div className="mx-auto max-w-lg animate-rise">
-      <form onSubmit={submit} className="glass space-y-5 p-6 sm:p-9">
+      <form onSubmit={submit} noValidate className="glass space-y-5 p-6 sm:p-9">
         <div className="space-y-2 border-b border-zinc-200 pb-4 dark:border-white/10">
           <div className="flex items-center justify-between">
             <span className="chip !border-[#AD2B17]/30 !bg-[#AD2B17]/10 !text-[#AD2B17] dark:!text-white">
@@ -109,6 +109,7 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
             type="email"
             inputMode="email"
             autoComplete="email"
+            maxLength={120}
             required
             aria-required="true"
             aria-invalid={errorKey === 'email'}

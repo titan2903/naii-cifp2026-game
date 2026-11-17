@@ -1,17 +1,20 @@
-import { memo, useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import {
   Activity,
   ArrowRight,
   ArrowUpRight,
   BookOpen,
   Check,
+  ChevronDown,
   Compass,
+  Crown,
   FileTerminal,
+  Gift,
   Globe2,
   Layers,
+  Medal,
   Play,
   QrCode,
-  Radio,
   Scale,
   ShieldAlert,
   Sparkles,
@@ -23,64 +26,22 @@ import {
 } from 'lucide-react'
 import { NaiiLogo, NaiiStarMark, NaiiWatermark } from '../components/NaiiBrand'
 import { BoothQrShowcase } from '../components/QrCodeModal'
-import { useLanguage, type Lang } from '../context/LanguageContext'
+import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { NAII_URL } from '../data/personas'
 import { getPromptMissions } from '../data/promptBattle'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { evaluatePrompt } from '../lib/evaluatePrompt'
-import { fetchTodayScores, sortScores } from '../lib/storage'
-import { currentSessionTag, formatSeconds, formatSessionTag, formatStampScore } from '../lib/utils'
+import { fetchTodayScores, sortScores, subscribeScores } from '../lib/storage'
+import {
+  currentSessionTag,
+  formatSeconds,
+  formatSessionTag,
+  formatSessionWindow,
+  formatStampScore,
+  type SessionTag,
+} from '../lib/utils'
 import type { ScoreEntry } from '../types'
-
-const LIVE_DISPATCHES = {
-  id: [
-    {
-      code: 'CABLE // SC-01',
-      region: 'INDO-PASIFIK · SEMICONDUCTOR',
-      headline: 'Embargo Chip AI & Tekanan Blok Pakta Teknologi Eksklusif',
-      vector: 'Kemandirian Industri · Hilirisasi RI',
-      readiness: '94.2%',
-    },
-    {
-      code: 'CABLE // SC-02',
-      region: 'MAJELIS UMUM PBB · REGULASI AI',
-      headline: 'Polarisasi Traktat AI Global: Kepatuhan Ketat vs Kedaulatan Tanpa Batas',
-      vector: 'Jembatan Global South · Inklusivitas',
-      readiness: '91.8%',
-    },
-    {
-      code: 'CABLE // SC-03',
-      region: 'ASEAN · KEDAULATAN DATA',
-      headline: 'Krisis Disinformasi Lintas Batas & Pelindungan Data Pribadi (UU PDP)',
-      vector: 'Protokol Regional · Talenta Lokal',
-      readiness: '96.4%',
-    },
-  ],
-  en: [
-    {
-      code: 'CABLE // SC-01',
-      region: 'INDO-PACIFIC · SEMICONDUCTOR',
-      headline: 'AI Chip Embargo & Exclusive Tech-Bloc Alignment Pressures',
-      vector: 'Industrial Autonomy · RI Downstream',
-      readiness: '94.2%',
-    },
-    {
-      code: 'CABLE // SC-02',
-      region: 'UN GENERAL ASSEMBLY · AI GOVERNANCE',
-      headline: 'Global AI Treaty Polarization: Strict Compliance vs Unchecked Sovereignty',
-      vector: 'Global South Bridge · Inclusivity',
-      readiness: '91.8%',
-    },
-    {
-      code: 'CABLE // SC-03',
-      region: 'ASEAN · DATA SOVEREIGNTY',
-      headline: 'Cross-Border Deepfake Crisis & Personal Data Protection (UU PDP)',
-      vector: 'Regional Protocol · Local Talent',
-      readiness: '96.4%',
-    },
-  ],
-} as const
 
 const COPILOT_EXAMPLES = {
   id: [
@@ -197,113 +158,6 @@ const COPILOT_EXAMPLES = {
   ],
 } as const
 
-/**
- * Leaf Component terisolasi (React.memo) untuk Perpetual Micro-Interactions
- * agar animasi siklus kabel diplomatik tidak memicu re-render pada halaman induk.
- */
-const DiplomaticSituationMonitor = memo(function DiplomaticSituationMonitor({ lang }: { lang: Lang }) {
-  const [idx, setIdx] = useState(0)
-  const en = lang === 'en'
-  const dispatches = LIVE_DISPATCHES[lang]
-
-  useEffect(() => {
-    const timer = window.setInterval(() => {
-      setIdx((prev) => (prev + 1) % dispatches.length)
-    }, 3800)
-    return () => window.clearInterval(timer)
-  }, [dispatches.length])
-
-  const active = dispatches[idx]
-
-  return (
-    <div className="relative flex flex-col justify-between rounded-2xl border border-white/15 bg-black/35 p-4 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] sm:p-5">
-      {/* Top radar bar */}
-      <div className="flex items-center justify-between gap-2 border-b border-white/10 pb-3">
-        <div className="flex items-center gap-2">
-          <span className="relative flex h-2.5 w-2.5">
-            <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#AD2B17] opacity-75" />
-            <span className="relative inline-flex h-2.5 w-2.5 rounded-full bg-[#AD2B17]" />
-          </span>
-          <span className="font-mono text-[10px] font-semibold tracking-[0.14em] text-white/90 sm:text-[11px]">
-            SITUATION MONITOR // CIFP-26
-          </span>
-        </div>
-        <span className="font-mono text-[10px] text-white/60">JAKARTA PLENARY</span>
-      </div>
-
-      {/* Center radar + active dispatch */}
-      <div className="my-3.5 grid grid-cols-[auto_1fr] items-center gap-3.5 sm:my-4 sm:gap-4">
-        <div className="relative grid h-16 w-16 shrink-0 place-items-center rounded-2xl border border-white/15 bg-[#220600]/90 sm:h-20 sm:w-20">
-          <svg viewBox="0 0 100 100" className="h-12 w-12 text-white/20 sm:h-16 sm:w-16" aria-hidden>
-            <circle cx="50" cy="50" r="42" fill="none" stroke="currentColor" strokeWidth="1" strokeDasharray="3 3" />
-            <circle cx="50" cy="50" r="26" fill="none" stroke="currentColor" strokeWidth="1" />
-            <line x1="8" y1="50" x2="92" y2="50" stroke="currentColor" strokeWidth="0.75" />
-            <line x1="50" y1="8" x2="50" y2="92" stroke="currentColor" strokeWidth="0.75" />
-          </svg>
-          <div className="absolute inset-0 grid place-items-center animate-radar">
-            <NaiiStarMark color="#AD2B17" className="h-6 w-6 sm:h-7 sm:w-7" />
-          </div>
-        </div>
-
-        <div key={active.code} className="min-w-0 space-y-1 animate-rise">
-          <div className="flex flex-wrap items-center gap-1.5">
-            <span className="rounded bg-[#AD2B17] px-2 py-0.5 font-mono text-[10px] font-bold tracking-wider text-white">
-              {active.code}
-            </span>
-            <span className="truncate font-mono text-[10px] tracking-wider text-[#C89D54]">
-              {active.region}
-            </span>
-          </div>
-          <p className="line-clamp-2 text-xs font-bold leading-snug text-white sm:text-sm">
-            {active.headline}
-          </p>
-          <div className="flex items-center justify-between pt-0.5 font-mono text-[10px] text-white/70 sm:text-[11px]">
-            <span className="truncate">{active.vector}</span>
-            <span className="ml-2 shrink-0 font-semibold text-white">{active.readiness}</span>
-          </div>
-        </div>
-      </div>
-
-      {/* Selector dots */}
-      <div className="mb-3.5 flex items-center gap-1.5">
-        {dispatches.map((item, i) => (
-          <button
-            key={item.code}
-            type="button"
-            onClick={() => setIdx(i)}
-            aria-label={`${en ? 'Select' : 'Pilih'} ${item.code}`}
-            className={`h-2 rounded-full transition-all ${
-              i === idx ? 'w-8 bg-[#AD2B17]' : 'w-2.5 bg-white/25 hover:bg-white/45'
-            }`}
-          />
-        ))}
-      </div>
-
-      {/* Bottom monospace telemetry */}
-      <div className="grid grid-cols-3 divide-x divide-white/10 rounded-xl border border-white/10 bg-black/30 py-2 text-center sm:py-2.5">
-        <div className="px-1.5">
-          <p className="font-mono text-sm font-bold tabular-nums text-white sm:text-base">03</p>
-          <p className="font-mono text-[9px] uppercase tracking-wider text-white/60 sm:text-[10px]">
-            {en ? 'Crises' : 'Krisis'}
-          </p>
-        </div>
-        <div className="px-1.5">
-          <p className="font-mono text-sm font-bold tabular-nums text-white sm:text-base">15</p>
-          <p className="font-mono text-[9px] uppercase tracking-wider text-white/60 sm:text-[10px]">
-            {en ? 'Quiz Bank' : 'Bank Soal'}
-          </p>
-        </div>
-        <div className="px-1.5">
-          <p className="font-mono text-sm font-bold tabular-nums text-[#C89D54] sm:text-base">20+</p>
-          <p className="font-mono text-[9px] uppercase tracking-wider text-white/60 sm:text-[10px]">
-            {en ? 'AI Courses' : 'Kursus AI'}
-          </p>
-        </div>
-      </div>
-    </div>
-  )
-})
-
 export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
   const { lang } = useLanguage()
   const { passport, stampCount, setPassportOpen, setQrModalOpen } = usePlayer()
@@ -312,10 +166,13 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
   const [showLiveOutput, setShowLiveOutput] = useState(true)
   const [sandboxOpen, setSandboxOpen] = useState(false)
   const [sandboxPrompt, setSandboxPrompt] = useState('')
-  const [topLeaders, setTopLeaders] = useState<ScoreEntry[]>([])
+  const [showBoothExtras, setShowBoothExtras] = useState(false)
+  const [activeSession, setActiveSession] = useState<SessionTag>(() => currentSessionTag())
+  const [allScores, setAllScores] = useState<ScoreEntry[]>([])
+  const [scoresLoading, setScoresLoading] = useState(true)
   const examples = COPILOT_EXAMPLES[lang]
   const example = examples[activeCopilot]
-  const sessionTagLabel = formatSessionTag(currentSessionTag(), lang)
+  const sessionTagLabel = formatSessionTag(activeSession, lang)
   const defaultMission = useMemo(() => getPromptMissions(lang)[0], [lang])
   const effectiveSandboxPrompt = sandboxPrompt || example.structured.replace(/^[“"]|[”"]$/g, '')
   const sandboxEval = useMemo(
@@ -325,147 +182,240 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
 
   useEffect(() => {
     let mounted = true
-    void fetchTodayScores().then((scores) => {
-      if (mounted) {
-        const tag = currentSessionTag()
-        const sessionScores = scores.filter((s) => s.session_tag === tag)
-        setTopLeaders(sortScores(sessionScores).slice(0, 3))
-      }
+    void fetchTodayScores()
+      .then((scores) => {
+        if (mounted) {
+          setAllScores(scores)
+          setScoresLoading(false)
+        }
+      })
+      .catch(() => {
+        if (mounted) setScoresLoading(false)
+      })
+    const unsub = subscribeScores((entry) => {
+      setAllScores((prev) => {
+        const map = new Map(prev.map((e) => [e.id, e]))
+        map.set(entry.id, entry)
+        return [...map.values()]
+      })
     })
+    const timer = window.setInterval(() => {
+      const next = currentSessionTag()
+      setActiveSession((curr) => (curr === next ? curr : next))
+    }, 30_000)
     return () => {
       mounted = false
+      window.clearInterval(timer)
+      unsub()
     }
   }, [])
 
+  const topLeaders = useMemo(
+    () => sortScores(allScores.filter((s) => s.session_tag === activeSession)).slice(0, 3),
+    [allScores, activeSession],
+  )
+
   return (
-    <div className="relative space-y-8 animate-rise sm:space-y-12">
-      {/* ASYMMETRIC SPLIT HERO — NAII Brand Guidelines (Dark Red #3A0900 + White Logo) × CIFP 2026 10th Edition */}
-      <section className="relative overflow-hidden rounded-[1.5rem] border border-zinc-900/15 bg-[#3A0900] bg-diplomatic-grid p-5 text-white shadow-[0_28px_60px_-18px_rgba(58,9,0,0.55)] dark:border-white/15 sm:rounded-[2rem] sm:p-10 lg:p-12">
-        <NaiiWatermark className="absolute -bottom-24 -right-24 h-72 w-72 sm:h-[30rem] sm:w-[30rem]" />
+    <div className="relative space-y-6 animate-rise sm:space-y-8">
+      {/* 1. CLEAN INTRO BANNER: LOGO NAII + 1 OPENING SENTENCE + VISUAL BENEFIT PILLS */}
+      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/25 bg-[#3A0900] bg-diplomatic-grid p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.12)] sm:rounded-[1.75rem] sm:p-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,157,84,0.22),transparent_58%)]"
+        />
+        <NaiiWatermark className="absolute -bottom-24 -right-24 h-60 w-60 opacity-75 sm:h-80 sm:w-80" />
 
-        <div className="relative z-10 grid items-center gap-6 lg:grid-cols-[1.22fr_0.98fr] lg:gap-10">
-          {/* LEFT: EDITORIAL THESIS & ACTIONS */}
-          <div className="space-y-4 sm:space-y-6">
-            <div className="flex flex-wrap items-center gap-2.5 sm:gap-3">
-              <NaiiLogo variant="white" className="h-7 w-auto sm:h-10" />
-              <span className="h-4 w-px bg-white/25 sm:h-5" />
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-white/20 bg-white/10 px-2.5 py-1 font-mono text-[10px] font-semibold tracking-wider uppercase text-white sm:px-3 sm:text-[11px]">
-                <Radio className="h-3 w-3 text-[#AD2B17]" strokeWidth={2} />
-                10th CIFP 2026 · Public Diplomacy
+        <div className="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
+          <div className="space-y-3.5">
+            <div className="flex flex-wrap items-center gap-2.5">
+              <NaiiLogo variant="white" className="h-7 w-auto sm:h-9" />
+              <span className="h-4 w-px bg-white/25" />
+              <span className="rounded-full border border-[#C89D54]/40 bg-[#C89D54]/15 px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-wider text-[#FFF4DE] sm:text-[11px]">
+                10TH CIFP 2026
               </span>
             </div>
 
-            <div className="space-y-2 sm:space-y-3">
-              <p className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-[#C89D54] sm:text-xs">
-                Independent &amp; Active Foreign Policy × Sovereign AI
-              </p>
-              <h1 className="text-2xl font-extrabold tracking-tighter leading-[1.06] text-white sm:text-5xl sm:leading-[1.02] lg:text-[3.35rem]">
-                {en
-                  ? 'Independent & Active in the Next World Order and Artificial Intelligence.'
-                  : 'Bebas-Aktif dalam Arsitektur Dunia Baru & Kecerdasan Buatan.'}
-              </h1>
-            </div>
+            <h1 className="max-w-[52ch] text-base font-bold leading-snug text-white sm:text-xl">
+              {en
+                ? 'Pick one short game below to earn your FPCI Stamp & Sticker, then unlock booth rewards:'
+                : 'Pilih satu game singkat di bawah untuk mendapatkan Stamp FPCI & Stiker, lalu klaim hadiah booth:'}
+            </h1>
 
-            <p className="max-w-[62ch] text-xs leading-relaxed text-white/85 sm:text-base">
-              {en ? (
-                <>
-                  Welcome to the official interactive pavilion of <b>Nusantara AI Institute (NAII)</b> at{' '}
-                  <b>CIFP 2026</b>. Finish just <b>1 short game (~45s)</b> for your <b>FPCI Stamp + Sticker</b>, then
-                  create a free <b>www.naii.co</b> account for an <b>Official NAII Pin</b>!
-                </>
-              ) : (
-                <>
-                  Selamat datang di paviliun <b>Nusantara AI Institute (NAII)</b> pada <b>CIFP 2026</b>. Cukup
-                  selesaikan <b>1 game singkat (~45 dtk)</b> untuk mendapat <b>Stamp FPCI + Stiker</b>, lalu buat akun{' '}
-                  <b>www.naii.co</b> untuk klaim <b>Pin Resmi NAII</b>!
-                </>
-              )}
-            </p>
-
-            {/* COMPACT 2-STEP MERCHANDISE ROADMAP RIGHT IN HERO */}
-            <div className="flex flex-wrap items-center gap-2 rounded-xl border border-white/15 bg-black/35 px-3 py-2 font-mono text-[11px] text-white/90 backdrop-blur-xs">
-              <span className="inline-flex items-center gap-1.5">
-                <span className="grid h-4 w-4 place-items-center rounded bg-[#AD2B17] text-[9px] font-bold text-white">
-                  1
-                </span>
-                {en ? '1 Game → FPCI Stamp + Sticker' : '1 Game → Stamp FPCI + Stiker'}
+            <div className="flex flex-wrap gap-2 font-mono text-[11px]">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/30 px-2.5 py-1 text-white/95">
+                <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+                {en ? '1 Game → FPCI Stamp & Sticker' : '1 Game → Stamp FPCI & Stiker'}
               </span>
-              <span className="text-white/35">·</span>
-              <span className="inline-flex items-center gap-1.5">
-                <span className="grid h-4 w-4 place-items-center rounded bg-[#C89D54] text-[9px] font-bold text-zinc-950">
-                  2
-                </span>
-                {en ? 'naii.co Account → Official Pin' : 'Akun naii.co → Pin Resmi'}
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/30 px-2.5 py-1 text-white/95">
+                <Ticket className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+                {en ? 'naii.co Account → NAII Pin' : 'Akun naii.co → Pin NAII'}
               </span>
-              <span className="text-white/35">·</span>
-              <span className="text-[#C89D54]">
-                {en ? 'Top 3/Break → Totebag' : 'Top 3/Sesi → Totebag'}
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#C89D54]/45 bg-[#C89D54]/15 px-2.5 py-1 font-bold text-[#FFF4DE]">
+                <Gift className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+                {en ? 'Top 3 / Break → Totebag' : 'Top 3 / Sesi → Totebag'}
               </span>
-            </div>
-
-            {/* THUMB-FRIENDLY COMPACT CTA GROUP ON SMARTPHONE */}
-            <div className="grid grid-cols-2 gap-2 pt-1 sm:flex sm:flex-wrap sm:items-center sm:gap-3">
-              <button
-                onClick={() => navigate('trivia')}
-                className="btn-primary col-span-2 min-h-12 w-full !px-5 !py-3.5 text-sm sm:w-auto sm:text-base"
-              >
-                <Zap className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-                <span>{en ? 'Play Speed Trivia (~45s)' : 'Main Speed Trivia (~45 dtk)'}</span>
-                <ArrowRight className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-              </button>
-              <button
-                onClick={() => navigate('realvsai')}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-white/25 bg-white px-3.5 py-2.5 text-xs font-bold tracking-tight text-zinc-950 transition hover:-translate-y-[1px] hover:bg-zinc-100 active:scale-[0.98] sm:min-h-12 sm:w-auto sm:gap-2 sm:px-5 sm:py-3.5 sm:text-base"
-              >
-                <ShieldAlert className="h-4 w-4 shrink-0 text-[#AD2B17]" strokeWidth={1.75} />
-                <span>{en ? 'Real vs AI' : 'Real vs AI'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => navigate('simulator')}
-                className="inline-flex min-h-11 w-full items-center justify-center gap-1.5 rounded-xl border border-white/25 bg-white/10 px-3.5 py-2.5 text-xs font-bold tracking-tight text-white backdrop-blur-xs transition hover:bg-white/20 active:scale-[0.98] sm:min-h-12 sm:w-auto sm:gap-2 sm:px-4 sm:py-3.5 sm:text-base"
-              >
-                <Globe2 className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={1.75} />
-                <span>{en ? 'Simulator' : 'Simulator'}</span>
-              </button>
-              <button
-                type="button"
-                onClick={() => setQrModalOpen(true)}
-                className="col-span-2 inline-flex min-h-11 w-full items-center justify-center gap-2 rounded-xl border border-[#C89D54]/50 bg-black/35 px-4 py-2.5 text-xs font-bold tracking-tight text-[#C89D54] backdrop-blur-xs transition hover:bg-black/55 active:scale-[0.98] sm:min-h-12 sm:w-auto sm:py-3.5 sm:text-base"
-              >
-                <QrCode className="h-4 w-4 shrink-0" strokeWidth={2} />
-                <span>{en ? 'Scan QR Code' : 'Scan QR Code'}</span>
-              </button>
             </div>
           </div>
 
-          {/* RIGHT: LIVE SITUATION MONITOR */}
-          <DiplomaticSituationMonitor lang={lang} />
+          <button
+            type="button"
+            onClick={() => setQrModalOpen(true)}
+            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#C89D54]/60 bg-black/40 px-4 py-2.5 text-xs font-bold text-[#FFF4DE] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xs transition hover:border-[#C89D54] hover:bg-black/60 active:scale-[0.98]"
+          >
+            <QrCode className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+            <span>Scan QR Code</span>
+          </button>
         </div>
       </section>
 
-      {/* PASPOR STEMPEL 2 LANGKAH & TIKET KLAIM MERCHANDISE RESMI NAII */}
+      {/* 2. ASYMMETRIC GAME STAGE (1 FEATURED LEAD CARD + 2 STACKED CARDS) */}
+      <section aria-label={en ? 'Choose a Game' : 'Pilih Permainan'} className="grid grid-cols-1 gap-4 lg:grid-cols-12">
+        {/* LEFT FEATURE ANCHOR (6 COLS): SPEED TRIVIA */}
+        <a
+          href={ROUTE_PATHS.trivia}
+          className="glass group relative flex flex-col justify-between overflow-hidden border-[#AD2B17]/40 bg-gradient-to-br from-white via-white to-[#AD2B17]/[0.05] p-6 transition duration-300 hover:-translate-y-1 hover:border-[#AD2B17]/75 hover:shadow-[0_22px_44px_-16px_rgba(173,43,23,0.28)] dark:from-[#18100E] dark:via-[#140E0C] dark:to-[#240A06] sm:p-7 lg:col-span-6"
+        >
+          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#AD2B17] via-[#C89D54] to-[#AD2B17]" />
+          <div className="space-y-4 pt-1">
+            <div className="flex flex-wrap items-center justify-between gap-2">
+              <div className="flex items-center gap-2.5">
+                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#AD2B17] text-white shadow-[0_8px_20px_-6px_rgba(173,43,23,0.65)]">
+                  <Zap className="h-5 w-5" strokeWidth={1.75} />
+                </span>
+                <div>
+                  <span className="block font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                    {en ? 'FASTEST TO STAMP' : 'JALUR TERCEPAT'}
+                  </span>
+                  <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
+                    ~45–60 {en ? 'SEC' : 'DTK'} · {en ? '5 Questions' : '5 Soal Acak'}
+                  </span>
+                </div>
+              </div>
+              <span className="chip !border-[#AD2B17]/30 !bg-[#AD2B17]/10 !font-bold !text-[#AD2B17] dark:!text-[#FFF4DE]">
+                MAX 750 PTS
+              </span>
+            </div>
+
+            <div className="space-y-2 pt-1">
+              <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-3xl">
+                Speed Trivia
+              </h2>
+              <p className="max-w-[46ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
+                {en
+                  ? 'Answer 5 rapid-fire questions on CIFP 2026, Bebas-Aktif, & AI. Speed earns bonus Leaderboard points!'
+                  : 'Jawab 5 soal pilihan ganda seputar CIFP 2026, Bebas-Aktif, & AI. Kecepatan menjawab menentukan bonus poin Leaderboard!'}
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-6 flex items-center justify-between border-t border-zinc-200/80 pt-4 dark:border-white/[0.08]">
+            <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
+              <Stamp className="h-3.5 w-3.5 text-[#AD2B17] dark:text-[#C89D54]" strokeWidth={1.75} />
+              {en ? 'Unlocks FPCI Stamp + Sticker' : 'Membuka Stamp FPCI + Stiker'}
+            </span>
+            <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#AD2B17] px-4 py-2 text-xs font-bold text-white shadow-xs transition group-hover:bg-[#be311b]">
+              {en ? 'Play Trivia' : 'Main Trivia'}
+              <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+            </span>
+          </div>
+        </a>
+
+        {/* RIGHT STACKED PAIR (6 COLS): REAL VS AI + SIMULATOR */}
+        <div className="grid grid-cols-1 gap-4 lg:col-span-6">
+          {/* GAME 2: REAL VS AI */}
+          <a
+            href={ROUTE_PATHS.realvsai}
+            className="glass group relative flex flex-col justify-between overflow-hidden p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 hover:shadow-[0_18px_36px_-16px_rgba(173,43,23,0.22)] sm:p-6"
+          >
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-zinc-200 bg-zinc-100 text-[#AD2B17] dark:border-white/15 dark:bg-white/10 dark:text-[#C89D54]">
+                    <ShieldAlert className="h-4 w-4" strokeWidth={1.75} />
+                  </span>
+                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45]">
+                    Real vs AI
+                  </h2>
+                  <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-bold text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-200">
+                    ~45 {en ? 'SEC' : 'DTK'}
+                  </span>
+                  <span className="font-mono text-[10px] font-bold text-[#AD2B17] dark:text-[#C89D54]">
+                    MAX 750 PTS
+                  </span>
+                </div>
+                <p className="max-w-[48ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {en
+                    ? 'Spot whether 5 diplomatic claims are real historical facts or fabricated AI hallucinations.'
+                    : 'Tebak cepat 5 klaim diplomasi: fakta sejarah asli atau halusinasi AI.'}
+                </p>
+              </div>
+
+              <span className="inline-flex shrink-0 items-center justify-center gap-1 rounded-xl bg-[#AD2B17]/10 px-3.5 py-2 text-xs font-bold text-[#AD2B17] transition group-hover:bg-[#AD2B17] group-hover:text-white dark:bg-[#AD2B17]/25 dark:text-[#FFF4DE]">
+                {en ? 'Play Now' : 'Mainkan'}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+              </span>
+            </div>
+          </a>
+
+          {/* GAME 3: CRISIS SIMULATOR */}
+          <a
+            href={ROUTE_PATHS.simulator}
+            className="glass group relative flex flex-col justify-between overflow-hidden p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#C89D54]/70 hover:shadow-[0_18px_36px_-16px_rgba(200,157,84,0.24)] sm:p-6"
+          >
+            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+              <div className="space-y-1.5">
+                <div className="flex flex-wrap items-center gap-2">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#C89D54]/40 bg-[#C89D54]/15 text-[#9A6F22] dark:text-[#C89D54]">
+                    <Globe2 className="h-4 w-4" strokeWidth={1.75} />
+                  </span>
+                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#C89D54]">
+                    Simulator
+                  </h2>
+                  <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-bold text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-200">
+                    ~60 {en ? 'SEC' : 'DTK'}
+                  </span>
+                  <span className="chip !border-[#C89D54]/45 !bg-[#C89D54]/10 !px-2 !py-0.5 !text-[10px] !text-[#9A6F22] dark:!text-[#C89D54]">
+                    IG STORY CARD
+                  </span>
+                </div>
+                <p className="max-w-[48ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300">
+                  {en
+                    ? 'Roleplay 1 AI diplomacy crisis as Special Envoy and download your IG Story Persona Card.'
+                    : 'Simulasi 1 skenario krisis diplomasi AI & unduh Kartu Persona untuk IG Story.'}
+                </p>
+              </div>
+
+              <span className="inline-flex shrink-0 items-center justify-center gap-1 rounded-xl bg-[#AD2B17]/10 px-3.5 py-2 text-xs font-bold text-[#AD2B17] transition group-hover:bg-[#AD2B17] group-hover:text-white dark:bg-[#AD2B17]/25 dark:text-[#FFF4DE]">
+                {en ? 'Play Now' : 'Mainkan'}
+                <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
+              </span>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      {/* 3. ALUR CEPAT (2 LANGKAH) & COMPACT SHOWCASE LEADERBOARD CARD */}
       <section
-        aria-label={en ? 'Booth Passport 2 Quick Steps' : 'Paspor Stempel 2 Langkah'}
+        aria-label={en ? 'Booth Passport 2 Quick Steps' : 'Alur Cepat 2 Langkah'}
         className="glass border-[#C89D54]/40 p-4 sm:p-6"
       >
         <div className="mb-4 flex flex-col justify-between gap-2.5 border-b border-zinc-200/80 pb-3.5 dark:border-white/10 sm:flex-row sm:items-center">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[10px] font-bold tracking-wider uppercase text-white sm:text-[11px]">
               <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
-              {en ? 'BOOTH QUEST // 2 QUICK STEPS' : 'ALUR CEPAT // 2 LANGKAH KLAIM MERCH'}
+              {en ? 'QUICK FLOW // 2 STEPS' : 'ALUR CEPAT // 2 LANGKAH'}
             </span>
             <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
               {en
-                ? '1 Short Game (FPCI Stamp & Sticker) + naii.co Account (Pin)!'
-                : '1 Game Singkat (Stamp FPCI & Stiker) + Akun naii.co (Pin Resmi NAII)!'}
+                ? '1 Short Game (FPCI Stamp & Sticker) + naii.co Account (Pin)'
+                : '1 Game Singkat (Stamp FPCI & Stiker) + Akun naii.co (Pin)'}
             </span>
           </div>
 
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className={`inline-flex items-center justify-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition active:scale-95 ${
+            className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition active:scale-95 ${
               stampCount === 2
                 ? 'bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-md ring-1 ring-[#C89D54]'
                 : 'border border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
@@ -479,7 +429,7 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                   : 'Buka Tiket Klaim Pin (2/2)'
                 : en
                   ? `Open Booth Passport (${stampCount}/2)`
-                  : `Buka Paspor & Tiket Klaim (${stampCount}/2)`}
+                  : `Buka Paspor & Tiket (${stampCount}/2)`}
             </span>
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
@@ -509,13 +459,9 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                     {en ? 'FPCI Stamp & Tier 1 Sticker Ready!' : 'Stamp FPCI & Stiker Tier 1 Siap!'}
                   </span>
                 ) : en ? (
-                  <>
-                    Play just 1 game: <b>Speed Trivia</b>, <b>Real vs AI</b>, or <b>Crisis Simulator</b> (~45–60s).
-                  </>
+                  'Finish Speed Trivia, Real vs AI, or Simulator above (~45–60s).'
                 ) : (
-                  <>
-                    Cukup mainkan 1 game: <b>Speed Trivia</b>, <b>Real vs AI</b>, atau <b>Crisis Simulator</b> (~45–60 dtk).
-                  </>
+                  'Selesaikan Speed Trivia, Real vs AI, atau Simulator di atas (~45–60 dtk).'
                 )}
               </p>
             </div>
@@ -562,305 +508,211 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
         </div>
       </section>
 
-      {/* ASYMMETRIC BENTO 2.0 MISSION GRID (7/5 & 5/7 SPLIT) */}
-      <section className="space-y-4 sm:space-y-5">
-        <div className="flex flex-col justify-between gap-1.5 border-b border-zinc-200 pb-3.5 dark:border-white/10 sm:flex-row sm:items-end">
-          <div>
-            <p className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-[#AD2B17] sm:text-xs">
-              {en ? 'CHOOSE JUST 1 SHORT GAME // ~45–60 SECONDS' : 'PILIH SALAH SATU GAME SINGKAT // ~45–60 DETIK'}
-            </p>
-            <h2 className="mt-0.5 text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
-              {en ? 'Play 1 Game to Unlock Your First Stamp' : 'Mainkan 1 Game untuk Buka Stempel Pertama'}
-            </h2>
+      {/* SHOWCASE LIVE LEADERBOARD CARD (ASYMMETRIC OBSIDIAN-CRIMSON PODIUM) */}
+      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/40 bg-gradient-to-br from-[#230602] via-[#140A08] to-[#1D0C08] p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.12)] sm:rounded-[1.75rem] sm:p-7">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(200,157,84,0.18),transparent_70%)]"
+        />
+
+        <div className="relative z-10 grid items-center gap-6 lg:grid-cols-[0.95fr_1.25fr] lg:gap-8">
+          {/* LEFT: SESSION TELEMETRY & REWARD CTA */}
+          <div className="space-y-4">
+            <div className="flex flex-wrap items-center gap-2">
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-400/35 bg-emerald-500/15 px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-wider uppercase text-emerald-300">
+                <span className="relative flex h-2 w-2">
+                  <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-emerald-400 opacity-75" />
+                  <span className="relative inline-flex h-2 w-2 rounded-full bg-emerald-400" />
+                </span>
+                LIVE LEADERBOARD
+              </span>
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#C89D54]/40 bg-black/40 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#FFF4DE]">
+                <Activity className="h-3 w-3 text-[#C89D54]" strokeWidth={2} />
+                {sessionTagLabel} · {formatSessionWindow(activeSession)}
+              </span>
+            </div>
+
+            <div className="space-y-1.5">
+              <h2 className="text-xl font-extrabold tracking-tight text-white sm:text-2xl">
+                {en ? 'Top 3 Break Session Standings' : 'Klasemen Top 3 Sesi Break'}
+              </h2>
+              <p className="text-xs leading-relaxed text-white/75 sm:text-sm">
+                {en ? (
+                  <>
+                    Speed Trivia &amp; Real vs AI points compete here in real time. Finish in the{' '}
+                    <b className="text-[#C89D54]">Top 3</b> this break to win an{' '}
+                    <b className="text-white">Official NAII Totebag (Tier 3)</b>!
+                  </>
+                ) : (
+                  <>
+                    Skor Speed Trivia &amp; Real vs AI bersaing di sini secara <i>real-time</i>. Tembus{' '}
+                    <b className="text-[#C89D54]">Top 3</b> sesi ini untuk membawa pulang{' '}
+                    <b className="text-white">Totebag Resmi NAII (Tier 3)</b>!
+                  </>
+                )}
+              </p>
+            </div>
+
+            <div className="flex flex-wrap items-center gap-2.5 pt-1">
+              <a
+                href={ROUTE_PATHS.leaderboard}
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#AD2B17] px-4 py-2.5 text-xs font-bold text-white shadow-[0_10px_24px_-8px_rgba(173,43,23,0.7),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:-translate-y-[1px] hover:bg-[#be311b] active:scale-[0.98]"
+              >
+                <Trophy className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
+                <span>{en ? 'Open Full Leaderboard' : 'Buka Papan Peringkat'}</span>
+                <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
+              </a>
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-[#C89D54]/35 bg-[#C89D54]/10 px-3 py-2 font-mono text-[11px] font-semibold text-[#FFF4DE]">
+                <Gift className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+                {en ? 'Tier 3 Reward' : 'Hadiah Tier 3'}
+              </span>
+            </div>
           </div>
-          <p className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-            {en ? 'PICK ANY 1 GAME BELOW' : 'CUKUP PILIH 1 GAME DI BAWAH'}
-          </p>
-        </div>
 
-        <div className="grid grid-cols-1 gap-4 sm:gap-5 lg:grid-cols-12">
-          {/* TILE 01 (7 COLS): SPEED TRIVIA */}
-          <a
-            href={ROUTE_PATHS.trivia}
-            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-7"
-          >
-            <div className="space-y-3.5 sm:space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white sm:px-3 sm:text-xs">
-                  <Zap className="h-3.5 w-3.5" strokeWidth={1.75} />
-                  {en ? 'GAME 01 // FASTEST STAMP PATH' : 'GAME 01 // KUIS CEPAT'}
-                </span>
-                <span className="font-mono text-xs font-bold text-[#AD2B17]">MAX 750 PTS</span>
+          {/* RIGHT: VISUAL PODIUM SLOTS (#01, #02, #03) WITH SKELETAL LOADING & STAGGERED CASCADE */}
+          <div className="rounded-2xl border border-white/12 bg-black/40 p-3.5 backdrop-blur-md shadow-[inset_0_1px_0_rgba(255,255,255,0.08)] sm:p-4">
+            {scoresLoading ? (
+              <div className="space-y-2.5" aria-busy="true">
+                {[0, 1, 2].map((skeleton) => (
+                  <div
+                    key={skeleton}
+                    className="h-14 animate-pulse rounded-xl border border-white/10 bg-white/[0.05]"
+                  />
+                ))}
               </div>
-
-              <div>
-                <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-3xl">
-                  Speed Trivia: Next World Order &amp; AI
-                </h3>
-                <p className="mt-1.5 max-w-[60ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-2 sm:text-sm">
-                  {en
-                    ? 'Answer 5 randomized multiple-choice questions at 12 seconds per item. Unlocks Tier 1 Sticker + FPCI Stamp right away and puts you in the race for a Top 3 Totebag!'
-                    : 'Jawab 5 soal pilihan ganda acak dalam 12 detik per soal. Langsung membuka Stiker Tier 1 + Stamp FPCI sekaligus bersaing merebut Totebag Top 3!'}
-                </p>
-              </div>
-
-              <div className="space-y-2 rounded-2xl border border-zinc-200/80 bg-zinc-50/90 p-3.5 font-mono text-[11px] dark:border-white/[0.07] dark:bg-black/35 sm:text-xs">
-                <div className="flex items-center justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">
-                    {en ? '01. CIFP & Bebas-Aktif Doctrine' : '01. CIFP & Doktrin Bebas-Aktif'}
-                  </span>
-                  <span className="font-semibold text-zinc-900 dark:text-white">{en ? '5 Items' : '5 Soal'}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">
-                    {en ? '02. AI Governance & Geopolitics' : '02. Tata Kelola & Geopolitik AI'}
-                  </span>
-                  <span className="font-semibold text-zinc-900 dark:text-white">{en ? '5 Items' : '5 Soal'}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-zinc-600 dark:text-zinc-400">
-                    {en ? '03. UU PDP & NAII Ecosystem' : '03. UU PDP & Ekosistem NAII'}
-                  </span>
-                  <span className="font-semibold text-zinc-900 dark:text-white">{en ? '5 Items' : '5 Soal'}</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between border-t border-zinc-200/80 pt-3.5 dark:border-white/[0.08] sm:mt-6 sm:pt-4">
-              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                {en ? 'Duration ~45–60s · 12s / Q' : 'Durasi ~45–60 dtk · 12 dtk/Soal'}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17]/10 px-3 py-1.5 text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/25 dark:text-white sm:bg-transparent sm:p-0 sm:text-sm">
-                {en ? 'Start Speed Quiz' : 'Mulai Kuis Cepat'}
-                <ArrowRight className="h-4 w-4 text-[#AD2B17] transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
-              </span>
-            </div>
-          </a>
-
-          {/* TILE 02 (5 COLS): REAL DIPLOMACY OR AI HALLUCINATION */}
-          <a
-            href={ROUTE_PATHS.realvsai}
-            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-5"
-          >
-            <div className="space-y-3.5 sm:space-y-4">
-              <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-zinc-100 px-2.5 py-1 font-mono text-[11px] font-bold text-zinc-800 dark:border-white/15 dark:bg-white/10 dark:text-white sm:text-xs">
-                  <ShieldAlert className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
-                  {en ? 'GAME 02 // FACT VS AI CHECK' : 'GAME 02 // TEBAK FAKTA VS AI'}
-                </span>
-                <span className="chip">{en ? '10 SEC / CLAIM' : '10 DETIK / KLAIM'}</span>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-2xl">
-                  Real Diplomacy or AI Hallucination?
-                </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-2 sm:text-sm">
-                  {en ? (
-                    <>
-                      Fast 2-button verification: is this diplomatic treaty citation an <b>Authentic Fact</b> or a
-                      fabricated <b>AI Hallucination</b>? Unlocks FPCI Stamp + Leaderboard points!
-                    </>
-                  ) : (
-                    <>
-                      Tebak cepat dengan 2 tombol: apakah kutipan traktat &amp; sejarah diplomasi ini <b>Fakta Asli</b>{' '}
-                      atau karangan <b>Halusinasi AI</b>? Langsung membuka Stamp FPCI &amp; poin Leaderboard!
-                    </>
-                  )}
-                </p>
-              </div>
-
-              <div className="grid grid-cols-2 gap-2.5 font-mono text-[10px] sm:text-[11px]">
-                <div className="rounded-xl border border-emerald-600/25 bg-emerald-500/10 p-2.5 text-emerald-900 dark:border-emerald-400/25 dark:text-emerald-200 sm:p-3">
-                  <p className="font-bold">{en ? '[01] DIPLOMATIC FACT' : '[01] FAKTA DIPLOMASI'}</p>
-                  <p className="mt-0.5 text-[10px] opacity-80">
-                    {en ? 'Verified archival treaty' : 'Arsip & traktat sah'}
-                  </p>
-                </div>
-                <div className="rounded-xl border border-rose-600/25 bg-rose-500/10 p-2.5 text-rose-900 dark:border-rose-400/25 dark:text-rose-200 sm:p-3">
-                  <p className="font-bold">{en ? '[02] AI HALLUCINATION' : '[02] HALUSINASI AI'}</p>
-                  <p className="mt-0.5 text-[10px] opacity-80">
-                    {en ? 'Fabricated AI citation' : 'Pasal & klaim fiktif'}
-                  </p>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between border-t border-zinc-200/80 pt-3.5 dark:border-white/[0.08] sm:mt-6 sm:pt-4">
-              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                {en ? 'Duration ~45s · 5 Claims' : 'Durasi ~45 dtk · 5 Klaim'}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17]/10 px-3 py-1.5 text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/25 dark:text-white sm:bg-transparent sm:p-0 sm:text-sm">
-                {en ? 'Test Your Radar' : 'Uji Ketajaman'}
-                <ArrowRight className="h-4 w-4 text-[#AD2B17] transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
-              </span>
-            </div>
-          </a>
-
-          {/* TILE 03 (5 COLS): AI CRISIS SIMULATOR */}
-          <a
-            href={ROUTE_PATHS.simulator}
-            className="glass group relative flex flex-col justify-between overflow-hidden p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-5"
-          >
-            <div className="space-y-3.5 sm:space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-zinc-100 px-2.5 py-1 font-mono text-[11px] font-bold text-zinc-800 dark:border-white/15 dark:bg-white/10 dark:text-white sm:text-xs">
-                  <Globe2 className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
-                  {en ? 'GAME 03 // DIPLOMATIC SIMULATION' : 'GAME 03 // SIMULASI DIPLOMASI'}
-                </span>
-                <span className="chip">{en ? 'OUTPUT: IG STORY CARD' : 'OUTPUT: KARTU IG STORY'}</span>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-2xl">
-                  Bebas-Aktif AI Crisis Simulator
-                </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-2 sm:text-sm">
-                  {en ? (
-                    <>
-                      Act as <b>Special Envoy of Indonesia</b> in 1 quick crisis scenario and download a{' '}
-                      <b>Digital Diplomatic Persona Card</b> for IG Story while unlocking Stamp #01!
-                    </>
-                  ) : (
-                    <>
-                      Berperan sebagai <b>Utusan Khusus RI</b> dalam 1 skenario krisis dan unduh{' '}
-                      <b>Kartu Persona Diplomat IG Story</b> sambil langsung membuka Stempel #01!
-                    </>
-                  )}
-                </p>
-              </div>
-
-              {/* Mini Interactive Telemetry Preview inside Bento Tile */}
-              <div className="grid gap-2.5 rounded-2xl border border-zinc-200/80 bg-zinc-50/90 p-3.5 dark:border-white/[0.07] dark:bg-black/35 sm:grid-cols-3 sm:p-3.5">
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-zinc-500 dark:text-zinc-400">{en ? 'BEBAS' : 'BEBAS'}</span>
-                    <span className="font-bold text-zinc-900 dark:text-white">92</span>
-                  </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10">
-                    <div className="h-full w-[92%] rounded-full bg-[#AD2B17]" />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-zinc-500 dark:text-zinc-400">AKTIF</span>
-                    <span className="font-bold text-zinc-900 dark:text-white">95</span>
-                  </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10">
-                    <div className="h-full w-[95%] rounded-full bg-[#C89D54]" />
-                  </div>
-                </div>
-                <div className="space-y-1">
-                  <div className="flex items-center justify-between font-mono text-[10px]">
-                    <span className="text-zinc-500 dark:text-zinc-400">{en ? 'AI GOV' : 'KEDAULATAN'}</span>
-                    <span className="font-bold text-zinc-900 dark:text-white">90</span>
-                  </div>
-                  <div className="h-1.5 overflow-hidden rounded-full bg-zinc-200 dark:bg-white/10">
-                    <div className="h-full w-[90%] rounded-full bg-zinc-800 dark:bg-zinc-200" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between border-t border-zinc-200/80 pt-3.5 dark:border-white/[0.08] sm:mt-6 sm:pt-4">
-              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                {en ? 'Duration ~45–60s' : 'Durasi ~45–60 Detik'}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17]/10 px-3 py-1.5 text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/25 dark:text-white sm:bg-transparent sm:p-0 sm:text-sm">
-                {en ? 'Start Simulation' : 'Mulai Simulasi'}
-                <ArrowRight className="h-4 w-4 text-[#AD2B17] transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
-              </span>
-            </div>
-          </a>
-
-          {/* TILE 04 (7 COLS): LIVE BOOTH LEADERBOARD */}
-          <a
-            href={ROUTE_PATHS.leaderboard}
-            className="glass group flex flex-col justify-between p-5 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 sm:p-8 lg:col-span-7"
-          >
-            <div className="space-y-3.5 sm:space-y-4">
-              <div className="flex flex-wrap items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg border border-zinc-300 bg-zinc-100 px-2.5 py-1 font-mono text-[11px] font-bold text-zinc-800 dark:border-white/15 dark:bg-white/10 dark:text-white sm:text-xs">
-                  <Trophy className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
-                  {en ? 'STANDINGS // TOP 3 TOTEBAG' : 'PERINGKAT LIVE // TOTEBAG TOP 3'}
-                </span>
-                <span className="chip">
-                  <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
-                  {en ? 'SESSION' : 'SESI'}: {sessionTagLabel}
-                </span>
-              </div>
-
-              <div>
-                <h3 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-3xl">
-                  Live Leaderboard Booth NAII × CIFP 2026
-                </h3>
-                <p className="mt-1.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
-                  {en ? (
-                    <>
-                      Track your standing in real time across Speed Trivia &amp; Real vs AI. The top three delegates of
-                      every break session (11:25–12:00 · 13:15–14:00 · 15:15–16:00 WIB) win an{' '}
-                      <b>Official NAII Totebag (Tier 3)</b>!
-                    </>
-                  ) : (
-                    <>
-                      Pantau posisi skor Anda secara <i>real-time</i> pada Speed Trivia &amp; Real vs AI. Tiga delegasi
-                      terbaik di setiap sesi break (11:25–12:00 · 13:15–14:00 · 15:15–16:00 WIB) berhak meraih{' '}
-                      <b>Totebag Resmi NAII (Tier 3)</b>!
-                    </>
-                  )}
-                </p>
-              </div>
-
-              {/* Live Standings Mini-Table */}
-              <div className="rounded-2xl border border-zinc-200/80 bg-zinc-50/90 p-3.5 dark:border-white/[0.07] dark:bg-black/35">
-                {topLeaders.length > 0 ? (
-                  <div className="divide-y divide-zinc-200/70 dark:divide-white/[0.07]">
-                    {topLeaders.map((item, i) => (
-                      <div key={item.id} className="flex items-center justify-between py-2 first:pt-0 last:pb-0 text-xs">
-                        <div className="flex min-w-0 items-center gap-2.5">
-                          <span className="font-mono font-bold text-[#AD2B17]">0{i + 1}</span>
-                          <span className="truncate font-bold text-zinc-900 dark:text-white">{item.player_name}</span>
-                          <span className="hidden truncate text-zinc-500 dark:text-zinc-400 sm:inline">
-                            · {item.institution}
-                          </span>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-2.5 font-mono">
-                          <span className="text-zinc-500 dark:text-zinc-400">
-                            {formatSeconds(item.time_seconds, lang)}
-                          </span>
-                          <span className="font-bold text-zinc-900 dark:text-white">{item.score} PTS</span>
+            ) : topLeaders.length > 0 ? (
+              <div className="space-y-2.5">
+                {topLeaders.map((item, i) => {
+                  const isFirst = i === 0
+                  const badgeStyle = isFirst
+                    ? 'bg-[#C89D54] text-[#220600]'
+                    : i === 1
+                      ? 'border border-zinc-300/40 bg-zinc-200/15 text-zinc-100'
+                      : 'border border-[#B47B56]/45 bg-[#B47B56]/20 text-[#F3D5BE]'
+                  return (
+                    <a
+                      key={item.id}
+                      href={ROUTE_PATHS.leaderboard}
+                      style={{ animationDelay: `${i * 75}ms` }}
+                      className={`flex items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 transition animate-rise hover:bg-white/[0.08] ${
+                        isFirst
+                          ? 'border-[#C89D54]/60 bg-gradient-to-r from-[#AD2B17]/30 via-[#3A0900]/60 to-black/40'
+                          : 'border-white/10 bg-white/[0.03]'
+                      }`}
+                    >
+                      <div className="flex min-w-0 items-center gap-3">
+                        <span
+                          className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg font-mono text-xs font-extrabold ${badgeStyle}`}
+                        >
+                          {isFirst ? <Crown className="h-4 w-4" strokeWidth={1.75} /> : `#0${i + 1}`}
+                        </span>
+                        <div className="min-w-0">
+                          <p className="truncate text-xs font-extrabold text-white sm:text-sm">{item.player_name}</p>
+                          <p className="truncate font-mono text-[10px] text-white/60">{item.institution}</p>
                         </div>
                       </div>
-                    ))}
-                  </div>
-                ) : (
-                  <div className="flex items-center justify-between gap-2 py-1 font-mono text-[11px] text-zinc-600 dark:text-zinc-400 sm:text-xs">
-                    <span className="truncate">
-                      {en
-                        ? `${sessionTagLabel} is ready for its first high score.`
-                        : `Sesi ${sessionTagLabel} siap menerima rekor perdana.`}
-                    </span>
-                    <span className="shrink-0 font-bold text-[#AD2B17]">{en ? 'CLAIM #1' : 'KLAIM #1'}</span>
-                  </div>
-                )}
-              </div>
-            </div>
 
-            <div className="mt-5 flex items-center justify-between border-t border-zinc-200/80 pt-3.5 dark:border-white/[0.08] sm:mt-6 sm:pt-4">
-              <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
-                {en ? 'Real-Time Sync' : 'Update Otomatis'}
-              </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17]/10 px-3 py-1.5 text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/25 dark:text-white sm:bg-transparent sm:p-0 sm:text-sm">
-                {en ? 'Open Standings' : 'Buka Papan Skor'}
-                <ArrowRight className="h-4 w-4 text-[#AD2B17] transition-transform group-hover:translate-x-1" strokeWidth={1.75} />
-              </span>
-            </div>
-          </a>
+                      <div className="shrink-0 text-right font-mono">
+                        <p className={`text-sm font-extrabold tabular-nums ${isFirst ? 'text-[#C89D54]' : 'text-white'}`}>
+                          {item.score} <span className="text-[10px] font-semibold opacity-75">PTS</span>
+                        </p>
+                        <p className="text-[10px] text-white/55">{formatSeconds(item.time_seconds, lang)}</p>
+                      </div>
+                    </a>
+                  )
+                })}
+              </div>
+            ) : (
+              <div className="space-y-2.5">
+                <a
+                  href={ROUTE_PATHS.trivia}
+                  className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-[#C89D54]/65 bg-gradient-to-r from-[#AD2B17]/25 to-black/30 px-3.5 py-3 transition hover:border-[#C89D54] hover:bg-[#AD2B17]/35"
+                >
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#C89D54] text-[#220600]">
+                      <Crown className="h-4 w-4" strokeWidth={2.2} />
+                    </span>
+                    <div className="min-w-0">
+                      <p className="text-xs font-extrabold text-white sm:text-sm">
+                        {en ? 'Podium #01 — Open to Claim!' : 'Podium #01 — Masih Kosong!'}
+                      </p>
+                      <p className="truncate font-mono text-[10px] text-[#FFF4DE]/75">
+                        {en ? 'Play 45s Speed Trivia to take #1' : 'Main Speed Trivia 45 dtk untuk posisi #1'}
+                      </p>
+                    </div>
+                  </div>
+                  <span className="shrink-0 rounded-lg bg-[#C89D54] px-2.5 py-1 font-mono text-[10px] font-extrabold text-[#220600]">
+                    {en ? 'CLAIM #1' : 'KLAIM #1'}
+                  </span>
+                </a>
+
+                <div className="grid grid-cols-2 gap-2.5">
+                  {[2, 3].map((rank) => (
+                    <a
+                      key={rank}
+                      href={rank === 2 ? ROUTE_PATHS.realvsai : ROUTE_PATHS.trivia}
+                      className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 transition hover:border-white/25 hover:bg-white/[0.07]"
+                    >
+                      <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/10 text-white/80">
+                        <Medal className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+                      </span>
+                      <div className="min-w-0">
+                        <p className="font-mono text-[10px] font-bold text-white/90">RANK #0{rank}</p>
+                        <p className="truncate text-[10px] text-white/55">
+                          {en ? 'Totebag slot open' : 'Slot Totebag terbuka'}
+                        </p>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
         </div>
       </section>
 
-      {/* AI DIPLOMATIC CO-PILOT & MINI LIVE DEMO WORKBENCH */}
-      <section className="glass overflow-hidden">
+      {/* 4. COLLAPSED BY DEFAULT: MINI LIVE DEMO AI, DUAL QR, & CURRICULUM BANNER */}
+      <section className="space-y-4">
+        <button
+          type="button"
+          aria-expanded={showBoothExtras}
+          onClick={() => setShowBoothExtras((v) => !v)}
+          className="glass flex w-full items-center justify-between gap-3 p-4 text-left transition hover:border-[#AD2B17]/45 sm:px-6 sm:py-4"
+        >
+          <div className="flex items-center gap-3">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/25 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-[#C89D54]">
+              <FileTerminal className="h-4 w-4" strokeWidth={1.75} />
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
+                {en
+                  ? 'Mini Live Demo AI, Dual QR & Free Curriculum (www.naii.co)'
+                  : 'Mini Live Demo AI, QR Code & Kurikulum Gratis www.naii.co'}
+              </p>
+              <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
+                {showBoothExtras
+                  ? en
+                    ? 'Tap to collapse booth demo & curriculum info'
+                    : 'Ketuk untuk menutup demo AI & info kurikulum'
+                  : en
+                    ? 'Tap to open interactive AI prompt demo, QR codes, & 20+ free AI courses'
+                    : 'Ketuk untuk membuka demo AI interaktif, QR Code booth, & 20+ kursus gratis'}
+              </p>
+            </div>
+          </div>
+
+          <span className="inline-flex shrink-0 items-center gap-1.5 rounded-lg border border-zinc-200 bg-zinc-50 px-3 py-1.5 font-mono text-[11px] font-bold text-zinc-700 dark:border-white/10 dark:bg-black/40 dark:text-zinc-200">
+            <span>{showBoothExtras ? (en ? 'Hide' : 'Tutup') : en ? 'Open' : 'Buka'}</span>
+            <ChevronDown
+              className={`h-3.5 w-3.5 transition-transform duration-200 ${showBoothExtras ? 'rotate-180' : ''}`}
+            />
+          </span>
+        </button>
+
+        {showBoothExtras && (
+          <div className="space-y-6 animate-rise">
+            {/* AI DIPLOMATIC CO-PILOT & MINI LIVE DEMO WORKBENCH */}
+            <section className="glass overflow-hidden">
         <div className="border-b border-zinc-200/80 p-5 dark:border-white/[0.08] sm:p-8">
           <div className="flex flex-col justify-between gap-4 lg:flex-row lg:items-end">
             <div className="space-y-1.5 sm:space-y-2">
@@ -1238,6 +1090,9 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
             </span>
           </div>
         </div>
+      </section>
+          </div>
+        )}
       </section>
     </div>
   )

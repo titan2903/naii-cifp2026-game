@@ -11,7 +11,16 @@ import type { NewScore, Player, ScoreEntry, SimulationResult } from '../types'
 const LS_SCORES = 'naii-cifp26:scores'
 const LS_PENDING = 'naii-cifp26:pending'
 const LS_LEADS = 'naii-cifp26:leads-sent'
+const LS_PENDING_LEADS = 'naii-cifp26:pending-leads'
 const LOCAL_EVENT = 'naii-cifp26:score-added'
+
+interface PendingLead {
+  player_name: string
+  institution: string
+  email: string
+  consent: true
+  source: string
+}
 
 export const backendMode: 'supabase' | 'local' = supabase ? 'supabase' : 'local'
 
@@ -46,12 +55,32 @@ function setPending(list: ScoreEntry[]) {
   writeJson(LS_PENDING, list)
 }
 
+export async function flushPendingLeads(): Promise<void> {
+  if (!supabase) return
+  const queue = readJson<PendingLead[]>(LS_PENDING_LEADS, [])
+  if (!queue.length) return
+  const remaining: PendingLead[] = []
+  const sent = readJson<string[]>(LS_LEADS, [])
+  for (const item of queue) {
+    const { error } = await supabase.from('leads').insert(item)
+    if (error) {
+      remaining.push(item)
+    } else if (!sent.includes(item.email)) {
+      sent.push(item.email)
+    }
+  }
+  writeJson(LS_LEADS, sent)
+  writeJson(LS_PENDING_LEADS, remaining)
+}
+
 export async function flushPending(): Promise<void> {
   if (!supabase) return
   const pending = getPending()
-  if (!pending.length) return
-  const { error } = await supabase.from('leaderboard').upsert(pending, { onConflict: 'id', ignoreDuplicates: true })
-  if (!error) setPending([])
+  if (pending.length) {
+    const { error } = await supabase.from('leaderboard').upsert(pending, { onConflict: 'id', ignoreDuplicates: true })
+    if (!error) setPending([])
+  }
+  await flushPendingLeads()
 }
 
 if (typeof window !== 'undefined') {
@@ -129,20 +158,40 @@ export function subscribeScores(onInsert: (entry: ScoreEntry) => void): () => vo
   }
 }
 
-/** Data kontak hanya dikirim bila ada email + persetujuan (UU PDP). Tabel leads bersifat insert-only. */
+/** Data kontak hanya dikirim bila ada email + persetujuan (UU PDP). Tabel leads bersifat insert-only + retry offline. */
 export async function saveLead(player: Player, source: string): Promise<void> {
-  if (!supabase || !player.email || !player.consent) return
+  if (!player.email || !player.consent) return
+  const key = player.email.trim().toLowerCase()
   const sent = readJson<string[]>(LS_LEADS, [])
-  const key = player.email.toLowerCase()
   if (sent.includes(key)) return
-  const { error } = await supabase.from('leads').insert({
+
+  const payload: PendingLead = {
     player_name: player.name,
     institution: player.institution,
     email: key,
     consent: true,
     source,
-  })
-  if (!error) writeJson(LS_LEADS, [...sent, key])
+  }
+
+  if (!supabase) {
+    const queue = readJson<PendingLead[]>(LS_PENDING_LEADS, [])
+    if (!queue.some((item) => item.email === key)) {
+      writeJson(LS_PENDING_LEADS, [...queue, payload])
+    }
+    return
+  }
+
+  try {
+    const { error } = await supabase.from('leads').insert(payload)
+    if (error) throw error
+    writeJson(LS_LEADS, [...sent, key])
+    void flushPendingLeads()
+  } catch {
+    const queue = readJson<PendingLead[]>(LS_PENDING_LEADS, [])
+    if (!queue.some((item) => item.email === key)) {
+      writeJson(LS_PENDING_LEADS, [...queue, payload])
+    }
+  }
 }
 
 export async function savePersona(player: Player, r: SimulationResult): Promise<void> {

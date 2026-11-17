@@ -15,8 +15,8 @@ export function TriviaScreen() {
         ? 'Speed Trivia: Independent-Active, Next World Order & AI'
         : 'Speed Trivia: Bebas-Aktif, Next World Order & AI',
       badge: en
-        ? 'INSTRUMENT 02 // 5 RANDOM QUESTIONS FROM 15 BANK ITEMS · 12 SEC/Q'
-        : 'INSTRUMEN 02 // 5 SOAL ACAK DARI 15 BANK SOAL · 12 DETIK/SOAL',
+        ? 'GAME 01 // 5 RANDOM QUESTIONS FROM 15 BANK ITEMS · 12 SEC/Q'
+        : 'GAME 01 // 5 SOAL ACAK DARI 15 BANK SOAL · 12 DETIK/SOAL',
       description: en
         ? 'Test your mastery of 10 Years of CIFP 2026, Indonesia’s Independent & Active Foreign Policy doctrine, AI Geopolitics, the Personal Data Protection Law (UU PDP), and Nusantara AI Institute.'
         : 'Adu wawasan seputar 10 Tahun CIFP 2026, doktrin Politik Luar Negeri Bebas-Aktif, Geopolitik AI, UU PDP, dan ekosistem Nusantara AI Institute.',

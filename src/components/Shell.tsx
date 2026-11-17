@@ -40,13 +40,6 @@ const NAV_ITEMS: Array<{
     icon: Compass,
   },
   {
-    route: 'simulator',
-    label: { id: 'Crisis Simulator', en: 'Crisis Simulator' },
-    mobileLabel: { id: 'Simulator', en: 'Simulator' },
-    href: ROUTE_PATHS.simulator,
-    icon: Globe2,
-  },
-  {
     route: 'trivia',
     label: { id: 'Speed Trivia', en: 'Speed Trivia' },
     mobileLabel: { id: 'Trivia', en: 'Trivia' },
@@ -59,6 +52,13 @@ const NAV_ITEMS: Array<{
     mobileLabel: { id: 'Real/AI', en: 'Real/AI' },
     href: ROUTE_PATHS.realvsai,
     icon: ShieldAlert,
+  },
+  {
+    route: 'simulator',
+    label: { id: 'Crisis Simulator', en: 'Crisis Simulator' },
+    mobileLabel: { id: 'Simulator', en: 'Simulator' },
+    href: ROUTE_PATHS.simulator,
+    icon: Globe2,
   },
   {
     route: 'leaderboard',

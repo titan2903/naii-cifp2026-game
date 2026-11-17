@@ -347,6 +347,7 @@ function PassportModalContent() {
                       <div className="mt-2 space-y-2">
                         <input
                           type="email"
+                          maxLength={120}
                           aria-label={en ? 'Registered www.naii.co email (optional)' : 'Email akun www.naii.co (opsional)'}
                           value={emailInput}
                           onChange={(e) => {
@@ -457,7 +458,7 @@ function PassportModalContent() {
         </div>
 
         {/* OFFICIAL MERCHANDISE CLAIM TICKET SECTION */}
-        <div ref={ticketRef} className={allUnlocked ? 'order-first sm:mt-5' : 'mt-6'}>
+        <div ref={ticketRef} className={allUnlocked ? 'order-first scroll-mt-24 sm:mt-5' : 'mt-6 scroll-mt-24'}>
           {allUnlocked ? (
             /* FULL 2/2 OFFICIAL MERCHANDISE REDEMPTION TICKET */
             <div className="relative overflow-hidden rounded-2xl border-2 border-[#C89D54] bg-gradient-to-br from-[#3A0900] via-[#240600] to-[#0B0908] p-5 text-white shadow-[0_20px_50px_-12px_rgba(173,43,23,0.55)] sm:p-7">
