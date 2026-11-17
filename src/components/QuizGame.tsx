@@ -20,7 +20,7 @@ import { coursesForQuiz } from '../data/personas'
 import { useCountdown } from '../hooks/useCountdown'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { fetchTodayScores, sortScores, submitScore } from '../lib/storage'
-import { currentSessionTag, formatSessionTag, pickRandom } from '../lib/utils'
+import { currentSessionTag, pickRandom } from '../lib/utils'
 import type { GameId, QuizItem, ScoreEntry } from '../types'
 import { CourseCta } from './CourseCta'
 import { TimerBar } from './TimerBar'
@@ -249,33 +249,23 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           {entry && (
             <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs text-zinc-700 dark:border-white/10 dark:bg-black/40 dark:text-zinc-300 sm:mt-5">
               {en ? 'Score recorded on the ' : 'Skor tercatat pada Leaderboard '}
-              <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">
-                {formatSessionTag(entry.session_tag, lang)}
-              </b>
+              <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">ALL SESSIONS</b>
               {en ? ' Leaderboard.' : '.'}{' '}
               {rank !== null && rank <= 3 && (
                 <span className="mt-1.5 flex items-center justify-center gap-1.5 font-bold text-[#AD2B17] dark:text-[#C89D54]">
                   <Award className="h-4 w-4 shrink-0" strokeWidth={1.75} />
                   {en
-                    ? 'You made the Top 3 Podium — claim your Official NAII Totebag at the break announcement!'
-                    : 'Anda masuk Podium Top 3 — klaim Totebag Resmi NAII saat pengumuman sesi break!'}
+                    ? 'You made the Top 3 Podium — claim your Official NAII Totebag!'
+                    : 'Anda masuk Podium Top 3 — berhak meraih Totebag Resmi NAII!'}
                 </span>
               )}
             </div>
           )}
 
-          <div className="mt-6 grid grid-cols-2 gap-2.5 sm:mt-7 sm:flex sm:flex-row sm:gap-3">
-            <button onClick={start} className="btn-secondary min-h-12 flex-1">
-              <RotateCcw className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Play Again' : 'Main Lagi'}
-            </button>
-            <a href={ROUTE_PATHS.leaderboard} className="btn-primary min-h-12 flex-1">
-              <Trophy className="h-4 w-4" strokeWidth={1.75} /> {en ? 'View Standings' : 'Cek Peringkat'}
-            </a>
-          </div>
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className="mt-2.5 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:mt-3 sm:text-sm"
+            className="mt-6 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:mt-7 sm:text-sm"
           >
             <span className="flex items-center gap-2">
               {stampCount === 2 ? (
@@ -295,6 +285,15 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             </span>
             <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
           </button>
+
+          <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:mt-3 sm:flex sm:flex-row sm:gap-3">
+            <button onClick={start} className="btn-secondary min-h-12 flex-1">
+              <RotateCcw className="h-4 w-4" strokeWidth={1.75} /> {en ? 'Play Again' : 'Main Lagi'}
+            </button>
+            <a href={ROUTE_PATHS.leaderboard} className="btn-primary min-h-12 flex-1">
+              <Trophy className="h-4 w-4" strokeWidth={1.75} /> {en ? 'View Standings' : 'Cek Peringkat'}
+            </a>
+          </div>
           <a href={ROUTE_PATHS.home} className="btn-secondary mt-2.5 min-h-11 w-full sm:mt-3">
             {en ? 'Back to Main Pavilion' : 'Kembali ke Paviliun Utama'}
           </a>

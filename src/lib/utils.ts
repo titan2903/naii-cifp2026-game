@@ -26,15 +26,30 @@ export function uuid(): string {
   return `${hex.slice(0, 8)}-${hex.slice(8, 12)}-${hex.slice(12, 16)}-${hex.slice(16, 20)}-${hex.slice(20)}`
 }
 
-/** Label sesi break berdasarkan jam lokal — dipakai untuk "Top 3 per sesi". */
+/** Label sesi break diselaraskan dengan rundown resmi cifp.center (CIFP 2026 WIB):
+ *  - Break 1 (Pagi): 11:25–12:00 WIB (setelah Opening Plenary 09:30–11:25) -> s.d. 12:05
+ *  - Break 2 (Siang): 13:15–14:00 WIB (setelah Session 1 12:00–13:15) -> 12:05–14:05
+ *  - Break 3 (Sore): 15:15–16:00 WIB (setelah Session 2 14:00–15:15, hingga Closing 19:25) -> >= 14:05 */
 export function currentSessionTag(date = new Date()): string {
-  const h = date.getHours()
-  if (h < 12) return 'Break Pagi'
-  if (h < 15) return 'Break Siang'
+  const minutes = date.getHours() * 60 + date.getMinutes()
+  if (minutes < 12 * 60 + 5) return 'Break Pagi'
+  if (minutes < 14 * 60 + 5) return 'Break Siang'
   return 'Break Sore'
 }
 
 export const SESSION_TAGS = ['Break Pagi', 'Break Siang', 'Break Sore'] as const
+
+const SESSION_WINDOW_MAP: Record<string, { full: string; short: string }> = {
+  'Break Pagi': { full: '11:25–12:00 WIB', short: '11:25' },
+  'Break Siang': { full: '13:15–14:00 WIB', short: '13:15' },
+  'Break Sore': { full: '15:15–16:00 WIB', short: '15:15' },
+}
+
+export function formatSessionWindow(tag: string, compact = false): string {
+  const entry = SESSION_WINDOW_MAP[tag]
+  if (!entry) return ''
+  return compact ? entry.short : entry.full
+}
 
 const SESSION_EN_MAP: Record<string, string> = {
   'Break Pagi': 'Morning Break',
@@ -55,4 +70,9 @@ export function startOfToday(): Date {
 
 export function formatSeconds(s: number, lang: Lang = 'id'): string {
   return lang === 'en' ? `${s.toFixed(1)}s` : `${s.toFixed(1)} dtk`
+}
+
+export function formatStampScore(gameLabel?: string, score?: number): string {
+  if (score == null) return ''
+  return gameLabel?.startsWith('Simulator') ? `${score}/100` : `${score} PTS`
 }

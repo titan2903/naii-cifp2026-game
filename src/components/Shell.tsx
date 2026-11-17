@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useEffect, useState, type ReactNode } from 'react'
 import {
   ArrowUpRight,
   Compass,
@@ -20,7 +20,6 @@ import { usePlayer } from '../context/PlayerContext'
 import { useTheme } from '../context/ThemeContext'
 import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
 import { backendMode } from '../lib/storage'
-import { currentSessionTag, formatSessionTag } from '../lib/utils'
 import { NaiiLogo, NaiiStarMark } from './NaiiBrand'
 import { PassportModal } from './PassportModal'
 import { QrCodeModal } from './QrCodeModal'
@@ -97,8 +96,23 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
   const { player, clearPlayer, stampCount, setPassportOpen, qrModalOpen, setQrModalOpen } = usePlayer()
   const { theme, toggleTheme } = useTheme()
   const { lang, toggleLang } = useLanguage()
+  const [confirmClear, setConfirmClear] = useState(false)
   const en = lang === 'en'
-  const sessionTag = formatSessionTag(currentSessionTag(), lang)
+
+  useEffect(() => {
+    if (!confirmClear) return
+    const timer = window.setTimeout(() => setConfirmClear(false), 3500)
+    return () => window.clearTimeout(timer)
+  }, [confirmClear])
+
+  const handlePlayerSwitchClick = () => {
+    if (stampCount > 0 && !confirmClear) {
+      setConfirmClear(true)
+      return
+    }
+    setConfirmClear(false)
+    clearPlayer()
+  }
 
   return (
     <div className="relative flex min-h-[100dvh] flex-col pb-20 text-zinc-900 transition-colors duration-300 dark:text-zinc-100 lg:pb-0">
@@ -116,7 +130,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
           <div className="flex shrink-0 items-center gap-2.5 sm:gap-4">
             <span className="text-zinc-400">
-              {en ? 'SESSION' : 'SESI'} <strong className="text-white">{sessionTag}</strong>
+              <strong className="text-white">ALL SESSIONS</strong>
             </span>
             <span className="hidden text-zinc-600 sm:inline">·</span>
             <a
@@ -172,11 +186,11 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
           </nav>
 
           {/* RIGHT ACTIONS: QR BUTTON + PASSPORT BADGE + DELEGATE BADGE + LANGUAGE SWITCH + THEME SWITCH */}
-          <div className="flex items-center gap-1.5 sm:gap-2">
+          <div className="flex shrink-0 items-center gap-1 sm:gap-2">
             <button
               type="button"
               onClick={() => setQrModalOpen(true)}
-              className="btn-secondary !px-2.5 !py-1.5 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:!px-3 sm:!py-2"
+              className="btn-secondary min-h-9 !px-2 !py-1.5 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:min-h-10 sm:!px-3 sm:!py-2"
               title={
                 en
                   ? 'Show QR Codes for Smartphone & www.naii.co'
@@ -191,7 +205,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
             <button
               type="button"
               onClick={() => setPassportOpen(true)}
-              className={`inline-flex items-center gap-1.5 rounded-xl border px-2.5 py-1.5 font-mono text-xs font-bold transition active:scale-95 sm:px-3 sm:py-2 ${
+              className={`inline-flex min-h-9 items-center gap-1 rounded-xl border px-2 py-1.5 font-mono text-xs font-bold transition active:scale-95 sm:min-h-10 sm:gap-1.5 sm:px-3 sm:py-2 ${
                 stampCount === 2
                   ? 'border-[#C89D54] bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-[0_0_16px_rgba(200,157,84,0.4)]'
                   : 'border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
@@ -201,14 +215,19 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                   ? 'Open Booth Passport & Claim Merchandise Ticket'
                   : 'Buka Paspor Misi & Tiket Klaim Merchandise'
               }
+              aria-label={
+                en
+                  ? `Open Booth Passport (${stampCount}/2 completed)`
+                  : `Buka Paspor & Tiket Klaim (${stampCount}/2 selesai)`
+              }
             >
               {stampCount === 2 ? (
                 <Ticket className="h-3.5 w-3.5 shrink-0 text-[#C89D54]" strokeWidth={2} />
               ) : (
                 <Stamp className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
               )}
-              <span className="hidden sm:inline">
-                {stampCount === 2 ? (en ? 'Claim Pin' : 'Tiket Klaim') : en ? 'Passport' : 'Paspor'}
+              <span className={stampCount === 2 ? 'hidden min-[400px]:inline sm:inline' : 'hidden sm:inline'}>
+                {stampCount === 2 ? (en ? 'Claim' : 'Klaim') : en ? 'Passport' : 'Paspor'}
               </span>
               <span className="rounded bg-black/15 px-1.5 py-0.2 text-[10px] dark:bg-white/15">
                 {stampCount}/2
@@ -217,13 +236,35 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
             {player && (
               <button
-                onClick={clearPlayer}
-                className="chip !px-2 !py-1.5 hover:border-[#AD2B17]/50 hover:text-zinc-950 dark:hover:text-white sm:!px-2.5"
-                title={en ? 'Switch delegate / next player' : 'Ganti delegasi / pemain berikutnya'}
+                type="button"
+                onClick={handlePlayerSwitchClick}
+                className={`chip min-h-9 !px-2 !py-1.5 sm:min-h-10 sm:!px-2.5 ${
+                  confirmClear
+                    ? '!border-rose-500 !bg-rose-500/15 !text-rose-700 dark:!text-rose-200'
+                    : 'hover:border-[#AD2B17]/50 hover:text-zinc-950 dark:hover:text-white'
+                }`}
+                title={
+                  confirmClear
+                    ? en
+                      ? 'Tap again to reset active delegate & passport'
+                      : 'Ketuk lagi untuk reset delegasi & paspor aktif'
+                    : en
+                      ? 'Switch delegate / next player'
+                      : 'Ganti delegasi / pemain berikutnya'
+                }
+                aria-label={
+                  confirmClear
+                    ? en
+                      ? 'Tap again to confirm delegate reset'
+                      : 'Ketuk lagi untuk konfirmasi reset delegasi'
+                    : en
+                      ? 'Switch delegate'
+                      : 'Ganti delegasi'
+                }
               >
                 <UserRound className="h-3.5 w-3.5 shrink-0 text-[#AD2B17]" strokeWidth={1.75} />
-                <span className="max-w-[4.5rem] truncate font-sans text-xs font-semibold normal-case tracking-normal sm:max-w-[9rem]">
-                  {player.name}
+                <span className="max-w-[3.75rem] truncate font-sans text-xs font-semibold normal-case tracking-normal min-[400px]:max-w-[5.2rem] sm:max-w-[9rem]">
+                  {confirmClear ? (en ? 'Reset?' : 'Reset?') : player.name}
                 </span>
                 <UserRoundX className="h-3.5 w-3.5 shrink-0 opacity-60" strokeWidth={1.75} />
               </button>
@@ -232,7 +273,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
             {/* LANGUAGE TOGGLE BUTTON (ID / EN) */}
             <button
               onClick={toggleLang}
-              className="btn-secondary !px-2.5 !py-2 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:!px-3"
+              className="btn-secondary min-h-9 !px-2 !py-1.5 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:min-h-10 sm:!px-3 sm:!py-2"
               title={en ? 'Ganti ke Bahasa Indonesia (ID)' : 'Switch to English (EN)'}
               aria-label={en ? 'Switch language to Bahasa Indonesia' : 'Switch language to English'}
             >
@@ -330,7 +371,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                 key={item.route}
                 href={item.href}
                 aria-current={active ? 'page' : undefined}
-                className={`flex flex-col items-center justify-center gap-1 rounded-xl py-1.5 text-[11px] font-bold tracking-tight transition active:scale-95 ${
+                className={`flex min-h-11 flex-col items-center justify-center gap-0.5 rounded-xl py-1.5 text-[11px] font-bold tracking-tight transition active:scale-95 ${
                   active
                     ? 'bg-[#AD2B17] text-white shadow-xs'
                     : 'text-zinc-600 hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white'

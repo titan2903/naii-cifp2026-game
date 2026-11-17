@@ -19,11 +19,10 @@ import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { backendMode, fetchTodayScores, sortScores, submitScore, subscribeScores } from '../lib/storage'
-import { currentSessionTag, formatSeconds, formatSessionTag, SESSION_TAGS } from '../lib/utils'
+import { currentSessionTag, formatSeconds } from '../lib/utils'
 import type { GameId, ScoreEntry } from '../types'
 
 type GameFilter = 'all' | 'trivia' | 'realvsai'
-type SessionFilter = 'all' | (typeof SESSION_TAGS)[number]
 
 const DEMO_PLAYERS: Array<{ name: string; inst: string; game: GameId; score: number; correct: number; time: number }> = [
   { name: 'Mahendra Kusuma', inst: 'HI Universitas Indonesia', game: 'trivia', score: 718, correct: 5, time: 13.8 },
@@ -41,7 +40,6 @@ export function LeaderboardScreen() {
 
   const [scores, setScores] = useState<ScoreEntry[]>([])
   const [gameFilter, setGameFilter] = useState<GameFilter>('all')
-  const [sessionFilter, setSessionFilter] = useState<SessionFilter>('all')
   const [flashId, setFlashId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
   const flashTimerRef = useRef<number | null>(null)
@@ -79,14 +77,8 @@ export function LeaderboardScreen() {
   }, [])
 
   const filtered = useMemo(() => {
-    return sortScores(
-      scores.filter(
-        (s) =>
-          (gameFilter === 'all' || s.game === gameFilter) &&
-          (sessionFilter === 'all' || s.session_tag === sessionFilter),
-      ),
-    )
-  }, [scores, gameFilter, sessionFilter])
+    return sortScores(scores.filter((s) => gameFilter === 'all' || s.game === gameFilter))
+  }, [scores, gameFilter])
 
   const champion = filtered[0]
   const runnersUp = filtered.slice(1, 3)
@@ -130,10 +122,7 @@ export function LeaderboardScreen() {
             </span>
             <span className="chip">
               <Activity className="h-3 w-3 text-[#AD2B17]" strokeWidth={1.75} />
-              {en ? 'SESSION' : 'SESI'}:{' '}
-              <strong className="text-zinc-900 dark:text-white">
-                {formatSessionTag(currentSessionTag(), lang)}
-              </strong>
+              <strong className="text-zinc-900 dark:text-white">ALL SESSIONS</strong>
             </span>
             <span className="chip">
               MODE:{' '}
@@ -149,12 +138,11 @@ export function LeaderboardScreen() {
           <p className="text-sm text-zinc-600 dark:text-zinc-300">
             {en ? (
               <>
-                The top three delegates in each break session (Morning, Midday, Afternoon) earn{' '}
-                <b>an Official NAII Totebag (Tier 3)</b>.
+                The top three delegates across <b>All Sessions</b> earn <b>an Official NAII Totebag (Tier 3)</b>.
               </>
             ) : (
               <>
-                Tiga delegasi tertinggi pada setiap sesi break (Pagi, Siang, Sore) berhak meraih{' '}
+                Tiga delegasi tertinggi pada klasemen <b>All Sessions</b> berhak meraih{' '}
                 <b>Totebag Resmi NAII (Tier 3)</b>.
               </>
             )}
@@ -208,34 +196,9 @@ export function LeaderboardScreen() {
           ))}
         </div>
 
-        <div className="grid grid-cols-4 gap-1.5 sm:flex sm:flex-wrap">
-          {(['all', ...SESSION_TAGS] as const).map((tag) => {
-            const labelFull =
-              tag === 'all' ? (en ? 'ALL SESSIONS' : 'SEMUA SESI') : formatSessionTag(tag, lang).toUpperCase()
-            const labelShort =
-              tag === 'all'
-                ? en
-                  ? 'ALL'
-                  : 'SEMUA'
-                : formatSessionTag(tag, lang)
-                    .replace(/Break\s*/i, '')
-                    .toUpperCase()
-            return (
-              <button
-                key={tag}
-                type="button"
-                onClick={() => setSessionFilter(tag)}
-                className={`rounded-xl px-2 py-2 text-center font-mono text-[11px] font-semibold transition sm:px-3.5 sm:text-xs ${
-                  sessionFilter === tag
-                    ? 'border border-[#AD2B17] bg-[#AD2B17]/10 text-[#AD2B17] dark:bg-[#AD2B17]/20 dark:text-white'
-                    : 'border border-zinc-200 bg-white/80 text-zinc-600 hover:bg-white dark:border-white/10 dark:bg-white/[0.03] dark:text-zinc-400 dark:hover:text-white'
-                }`}
-              >
-                <span className="sm:hidden">{labelShort}</span>
-                <span className="hidden sm:inline">{labelFull}</span>
-              </button>
-            )
-          })}
+        <div className="inline-flex items-center justify-center gap-2 self-start rounded-xl border border-[#AD2B17] bg-[#AD2B17]/10 px-3.5 py-2 font-mono text-xs font-bold text-[#AD2B17] dark:bg-[#AD2B17]/20 dark:text-white sm:self-auto">
+          <Activity className="h-3.5 w-3.5" strokeWidth={1.75} />
+          <span>ALL SESSIONS</span>
         </div>
       </div>
 
@@ -291,10 +254,10 @@ export function LeaderboardScreen() {
                 <div className="flex items-center justify-between gap-2">
                   <span className="inline-flex items-center gap-2 rounded-full bg-[#AD2B17] px-3.5 py-1 font-mono text-xs font-bold tracking-wider text-white">
                     <Crown className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
-                    {en ? 'RANK #01 // SESSION LEADER' : 'PERINGKAT #01 // PEMIMPIN SESI'}
+                    {en ? 'RANK #01 // LEADERBOARD KING' : 'PERINGKAT #01 // PEMIMPIN PAPAN'}
                   </span>
                   <span className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
-                    {formatSessionTag(champion.session_tag, lang)}
+                    ALL SESSIONS
                   </span>
                 </div>
 
@@ -363,8 +326,7 @@ export function LeaderboardScreen() {
                           ? 'SPEED TRIVIA'
                           : entry.game === 'battle'
                             ? 'PROMPT BATTLE'
-                            : 'REAL VS AI'}{' '}
-                        · {formatSessionTag(entry.session_tag, lang)}
+                            : 'REAL VS AI'}
                       </span>
                     </div>
 
@@ -432,8 +394,7 @@ export function LeaderboardScreen() {
                                 : entry.game === 'battle'
                                   ? 'Prompt Battle'
                                   : 'Real vs AI'}
-                            </span>{' '}
-                            · {formatSessionTag(entry.session_tag, lang)}
+                            </span>
                           </p>
                         </div>
                       </div>

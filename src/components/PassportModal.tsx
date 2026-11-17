@@ -1,4 +1,4 @@
-import { useEffect, useState, type FormEvent } from 'react'
+import { useEffect, useRef, useState, type FormEvent } from 'react'
 import confetti from 'canvas-confetti'
 import {
   ArrowRight,
@@ -21,14 +21,11 @@ import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { NAII_URL } from '../data/personas'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
+import { formatStampScore } from '../lib/utils'
 import { NaiiLogo, NaiiWatermark } from './NaiiBrand'
+import { QrCodeSvg } from './QrCodeModal'
 
 const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
-
-function formatStampScore(gameLabel?: string, score?: number): string {
-  if (score == null) return ''
-  return gameLabel?.startsWith('Simulator') ? `${score}/100` : `${score} PTS`
-}
 
 export function PassportModal() {
   const { passport, passportOpen } = usePlayer()
@@ -44,16 +41,18 @@ function PassportModalContent() {
     passport,
     stampCount,
     setPassportOpen,
-    setQrModalOpen,
     verifyNaiiAccountByStaff,
     markTicketClaimed,
   } = usePlayer()
 
   const [emailInput, setEmailInput] = useState(player?.email ?? '')
   const [emailConsent, setEmailConsent] = useState(Boolean(player?.consent && player?.email))
+  const [showOptionalEmail, setShowOptionalEmail] = useState(false)
+  const [showNaiiQr, setShowNaiiQr] = useState(false)
   const [formError, setFormError] = useState<'email' | 'consent' | null>(null)
   const [confirmNaiiVerify, setConfirmNaiiVerify] = useState(false)
   const [confirmStaffClaim, setConfirmStaffClaim] = useState(false)
+  const ticketRef = useRef<HTMLDivElement>(null)
 
   useEffect(() => {
     const onKeyDown = (e: KeyboardEvent) => {
@@ -64,7 +63,16 @@ function PassportModalContent() {
   }, [setPassportOpen])
 
   const allUnlocked = stampCount === 2
-  const trimmedEmail = emailInput.trim()
+
+  useEffect(() => {
+    if (!allUnlocked) return
+    const timer = window.setTimeout(() => {
+      ticketRef.current?.scrollIntoView({ behavior: 'smooth', block: 'nearest' })
+    }, 120)
+    return () => window.clearTimeout(timer)
+  }, [allUnlocked])
+
+  const trimmedEmail = showOptionalEmail ? emailInput.trim() : ''
   const needsEmailConsent = Boolean(trimmedEmail) && (trimmedEmail !== (player?.email ?? '') || !player?.consent)
 
   const handleConfirmNaiiAccount = (e: FormEvent) => {
@@ -105,9 +113,9 @@ function PassportModalContent() {
         if (e.target === e.currentTarget) setPassportOpen(false)
       }}
     >
-      <div className="glass relative max-h-[92dvh] w-full max-w-3xl overflow-y-auto border-[#C89D54]/40 p-5 shadow-2xl sm:p-8">
-        {/* TOP HEADER */}
-        <div className="flex items-start justify-between gap-3 border-b border-zinc-200 pb-4 dark:border-white/10">
+      <div className="glass relative max-h-[92dvh] w-full max-w-3xl overflow-y-auto border-[#C89D54]/40 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:p-8">
+        {/* STICKY TOP HEADER ON MOBILE */}
+        <div className="sticky top-0 z-20 -mx-5 -mt-5 mb-4 flex items-start justify-between gap-3 border-b border-zinc-200 bg-white/95 px-5 pb-3.5 pt-4 backdrop-blur-md dark:border-white/10 dark:bg-[#140E0C]/95 sm:static sm:mx-0 sm:mb-0 sm:mt-0 sm:bg-transparent sm:p-0 sm:pb-4 sm:backdrop-blur-none dark:sm:bg-transparent">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white">
@@ -118,7 +126,7 @@ function PassportModalContent() {
                 {stampCount}/2 {en ? 'STEPS COMPLETED' : 'MISI SELESAI'}
               </span>
             </div>
-            <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
+            <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-2xl">
               {en
                 ? 'Play 1 Short Game + Create a www.naii.co Account'
                 : 'Main 1 Game Singkat + Buat Akun www.naii.co'}
@@ -133,15 +141,17 @@ function PassportModalContent() {
           <button
             type="button"
             onClick={() => setPassportOpen(false)}
-            className="btn-secondary !p-2 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
+            className="btn-secondary min-h-11 min-w-11 shrink-0 !p-2.5 text-zinc-500 hover:text-zinc-900 dark:hover:text-white"
             aria-label={en ? 'Close Passport' : 'Tutup Paspor'}
           >
             <X className="h-5 w-5" strokeWidth={2} />
           </button>
         </div>
 
+        {/* CONTENT FLOW: PROMOTES UNLOCKED TICKET TO TOP VIA FLEX ORDER */}
+        <div className="flex flex-col">
         {/* 2 STAMPS GRID */}
-        <div className="mt-5 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${allUnlocked ? 'mt-5' : 'sm:mt-5'}`}>
           {/* STAMP 01: 1 SHORT GAME */}
           <div
             className={`relative flex flex-col justify-between rounded-2xl border p-4 transition sm:p-5 ${
@@ -195,7 +205,11 @@ function PassportModalContent() {
                 <div className="flex flex-wrap gap-2">
                   <button
                     type="button"
-                    onClick={() => goToRoute(ROUTE_PATHS.trivia)}
+                    onClick={() =>
+                      goToRoute(
+                        passport.stamp1.gameLabel === 'Real vs AI' ? ROUTE_PATHS.realvsai : ROUTE_PATHS.trivia,
+                      )
+                    }
                     className="inline-flex items-center gap-1 font-mono text-[11px] font-bold text-emerald-700 hover:underline dark:text-emerald-300"
                   >
                     {en ? 'Play Again for Top 3 Totebag' : 'Main Lagi (Kejar Totebag Top 3)'}{' '}
@@ -273,72 +287,116 @@ function PassportModalContent() {
                     </a>
                     <button
                       type="button"
-                      onClick={() => {
-                        setPassportOpen(false)
-                        setQrModalOpen(true)
-                      }}
-                      className="inline-flex items-center gap-1 rounded-lg border border-[#C89D54]/50 bg-[#C89D54]/15 px-2.5 py-2 font-mono text-xs font-bold text-[#9A6F22] hover:bg-[#C89D54]/25 dark:text-[#C89D54]"
-                      title={en ? 'Show QR Code' : 'Tampilkan QR Code'}
+                      onClick={() => setShowNaiiQr((v) => !v)}
+                      className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-2 font-mono text-xs font-bold transition ${
+                        showNaiiQr
+                          ? 'border-[#AD2B17] bg-[#AD2B17] text-white'
+                          : 'border-[#C89D54]/50 bg-[#C89D54]/15 text-[#9A6F22] hover:bg-[#C89D54]/25 dark:text-[#C89D54]'
+                      }`}
+                      title={en ? 'Toggle www.naii.co QR Code' : 'Tampilkan QR Code www.naii.co'}
                     >
                       <QrCode className="h-3.5 w-3.5" />
                       <span>QR</span>
                     </button>
                   </div>
 
+                  {showNaiiQr && (
+                    <div className="flex items-center gap-3 rounded-xl border border-[#C89D54]/40 bg-white p-2.5 dark:bg-black/45">
+                      <div className="shrink-0 rounded-lg border border-zinc-200 bg-white p-1.5">
+                        <QrCodeSvg value={NAII_URL} className="h-20 w-20" />
+                      </div>
+                      <div className="min-w-0 space-y-0.5">
+                        <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                          SCAN WWW.NAII.CO
+                        </p>
+                        <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
+                          {en
+                            ? 'Point another camera to open www.naii.co directly, or tap the button above.'
+                            : 'Scan dari kamera HP lain atau ketuk tombol daftar gratis di atas.'}
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
                   <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
                     2.{' '}
                     {en
-                      ? 'Show your www.naii.co account screenshot to the booth staff, then let staff press the verification button below:'
-                      : 'Tunjukkan screenshot akun www.naii.co yang sudah dibuat ke panitia booth, lalu panitia menekan tombol verifikasi di bawah:'}
+                      ? 'Show your www.naii.co account screenshot to booth staff, then let staff press verify below:'
+                      : 'Tunjukkan screenshot akun www.naii.co ke panitia booth, lalu panitia menekan tombol verifikasi di bawah:'}
                   </p>
 
-                  <div className="space-y-2">
-                    <input
-                      type="email"
-                      aria-label={en ? 'Registered www.naii.co email (optional)' : 'Email akun www.naii.co (opsional)'}
-                      value={emailInput}
-                      onChange={(e) => {
-                        const val = e.target.value
-                        setEmailInput(val)
+                  <div>
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setShowOptionalEmail((v) => !v)
                         setFormError(null)
-                        if (val.trim() !== (player?.email ?? '')) {
-                          setEmailConsent(false)
-                        } else {
-                          setEmailConsent(Boolean(player?.consent))
-                        }
                       }}
-                      placeholder={en ? 'Email registered on www.naii.co (optional)' : 'Email terdaftar di www.naii.co (opsional)'}
-                      className="field !py-1.5 !px-2.5 !text-xs"
-                    />
-                    {trimmedEmail && needsEmailConsent && (
-                      <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-zinc-200/80 bg-zinc-50/80 p-2 text-[10px] leading-snug text-zinc-600 dark:border-white/10 dark:bg-black/30 dark:text-zinc-300">
+                      className="font-mono text-[10px] font-semibold text-zinc-500 underline decoration-dotted hover:text-zinc-900 dark:text-zinc-400 dark:hover:text-white"
+                    >
+                      {showOptionalEmail
+                        ? en
+                          ? '− Hide optional email note'
+                          : '− Sembunyikan catatan email'
+                        : en
+                          ? '+ Optional: save email for free course links'
+                          : '+ Opsional: catat email akun naii.co'}
+                    </button>
+
+                    {showOptionalEmail && (
+                      <div className="mt-2 space-y-2">
                         <input
-                          type="checkbox"
-                          checked={emailConsent}
+                          type="email"
+                          aria-label={en ? 'Registered www.naii.co email (optional)' : 'Email akun www.naii.co (opsional)'}
+                          value={emailInput}
                           onChange={(e) => {
-                            setEmailConsent(e.target.checked)
+                            const val = e.target.value
+                            setEmailInput(val)
                             setFormError(null)
+                            if (val.trim() !== (player?.email ?? '')) {
+                              setEmailConsent(false)
+                            } else {
+                              setEmailConsent(Boolean(player?.consent))
+                            }
                           }}
-                          className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#AD2B17]"
+                          placeholder={
+                            en ? 'Email registered on www.naii.co (optional)' : 'Email terdaftar di www.naii.co (opsional)'
+                          }
+                          className="field !py-1.5 !px-2.5 !text-xs"
                         />
-                        <span>
-                          {en
-                            ? 'Consent (UU PDP No. 27/2022): I agree to share my email for NAII learning info.'
-                            : 'Persetujuan UU PDP (No. 27/2022): Saya setuju email ini disimpan untuk info belajar gratis NAII.'}
-                        </span>
-                      </label>
-                    )}
-                    {formError === 'email' && (
-                      <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
-                        {en ? 'Enter a valid email address or leave blank.' : 'Masukkan format email valid atau kosongkan.'}
-                      </p>
-                    )}
-                    {formError === 'consent' && (
-                      <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
-                        {en
-                          ? 'Please check the UU PDP consent box before saving your email.'
-                          : 'Centang kotak persetujuan UU PDP terlebih dahulu jika mengisi email.'}
-                      </p>
+                        {trimmedEmail && needsEmailConsent && (
+                          <label className="flex cursor-pointer items-start gap-2 rounded-lg border border-zinc-200/80 bg-zinc-50/80 p-2 text-[10px] leading-snug text-zinc-600 dark:border-white/10 dark:bg-black/30 dark:text-zinc-300">
+                            <input
+                              type="checkbox"
+                              checked={emailConsent}
+                              onChange={(e) => {
+                                setEmailConsent(e.target.checked)
+                                setFormError(null)
+                              }}
+                              className="mt-0.5 h-3.5 w-3.5 shrink-0 accent-[#AD2B17]"
+                            />
+                            <span>
+                              {en
+                                ? 'Consent (UU PDP No. 27/2022): I agree to share my email for NAII learning info.'
+                                : 'Persetujuan UU PDP (No. 27/2022): Saya setuju email ini disimpan untuk info belajar gratis NAII.'}
+                            </span>
+                          </label>
+                        )}
+                        {formError === 'email' && (
+                          <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
+                            {en
+                              ? 'Enter a valid email address or leave blank.'
+                              : 'Masukkan format email valid atau kosongkan.'}
+                          </p>
+                        )}
+                        {formError === 'consent' && (
+                          <p className="text-[11px] font-medium text-rose-600 dark:text-rose-400">
+                            {en
+                              ? 'Please check the UU PDP consent box before saving your email.'
+                              : 'Centang kotak persetujuan UU PDP terlebih dahulu jika mengisi email.'}
+                          </p>
+                        )}
+                      </div>
                     )}
                   </div>
 
@@ -399,7 +457,7 @@ function PassportModalContent() {
         </div>
 
         {/* OFFICIAL MERCHANDISE CLAIM TICKET SECTION */}
-        <div className="mt-6">
+        <div ref={ticketRef} className={allUnlocked ? 'order-first sm:mt-5' : 'mt-6'}>
           {allUnlocked ? (
             /* FULL 2/2 OFFICIAL MERCHANDISE REDEMPTION TICKET */
             <div className="relative overflow-hidden rounded-2xl border-2 border-[#C89D54] bg-gradient-to-br from-[#3A0900] via-[#240600] to-[#0B0908] p-5 text-white shadow-[0_20px_50px_-12px_rgba(173,43,23,0.55)] sm:p-7">
@@ -542,8 +600,8 @@ function PassportModalContent() {
                   <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
                     {passport.stamp1.unlocked
                       ? en
-                        ? 'Tier 1 Unlocked (FPCI Stamp + Sticker)! Complete Step #02 to claim your Tier 2 Official NAII Pin.'
-                        : 'Tier 1 Terbuka (Stamp FPCI + Stiker)! Lengkapi Stempel #02 untuk klaim Pin Resmi NAII (Tier 2).'
+                        ? 'Tier 1 Unlocked! Show this screen to booth staff now for your FPCI Stamp + Sticker, or complete Step #02 for the NAII Pin.'
+                        : 'Tier 1 Terbuka! Tunjukkan layar ini ke panitia sekarang untuk Stamp FPCI + Stiker, atau selesaikan Langkah #02 untuk Pin Resmi NAII.'
                       : passport.stamp2.unlocked
                         ? en
                           ? 'www.naii.co Account Verified! Complete 1 short game (Step #01) to claim your Tier 1 Sticker & Tier 2 Pin.'
@@ -565,6 +623,7 @@ function PassportModalContent() {
               </div>
             </div>
           )}
+        </div>
         </div>
       </div>
     </div>

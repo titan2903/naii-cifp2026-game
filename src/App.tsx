@@ -13,18 +13,22 @@ import { TriviaScreen } from './screens/TriviaScreen'
 
 function BoothRouter() {
   const { route, navigate } = useHashRoute()
-  const { clearPlayer } = usePlayer()
+  const { clearPlayer, stampCount, passportOpen, qrModalOpen } = usePlayer()
 
   // Pastikan setiap perpindahan layar di smartphone selalu mulai dari posisi paling atas
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'instant' })
   }, [route])
 
-  // Reset otomatis ke beranda setelah 3 menit tanpa sentuhan di tablet booth (kecuali layar TV Leaderboard)
-  useIdleReset(route !== 'home' && route !== 'leaderboard', 180_000, () => {
-    clearPlayer()
-    navigate('home')
-  })
+  // Reset otomatis hanya jika pengunjung belum membuka stamp dan tidak sedang membuka modal (mencegah Stamp #01 terhapus saat daftar ke www.naii.co)
+  useIdleReset(
+    route !== 'home' && route !== 'leaderboard' && stampCount === 0 && !passportOpen && !qrModalOpen,
+    180_000,
+    () => {
+      clearPlayer()
+      navigate('home')
+    },
+  )
 
   return (
     <Shell currentRoute={route}>
