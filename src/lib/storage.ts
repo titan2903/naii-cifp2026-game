@@ -198,7 +198,7 @@ export function sortScores(list: ScoreEntry[], dedupeByPlayer = true): ScoreEntr
   if (!dedupeByPlayer) return sorted
   const seen = new Set<string>()
   return sorted.filter((entry) => {
-    const key = `${entry.session_tag}::${entry.player_name.trim().toLowerCase()}::${entry.institution.trim().toLowerCase()}`
+    const key = `${entry.player_name.trim().toLowerCase()}::${entry.institution.trim().toLowerCase()}`
     if (seen.has(key)) return false
     seen.add(key)
     return true
