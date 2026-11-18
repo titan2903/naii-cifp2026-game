@@ -71,7 +71,8 @@ export function startOfToday(): Date {
 }
 
 export function formatSeconds(s: number, lang: Lang = 'id'): string {
-  return lang === 'en' ? `${s.toFixed(1)}s` : `${s.toFixed(1)} dtk`
+  const safe = typeof s === 'number' && Number.isFinite(s) ? Math.max(0, s) : 0
+  return lang === 'en' ? `${safe.toFixed(1)}s` : `${safe.toFixed(1)} dtk`
 }
 
 export function formatStampScore(gameLabel?: string, score?: number): string {

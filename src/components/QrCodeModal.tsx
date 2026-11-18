@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useState } from 'react'
+import { memo, useEffect, useMemo, useRef, useState } from 'react'
 import { ArrowUpRight, Check, Copy, Maximize2, QrCode, Smartphone, Sparkles, X } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { BOOTH_GAME_URL, NAII_URL } from '../data/personas'
@@ -19,18 +19,22 @@ export const QrCodeSvg = memo(function QrCodeSvg({
   accentColor?: string
 }) {
   const { pathData, totalSize } = useMemo(() => {
-    const matrix = generateQrMatrix(value)
-    const n = matrix.length
-    const quiet = 3
-    let d = ''
-    for (let r = 0; r < n; r++) {
-      for (let c = 0; c < n; c++) {
-        if (matrix[r][c]) {
-          d += `M${c + quiet},${r + quiet}h1v1h-1z`
+    try {
+      const matrix = generateQrMatrix(value)
+      const n = matrix.length
+      const quiet = 3
+      let d = ''
+      for (let r = 0; r < n; r++) {
+        for (let c = 0; c < n; c++) {
+          if (matrix[r][c]) {
+            d += `M${c + quiet},${r + quiet}h1v1h-1z`
+          }
         }
       }
+      return { pathData: d, totalSize: n + quiet * 2 }
+    } catch {
+      return { pathData: '', totalSize: 27 }
     }
-    return { pathData: d, totalSize: n + quiet * 2 }
   }, [value])
 
   return (
@@ -59,6 +63,13 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
   const en = lang === 'en'
   const [selectedDeepLink, setSelectedDeepLink] = useState<(typeof GAME_DEEP_LINKS)[number]['id']>('home')
   const [copiedKey, setCopiedKey] = useState<'game' | 'naii' | null>(null)
+  const copyTimerRef = useRef<number | null>(null)
+
+  useEffect(() => {
+    return () => {
+      if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current)
+    }
+  }, [])
 
   useEffect(() => {
     if (!open) return
@@ -78,7 +89,8 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
     try {
       await navigator.clipboard.writeText(url)
       setCopiedKey(key)
-      window.setTimeout(() => setCopiedKey(null), 1800)
+      if (copyTimerRef.current) window.clearTimeout(copyTimerRef.current)
+      copyTimerRef.current = window.setTimeout(() => setCopiedKey(null), 1800)
     } catch {
       /* abaikan bila clipboard diblokir */
     }

@@ -1,5 +1,5 @@
 import { supabase } from './supabase'
-import { uuid } from './utils'
+import { SESSION_TAGS, startOfToday, uuid } from './utils'
 import type { NewScore, Player, ScoreEntry, SimulationResult } from '../types'
 
 /**
@@ -13,6 +13,29 @@ const LS_PENDING = 'naii-cifp26:pending'
 const LS_LEADS = 'naii-cifp26:leads-sent'
 const LS_PENDING_LEADS = 'naii-cifp26:pending-leads'
 const LOCAL_EVENT = 'naii-cifp26:score-added'
+
+const VALID_GAMES = new Set<string>(['trivia', 'realvsai', 'battle'])
+const VALID_SESSIONS = new Set<string>(SESSION_TAGS)
+const EMAIL_RE = /^[^\s@]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
+
+/** Validasi integritas skor untuk mencegah manipulasi localStorage / payload API tidak wajar. */
+export function isValidScoreEntry(raw: unknown): raw is ScoreEntry {
+  if (!raw || typeof raw !== 'object') return false
+  const s = raw as ScoreEntry
+  if (typeof s.id !== 'string' || s.id.trim().length < 4) return false
+  if (typeof s.player_name !== 'string' || s.player_name.trim().length < 2 || s.player_name.length > 60) return false
+  if (typeof s.institution !== 'string' || s.institution.length > 80) return false
+  if (!VALID_GAMES.has(s.game)) return false
+  if (!VALID_SESSIONS.has(s.session_tag)) return false
+  if (!Number.isInteger(s.total_questions) || s.total_questions !== 5) return false
+  if (!Number.isInteger(s.correct_count) || s.correct_count < 0 || s.correct_count > s.total_questions) return false
+  if (!Number.isInteger(s.score) || s.score < s.correct_count * 100 || s.score > s.correct_count * 150) return false
+  if (typeof s.time_seconds !== 'number' || !Number.isFinite(s.time_seconds) || s.time_seconds < 0.5 || s.time_seconds > 300) {
+    return false
+  }
+  if (typeof s.created_at !== 'string' || Number.isNaN(Date.parse(s.created_at))) return false
+  return true
+}
 
 interface PendingLead {
   player_name: string
@@ -55,32 +78,71 @@ function setPending(list: ScoreEntry[]) {
   writeJson(LS_PENDING, list)
 }
 
+let flushingPromise: Promise<void> | null = null
+let flushingLeadsPromise: Promise<void> | null = null
+
 export async function flushPendingLeads(): Promise<void> {
   if (!supabase) return
-  const queue = readJson<PendingLead[]>(LS_PENDING_LEADS, [])
-  if (!queue.length) return
-  const remaining: PendingLead[] = []
-  const sent = readJson<string[]>(LS_LEADS, [])
-  for (const item of queue) {
-    const { error } = await supabase.from('leads').insert(item)
-    if (error) {
-      remaining.push(item)
-    } else if (!sent.includes(item.email)) {
-      sent.push(item.email)
+  if (flushingLeadsPromise) return flushingLeadsPromise
+  flushingLeadsPromise = (async () => {
+    const client = supabase
+    if (!client) return
+    const queue = readJson<PendingLead[]>(LS_PENDING_LEADS, [])
+    if (!queue.length) return
+    const succeededKeys = new Set<string>()
+    const invalidKeys = new Set<string>()
+    for (const item of queue) {
+      const emailKey = typeof item?.email === 'string' ? item.email.trim().toLowerCase() : ''
+      if (!emailKey || !EMAIL_RE.test(emailKey) || typeof item.player_name !== 'string' || item.player_name.trim().length < 2) {
+        invalidKeys.add(emailKey)
+        continue
+      }
+      const { error } = await client.from('leads').insert({ ...item, email: emailKey })
+      if (!error) {
+        succeededKeys.add(emailKey)
+      }
     }
-  }
-  writeJson(LS_LEADS, sent)
-  writeJson(LS_PENDING_LEADS, remaining)
+    if (!succeededKeys.size && !invalidKeys.size) return
+    if (succeededKeys.size > 0) {
+      const latestSent = new Set(readJson<string[]>(LS_LEADS, []).map((e) => e.trim().toLowerCase()))
+      for (const k of succeededKeys) latestSent.add(k)
+      writeJson(LS_LEADS, [...latestSent])
+    }
+    const latestQueue = readJson<PendingLead[]>(LS_PENDING_LEADS, [])
+    writeJson(
+      LS_PENDING_LEADS,
+      latestQueue.filter((item) => {
+        const k = typeof item?.email === 'string' ? item.email.trim().toLowerCase() : ''
+        return Boolean(k) && !succeededKeys.has(k) && !invalidKeys.has(k)
+      }),
+    )
+  })().finally(() => {
+    flushingLeadsPromise = null
+  })
+  return flushingLeadsPromise
 }
 
 export async function flushPending(): Promise<void> {
   if (!supabase) return
-  const pending = getPending()
-  if (pending.length) {
-    const { error } = await supabase.from('leaderboard').upsert(pending, { onConflict: 'id', ignoreDuplicates: true })
-    if (!error) setPending([])
-  }
-  await flushPendingLeads()
+  if (flushingPromise) return flushingPromise
+  flushingPromise = (async () => {
+    const client = supabase
+    if (!client) return
+    const pending = getPending().filter(isValidScoreEntry)
+    if (pending.length) {
+      const flushedIds = new Set(pending.map((p) => p.id))
+      const { error } = await client.from('leaderboard').upsert(pending, { onConflict: 'id', ignoreDuplicates: true })
+      if (!error) {
+        setPending(getPending().filter(isValidScoreEntry).filter((p) => !flushedIds.has(p.id)))
+      }
+    } else {
+      setPending([])
+    }
+    await flushPendingLeads()
+  })().finally(() => {
+    flushingPromise = null
+  })
+  return flushingPromise
 }
 
 if (typeof window !== 'undefined') {
@@ -88,7 +150,27 @@ if (typeof window !== 'undefined') {
 }
 
 export async function submitScore(score: NewScore): Promise<ScoreEntry> {
-  const entry: ScoreEntry = { ...score, id: uuid(), created_at: new Date().toISOString() }
+  const safeTotal = 5
+  const safeCorrect = Math.max(0, Math.min(safeTotal, Math.round(score.correct_count)))
+  const minScore = safeCorrect * 100
+  const maxScore = safeCorrect * 150
+  const safeScore = Math.max(minScore, Math.min(maxScore, Math.round(score.score)))
+  const safeTime =
+    typeof score.time_seconds === 'number' && Number.isFinite(score.time_seconds)
+      ? Math.max(0.5, Math.min(300, Math.round(score.time_seconds * 10) / 10))
+      : 50
+
+  const entry: ScoreEntry = {
+    ...score,
+    player_name: score.player_name.trim().slice(0, 40) || 'Delegasi CIFP',
+    institution: score.institution.trim().slice(0, 60) || 'Umum',
+    correct_count: safeCorrect,
+    total_questions: safeTotal,
+    score: safeScore,
+    time_seconds: safeTime,
+    id: uuid(),
+    created_at: new Date().toISOString(),
+  }
   saveLocal(entry)
   window.dispatchEvent(new CustomEvent<ScoreEntry>(LOCAL_EVENT, { detail: entry }))
 
@@ -98,21 +180,37 @@ export async function submitScore(score: NewScore): Promise<ScoreEntry> {
       if (error) throw error
       void flushPending()
     } catch {
-      setPending([...getPending(), entry])
+      setPending([...getPending().filter(isValidScoreEntry), entry])
     }
   }
   return entry
 }
 
-export function sortScores(list: ScoreEntry[]): ScoreEntry[] {
-  return [...list].sort(
+/**
+ * Mengurutkan skor tertinggi & waktu tercepat, sekaligus mendeduplikasi per delegasi per sesi
+ * agar 1 orang tidak bisa memborong Peringkat #1, #2, dan #3 sekaligus di sesi break yang sama.
+ */
+export function sortScores(list: ScoreEntry[], dedupeByPlayer = true): ScoreEntry[] {
+  const valid = list.filter(isValidScoreEntry)
+  const sorted = [...valid].sort(
     (a, b) => b.score - a.score || a.time_seconds - b.time_seconds || a.created_at.localeCompare(b.created_at),
   )
+  if (!dedupeByPlayer) return sorted
+  const seen = new Set<string>()
+  return sorted.filter((entry) => {
+    const key = `${entry.session_tag}::${entry.player_name.trim().toLowerCase()}::${entry.institution.trim().toLowerCase()}`
+    if (seen.has(key)) return false
+    seen.add(key)
+    return true
+  })
 }
 
-/** Seluruh skor delegasi (cloud + pending lokal, atau lokal saja). */
+/** Seluruh skor delegasi hari ini (cloud + pending lokal, atau lokal saja). */
 export async function fetchTodayScores(): Promise<ScoreEntry[]> {
-  const localScores = readJson<ScoreEntry[]>(LS_SCORES, [])
+  const todayIso = startOfToday().toISOString()
+  const localScores = readJson<ScoreEntry[]>(LS_SCORES, []).filter(
+    (e) => isValidScoreEntry(e) && e.created_at >= todayIso,
+  )
 
   if (!supabase) return localScores
 
@@ -120,12 +218,17 @@ export async function fetchTodayScores(): Promise<ScoreEntry[]> {
     const { data, error } = await supabase
       .from('leaderboard')
       .select('id, player_name, institution, game, score, correct_count, total_questions, time_seconds, session_tag, created_at')
+      .gte('created_at', todayIso)
       .order('score', { ascending: false })
       .limit(1000)
     if (error) throw error
     const byId = new Map<string, ScoreEntry>()
-    for (const e of data as ScoreEntry[]) byId.set(e.id, e)
-    for (const e of getPending()) byId.set(e.id, e)
+    for (const e of data as ScoreEntry[]) {
+      if (isValidScoreEntry(e)) byId.set(e.id, e)
+    }
+    for (const e of getPending()) {
+      if (isValidScoreEntry(e) && e.created_at >= todayIso) byId.set(e.id, e)
+    }
     return [...byId.values()]
   } catch {
     return localScores
@@ -134,12 +237,20 @@ export async function fetchTodayScores(): Promise<ScoreEntry[]> {
 
 /** Langganan skor baru: Supabase Realtime (lintas perangkat) + event lokal (perangkat yang sama / tab lain). */
 export function subscribeScores(onInsert: (entry: ScoreEntry) => void): () => void {
-  const onLocal = (e: Event) => onInsert((e as CustomEvent<ScoreEntry>).detail)
+  const safeEmit = (entry: unknown) => {
+    if (isValidScoreEntry(entry)) onInsert(entry)
+  }
+  const onLocal = (e: Event) => safeEmit((e as CustomEvent<ScoreEntry>).detail)
   const onStorage = (e: StorageEvent) => {
     if (e.key !== LS_SCORES || !e.newValue) return
-    const list = JSON.parse(e.newValue) as ScoreEntry[]
-    const last = list[list.length - 1]
-    if (last) onInsert(last)
+    try {
+      const list = JSON.parse(e.newValue) as unknown[]
+      if (!Array.isArray(list)) return
+      const last = list[list.length - 1]
+      safeEmit(last)
+    } catch {
+      /* abaikan payload storage korup dari tab lain */
+    }
   }
   window.addEventListener(LOCAL_EVENT, onLocal)
   window.addEventListener('storage', onStorage)
@@ -147,7 +258,7 @@ export function subscribeScores(onInsert: (entry: ScoreEntry) => void): () => vo
   const channel = supabase
     ?.channel('leaderboard-live')
     .on('postgres_changes', { event: 'INSERT', schema: 'public', table: 'leaderboard' }, (payload) =>
-      onInsert(payload.new as ScoreEntry),
+      safeEmit(payload.new),
     )
     .subscribe()
 

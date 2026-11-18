@@ -18,7 +18,7 @@ import { BoothQrShowcase } from '../components/QrCodeModal'
 import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
-import { backendMode, fetchTodayScores, sortScores, submitScore, subscribeScores } from '../lib/storage'
+import { backendMode, fetchTodayScores, sortScores, subscribeScores } from '../lib/storage'
 import { currentSessionTag, formatSeconds, formatSessionTag, formatSessionWindow, SESSION_TAGS, type SessionTag } from '../lib/utils'
 import type { GameId, ScoreEntry } from '../types'
 
@@ -63,9 +63,12 @@ export function LeaderboardScreen() {
 
   const reload = useCallback(async () => {
     setLoading(true)
-    const data = await fetchTodayScores()
-    setScores(data)
-    setLoading(false)
+    try {
+      const data = await fetchTodayScores()
+      setScores(data)
+    } finally {
+      setLoading(false)
+    }
   }, [])
 
   useEffect(() => {
@@ -78,7 +81,9 @@ export function LeaderboardScreen() {
     })
     const unsub = subscribeScores((entry) => {
       setScores((prev) => {
-        const map = new Map(prev.map((e) => [e.id, e]))
+        // Hapus data pratinjau demo (id "demo-*") begitu skor delegasi asli masuk
+        const realOnly = prev.filter((e) => !e.id.startsWith('demo-'))
+        const map = new Map(realOnly.map((e) => [e.id, e]))
         map.set(entry.id, entry)
         return [...map.values()]
       })
@@ -107,29 +112,40 @@ export function LeaderboardScreen() {
   const runnersUp = filtered.slice(1, 3)
   const rest = filtered.slice(3, 25)
 
-  const seedDemoScores = async () => {
-    setLoading(true)
-    const tag = currentSessionTag()
-    for (const p of DEMO_PLAYERS) {
-      await submitScore({
-        player_name: p.name,
-        institution: p.inst,
-        game: p.game,
-        score: p.score,
-        correct_count: p.correct,
-        total_questions: 5,
-        time_seconds: p.time,
-        session_tag: tag,
-      })
-    }
-    await reload()
+  /**
+   * Pratinjau layar TV saja (in-memory, TIDAK pernah memanggil submitScore / tidak masuk ke Supabase maupun localStorage)
+   * sehingga skor simulasi tidak pernah mencemari kompetisi hadiah Totebag Top 3 delegasi asli.
+   */
+  const seedDemoScores = () => {
+    const tag = sessionFilter === 'all' ? currentSessionTag() : sessionFilter
+    const now = new Date().toISOString()
+    const preview: ScoreEntry[] = DEMO_PLAYERS.map((p, idx) => ({
+      id: `demo-${tag}-${idx}`,
+      player_name: `${p.name} (Simulasi)`,
+      institution: p.inst,
+      game: p.game,
+      score: p.score,
+      correct_count: p.correct,
+      total_questions: 5,
+      time_seconds: p.time,
+      session_tag: tag,
+      created_at: now,
+    }))
+    setScores((prev) => {
+      const realOnly = prev.filter((e) => !e.id.startsWith('demo-'))
+      return realOnly.length > 0 ? realOnly : preview
+    })
   }
 
   const toggleFullscreen = () => {
-    if (!document.fullscreenElement) {
-      void document.documentElement.requestFullscreen?.()
-    } else {
-      void document.exitFullscreen?.()
+    try {
+      if (!document.fullscreenElement) {
+        void document.documentElement.requestFullscreen?.()?.catch(() => {})
+      } else {
+        void document.exitFullscreen?.()?.catch(() => {})
+      }
+    } catch {
+      /* abaikan bila fullscreen tidak didukung browser */
     }
   }
 
@@ -296,7 +312,7 @@ export function LeaderboardScreen() {
             <a href={ROUTE_PATHS.realvsai} className="btn-secondary">
               <ShieldAlert className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} /> Real vs AI
             </a>
-            <button onClick={() => void seedDemoScores()} className="btn-secondary">
+            <button onClick={seedDemoScores} className="btn-secondary">
               <Sparkles className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />{' '}
               {en ? 'Load Booth TV Demo Scores' : 'Muat Simulasi Skor TV Booth'}
             </button>

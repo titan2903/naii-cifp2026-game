@@ -77,7 +77,7 @@ export function Logo() {
           - Reverse (Red mark + White wordmark) di latar gelap
           - Full-color (Red mark + Black wordmark) di latar terang
           Tagline CIFP dihapus dari header: tidak muat di max-w-7xl & sudah ada di top bar. */}
-      <NaiiLogo variant={theme === 'dark' ? 'reverse' : 'full-color'} className="h-7 w-auto sm:h-9" />
+      <NaiiLogo variant={theme === 'dark' ? 'reverse' : 'full-color'} className="h-6 w-auto sm:h-9" />
     </a>
   )
 }
@@ -147,7 +147,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
       {/* MAIN NAVIGATION HEADER */}
       <header className="sticky top-0 z-20 border-b border-zinc-200/80 bg-[#F6F4F0]/90 backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-[#000000]/90">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3.5 py-2.5 sm:px-6 sm:py-3">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-1.5 px-2.5 py-2 sm:gap-2 sm:px-6 sm:py-3">
           <Logo />
 
           {/* DESKTOP SEGMENTED NAVIGATION */}
@@ -254,22 +254,22 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                 }
               >
                 <UserRound className="h-3.5 w-3.5 shrink-0 text-[#AD2B17]" strokeWidth={1.75} />
-                <span className="max-w-[3.75rem] truncate font-sans text-xs font-semibold normal-case tracking-normal min-[400px]:max-w-[5.2rem] sm:max-w-[9rem]">
+                <span className="max-w-[3.25rem] truncate font-sans text-xs font-semibold normal-case tracking-normal min-[410px]:max-w-[5rem] sm:max-w-[9rem]">
                   {confirmClear ? (en ? 'Reset?' : 'Reset?') : player.name}
                 </span>
-                <UserRoundX className="h-3.5 w-3.5 shrink-0 opacity-60" strokeWidth={1.75} />
+                <UserRoundX className="hidden h-3.5 w-3.5 shrink-0 opacity-60 min-[430px]:inline-block" strokeWidth={1.75} />
               </button>
             )}
 
             {/* LANGUAGE TOGGLE BUTTON (ID / EN) */}
             <button
               onClick={toggleLang}
-              className="btn-secondary min-h-9 !px-2 !py-1.5 font-mono text-xs text-zinc-700 dark:text-zinc-200 sm:min-h-10 sm:!px-3 sm:!py-2"
+              className="btn-secondary min-h-9 !px-1.5 !py-1.5 font-mono text-[11px] text-zinc-700 dark:text-zinc-200 sm:min-h-10 sm:!px-3 sm:!py-2 sm:text-xs"
               title={en ? 'Ganti ke Bahasa Indonesia (ID)' : 'Switch to English (EN)'}
               aria-label={en ? 'Switch language to Bahasa Indonesia' : 'Switch language to English'}
             >
               <Languages className="hidden h-4 w-4 text-[#AD2B17] sm:inline" strokeWidth={1.75} />
-              <span className="inline-flex items-center gap-1">
+              <span className="inline-flex items-center gap-0.5 sm:gap-1">
                 <span className={lang === 'id' ? 'font-extrabold text-[#AD2B17] dark:text-white' : 'opacity-60'}>
                   ID
                 </span>
@@ -282,7 +282,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
             <button
               onClick={toggleTheme}
-              className="btn-secondary !px-2.5 !py-2 text-xs text-zinc-700 dark:text-zinc-200 sm:!px-3"
+              className="btn-secondary min-h-9 !px-2 !py-1.5 text-xs text-zinc-700 dark:text-zinc-200 sm:min-h-10 sm:!px-3 sm:!py-2"
               title={
                 theme === 'dark'
                   ? en

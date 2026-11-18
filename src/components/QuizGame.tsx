@@ -20,7 +20,7 @@ import { coursesForQuiz } from '../data/personas'
 import { useCountdown } from '../hooks/useCountdown'
 import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { fetchTodayScores, sortScores, submitScore } from '../lib/storage'
-import { currentSessionTag, formatSessionTag, pickRandom } from '../lib/utils'
+import { currentSessionTag, formatSessionTag, pickRandom, shuffle } from '../lib/utils'
 import type { GameId, QuizItem, ScoreEntry } from '../types'
 import { CourseCta } from './CourseCta'
 import { TimerBar } from './TimerBar'
@@ -59,6 +59,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
 
   const [phase, setPhase] = useState<Phase>('intro')
   const [roundIds, setRoundIds] = useState<string[]>([])
+  const [optionPermutations, setOptionPermutations] = useState<Record<string, number[]>>({})
   const [index, setIndex] = useState(0)
   const [answers, setAnswers] = useState<Answer[]>([])
   const [entry, setEntry] = useState<ScoreEntry | null>(null)
@@ -74,11 +75,24 @@ export function QuizGame({ config }: { config: QuizConfig }) {
     }
   }, [])
 
-  // Resolve current round items from config.pool so switching ID <-> EN mid-round updates text immediately
+  // Resolve current round items from config.pool (with per-question shuffled options for grid trivia)
+  // so switching ID <-> EN mid-round updates text immediately while keeping the same shuffled order
   const round = useMemo(() => {
     const byId = new Map(config.pool.map((item) => [item.id, item]))
-    return roundIds.map((id) => byId.get(id)).filter((item): item is QuizItem => Boolean(item))
-  }, [config.pool, roundIds])
+    return roundIds
+      .map((id) => {
+        const base = byId.get(id)
+        if (!base) return null
+        const perm = optionPermutations[id]
+        if (!perm || config.layout !== 'grid' || perm.length !== base.options.length) return base
+        return {
+          ...base,
+          options: perm.map((origIdx) => base.options[origIdx]),
+          answer: perm.indexOf(base.answer),
+        }
+      })
+      .filter((item): item is QuizItem => Boolean(item))
+  }, [config.pool, config.layout, roundIds, optionPermutations])
 
   const current = round[index]
   const lastAnswer = answers[index]
@@ -87,10 +101,12 @@ export function QuizGame({ config }: { config: QuizConfig }) {
     (picked: number | null, elapsedMs: number) => {
       if (!current || answeredIndexRef.current === index) return
       answeredIndexRef.current = index
+      const safeElapsed =
+        picked === null ? durationMs : Math.max(250, Math.min(durationMs, Math.round(elapsedMs)))
       const correct = picked === current.answer
-      const remainingRatio = Math.max(0, (durationMs - elapsedMs) / durationMs)
+      const remainingRatio = Math.max(0, (durationMs - safeElapsed) / durationMs)
       const points = correct ? BASE_POINTS + Math.round(MAX_SPEED_BONUS * remainingRatio) : 0
-      setAnswers((prev) => [...prev, { picked, correct, points, elapsedMs }])
+      setAnswers((prev) => [...prev, { picked, correct, points, elapsedMs: safeElapsed }])
       setPhase('reveal')
     },
     [current, durationMs, index],
@@ -103,6 +119,13 @@ export function QuizGame({ config }: { config: QuizConfig }) {
     roundIdRef.current += 1
     answeredIndexRef.current = -1
     const pickedItems = pickRandom(config.pool, config.questionsPerRound)
+    const perms: Record<string, number[]> = {}
+    if (config.layout === 'grid') {
+      for (const item of pickedItems) {
+        perms[item.id] = shuffle(item.options.map((_, idx) => idx))
+      }
+    }
+    setOptionPermutations(perms)
     setRoundIds(pickedItems.map((q) => q.id))
     setIndex(0)
     setAnswers([])
@@ -127,19 +150,23 @@ export function QuizGame({ config }: { config: QuizConfig }) {
         score,
         correct_count: all.filter((a) => a.correct).length,
         total_questions: all.length,
-        time_seconds: Math.round(all.reduce((s, a) => s + a.elapsedMs, 0) / 100) / 10,
+        time_seconds: Math.max(0.5, Math.round(all.reduce((s, a) => s + a.elapsedMs, 0) / 100) / 10),
         session_tag: currentSessionTag(),
       })
       if (!mountedRef.current || roundIdRef.current !== currentRoundId) return
       setEntry(saved)
-      const list = sortScores(
-        (await fetchTodayScores()).filter((e) => e.game === config.game && e.session_tag === saved.session_tag),
-      )
+      const list = sortScores((await fetchTodayScores()).filter((e) => e.session_tag === saved.session_tag))
       if (!mountedRef.current || roundIdRef.current !== currentRoundId) return
-      const pos = list.findIndex((e) => e.id === saved.id)
+      const pos = list.findIndex(
+        (e) =>
+          e.id === saved.id ||
+          (e.player_name.trim().toLowerCase() === saved.player_name.trim().toLowerCase() &&
+            e.institution.trim().toLowerCase() === saved.institution.trim().toLowerCase()),
+      )
       const r = pos >= 0 ? pos + 1 : null
       setRank(r)
-      const ratio = score / (all.length * (BASE_POINTS + MAX_SPEED_BONUS))
+      const maxPossible = all.length * (BASE_POINTS + MAX_SPEED_BONUS)
+      const ratio = maxPossible > 0 ? score / maxPossible : 0
       if ((r !== null && r <= 3) || ratio >= 0.8) {
         confetti({
           particleCount: 130,
@@ -172,7 +199,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
   // Dukungan keyboard (kiosk): angka 1–4 / A–D untuk menjawab, Enter untuk lanjut
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (passportOpen || qrModalOpen) return
+      if (e.repeat || passportOpen || qrModalOpen) return
       const tag = (e.target as HTMLElement | null)?.tagName
       if (tag === 'INPUT' || tag === 'TEXTAREA') return
       if (phase === 'question' && current) {
@@ -180,7 +207,9 @@ export function QuizGame({ config }: { config: QuizConfig }) {
         const l = LETTERS.indexOf(e.key.toUpperCase())
         const i = Number.isInteger(n) && n >= 0 ? n : l
         if (i >= 0 && i < current.options.length) answer(i, getElapsedMs())
-      } else if (phase === 'reveal' && e.key === 'Enter') next()
+      } else if (phase === 'reveal' && e.key === 'Enter' && tag !== 'BUTTON' && tag !== 'A') {
+        next()
+      }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
@@ -301,7 +330,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           </a>
         </div>
         <div className="space-y-4">
-          <CourseCta courses={coursesForQuiz(score / max, lang)} />
+          <CourseCta courses={coursesForQuiz(max > 0 ? score / max : 0, lang)} />
         </div>
       </div>
     )

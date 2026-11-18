@@ -145,9 +145,11 @@ function SimulatorFlow() {
 
   const matchedPairs = useMemo(() => {
     const lower = customNote.toLowerCase()
-    return BONUS_KEYWORD_PAIRS.filter(
-      (p) => lower.includes(p.id.toLowerCase()) || lower.includes(p.en.toLowerCase()),
-    )
+    const hasBoundary = (word: string) => {
+      const esc = word.toLowerCase().replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+      return new RegExp(`(^|[^a-z0-9])${esc}([^a-z0-9]|$)`, 'i').test(lower)
+    }
+    return BONUS_KEYWORD_PAIRS.filter((p) => hasBoundary(p.id) || hasBoundary(p.en))
   }, [customNote])
 
   const chooseScenario = (sc: Scenario) => {
@@ -190,7 +192,7 @@ function SimulatorFlow() {
   }
 
   const runSimulation = () => {
-    if (!scenario || !selectedOption || !player) return
+    if (submitted || !scenario || !selectedOption || !player) return
     const res = evaluateDecision(scenario, selectedOption, customNote, lang)
     setSubmitted(true)
     unlockGameStamp(`Simulator (${res.persona.title})`, res.score)
@@ -568,15 +570,23 @@ function SimulatorFlow() {
       ]
 
   const handleDownload = async () => {
-    if (!player) return
-    await downloadPersonaCard(player, result, lang)
-    setShareStatusKey('downloaded')
+    if (!player || !result) return
+    try {
+      await downloadPersonaCard(player, result, lang)
+      setShareStatusKey('downloaded')
+    } catch {
+      /* abaikan error canvas/download pada browser terbatas */
+    }
   }
 
   const handleShare = async () => {
-    if (!player) return
-    const mode = await sharePersonaCard(player, result, lang)
-    setShareStatusKey(mode === 'shared' ? 'shared' : 'fallback')
+    if (!player || !result) return
+    try {
+      const mode = await sharePersonaCard(player, result, lang)
+      setShareStatusKey(mode === 'shared' ? 'shared' : 'fallback')
+    } catch {
+      /* abaikan pembatalan/error share API */
+    }
   }
 
   return (

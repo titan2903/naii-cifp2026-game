@@ -49,7 +49,8 @@ export async function drawPersonaCard(
   const canvas = document.createElement('canvas')
   canvas.width = W
   canvas.height = H
-  const ctx = canvas.getContext('2d')!
+  const ctx = canvas.getContext('2d')
+  if (!ctx) throw new Error('Canvas 2D context tidak tersedia')
   const cx = W / 2
 
   // Latar resmi NAII Dark Red (#3A0900) -> Black (#000000)
@@ -198,8 +199,10 @@ export async function downloadPersonaCard(player: Player, r: SimulationResult, l
   const a = document.createElement('a')
   a.href = url
   a.download = `persona-diplomat-${player.name.replace(/\s+/g, '-').toLowerCase()}.png`
+  document.body.appendChild(a)
   a.click()
-  setTimeout(() => URL.revokeObjectURL(url), 2000)
+  a.remove()
+  setTimeout(() => URL.revokeObjectURL(url), 4000)
 }
 
 export async function sharePersonaCard(

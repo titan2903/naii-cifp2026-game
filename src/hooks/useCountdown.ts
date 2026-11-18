@@ -27,10 +27,16 @@ export function useCountdown(durationMs: number, active: boolean, resetKey: unkn
         expireRef.current()
       }
     }, 80)
-    return () => window.clearInterval(id)
+    return () => {
+      window.clearInterval(id)
+      startRef.current = 0
+    }
   }, [active, durationMs, resetKey])
 
-  const getElapsedMs = useCallback(() => Math.min(durationMs, performance.now() - startRef.current), [durationMs])
+  const getElapsedMs = useCallback(() => {
+    if (startRef.current <= 0) return durationMs
+    return Math.max(0, Math.min(durationMs, performance.now() - startRef.current))
+  }, [durationMs])
   const remaining = state.key === resetKey ? state.remaining : durationMs
 
   return { remaining, getElapsedMs }

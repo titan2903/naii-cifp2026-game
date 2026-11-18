@@ -4,7 +4,24 @@ import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { NaiiStarMark } from './NaiiBrand'
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const EMAIL_RE = /^[^\s@]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
+const NAME_LETTER_RE = /[a-zA-Z\u00C0-\u024F]{2,}/
+const BLOCKED_EMAILS = new Set([
+  'a@a.com',
+  'a@b.com',
+  'test@test.com',
+  'admin@admin.com',
+  'user@user.com',
+  '123@123.com',
+  'asdf@asdf.com',
+])
+
+function isValidEmail(raw: string): boolean {
+  const lower = raw.trim().toLowerCase()
+  if (!EMAIL_RE.test(lower)) return false
+  if (BLOCKED_EMAILS.has(lower) || lower.endsWith('@example.com') || lower.endsWith('@test.com')) return false
+  return true
+}
 
 type ErrorKey = 'name' | 'email' | 'consent' | null
 
@@ -23,10 +40,10 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
     e.preventDefault()
     const n = name.trim()
     const em = email.trim()
-    if (n.length < 2) {
+    if (n.length < 2 || !NAME_LETTER_RE.test(n)) {
       return setErrorKey('name')
     }
-    if (!em || !EMAIL_RE.test(em)) {
+    if (!em || !isValidEmail(em)) {
       return setErrorKey('email')
     }
     if (!consent) {

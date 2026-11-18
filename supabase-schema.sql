@@ -9,10 +9,10 @@ create table if not exists public.leaderboard (
   player_name text not null check (char_length(player_name) between 2 and 50),
   institution text default 'Umum' check (char_length(institution) <= 80),
   game text not null default 'trivia' check (game in ('trivia', 'realvsai', 'battle')),
-  score integer not null default 0 check (score >= 0 and score <= 750),
+  score integer not null default 0 check (score >= correct_count * 100 and score <= correct_count * 150 and score <= 750),
   correct_count integer not null default 0 check (correct_count >= 0 and correct_count <= total_questions),
-  total_questions integer not null default 5 check (total_questions between 1 and 15),
-  time_seconds numeric(6, 2) default 0 check (time_seconds >= 0 and time_seconds <= 300),
+  total_questions integer not null default 5 check (total_questions = 5),
+  time_seconds numeric(6, 2) default 0.5 check (time_seconds >= 0.5 and time_seconds <= 300),
   session_tag text default 'Break Pagi' check (session_tag in ('Break Pagi', 'Break Siang', 'Break Sore')),
   created_at timestamp with time zone default timezone('utc'::text, now()) not null
 );
@@ -30,7 +30,14 @@ create policy "Allow anyone to read leaderboard"
 
 create policy "Allow anyone to insert valid score"
   on public.leaderboard for insert
-  with check (score >= 0 and score <= 750 and char_length(player_name) between 2 and 50);
+  with check (
+    total_questions = 5
+    and correct_count between 0 and 5
+    and score >= correct_count * 100
+    and score <= correct_count * 150
+    and time_seconds between 0.5 and 300
+    and char_length(player_name) between 2 and 50
+  );
 
 -- Aktifkan Supabase Realtime dengan full payload agar layar TV booth update instan
 alter table public.leaderboard replica identity full;

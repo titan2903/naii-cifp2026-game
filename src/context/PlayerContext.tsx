@@ -4,7 +4,32 @@ import type { PassportState, Player } from '../types'
 
 const KEY = 'naii-cifp26:player-v2'
 const PASSPORT_KEY = 'naii-cifp26:passport-v2'
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const CLAIMED_EMAILS_KEY = 'naii-cifp26:claimed-emails'
+const EMAIL_RE = /^[^\s@]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
+const TICKET_RE = /^NAII-26-[2-9A-HJ-NP-Z]{4}$/
+
+function readClaimedEmails(): string[] {
+  try {
+    const raw = localStorage.getItem(CLAIMED_EMAILS_KEY)
+    const parsed = raw ? (JSON.parse(raw) as unknown) : []
+    return Array.isArray(parsed) ? parsed.filter((x): x is string => typeof x === 'string') : []
+  } catch {
+    return []
+  }
+}
+
+function recordClaimedEmail(email?: string) {
+  if (!email) return
+  const key = email.trim().toLowerCase()
+  if (!key) return
+  try {
+    const list = new Set(readClaimedEmails())
+    list.add(key)
+    localStorage.setItem(CLAIMED_EMAILS_KEY, JSON.stringify([...list]))
+  } catch {
+    /* abaikan */
+  }
+}
 
 function generateTicketCode(): string {
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ'
@@ -67,12 +92,31 @@ function loadPlayer(): Player | null {
   }
 }
 
+function isValidPassport(raw: unknown): raw is PassportState {
+  if (!raw || typeof raw !== 'object') return false
+  const p = raw as PassportState
+  if (typeof p.ticketCode !== 'string' || !TICKET_RE.test(p.ticketCode)) return false
+  if (!p.stamp1 || typeof p.stamp1 !== 'object' || typeof p.stamp1.unlocked !== 'boolean') return false
+  if (p.stamp1.unlocked) {
+    if (p.stamp1.gameLabel !== undefined && typeof p.stamp1.gameLabel !== 'string') return false
+    if (
+      p.stamp1.score !== undefined &&
+      (typeof p.stamp1.score !== 'number' || !Number.isFinite(p.stamp1.score) || p.stamp1.score < 0 || p.stamp1.score > 750)
+    ) {
+      return false
+    }
+  }
+  if (!p.stamp2 || typeof p.stamp2 !== 'object' || typeof p.stamp2.unlocked !== 'boolean') return false
+  if (typeof p.claimedByStaff !== 'boolean') return false
+  return true
+}
+
 function loadPassport(): PassportState {
   try {
     const raw = localStorage.getItem(PASSPORT_KEY)
     if (raw) {
-      const parsed = JSON.parse(raw) as PassportState
-      if (parsed && parsed.ticketCode && parsed.stamp1 && parsed.stamp2) {
+      const parsed = JSON.parse(raw) as unknown
+      if (isValidPassport(parsed)) {
         return parsed
       }
     }
@@ -109,6 +153,20 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       sessionStorage.setItem(KEY, JSON.stringify(p))
     } catch {
       /* mode privat / storage penuh */
+    }
+    // Jika email ini sebelumnya sudah mengklaim Pin di perangkat ini, pertahankan status claimedByStaff
+    const emailKey = p.email.trim().toLowerCase()
+    if (emailKey && readClaimedEmails().includes(emailKey)) {
+      setPassportState((prev) => {
+        if (prev.claimedByStaff) return prev
+        const next: PassportState = {
+          ...prev,
+          claimedByStaff: true,
+          claimedAt: prev.claimedAt ?? new Date().toISOString(),
+        }
+        persistPassport(next)
+        return next
+      })
     }
     void saveLead(p, 'booth-registration')
   }, [])
@@ -185,6 +243,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
   )
 
   const markTicketClaimed = useCallback(() => {
+    recordClaimedEmail(player?.email)
     setPassportState((prev) => {
       const next: PassportState = {
         ...prev,
@@ -194,7 +253,7 @@ export function PlayerProvider({ children }: { children: ReactNode }) {
       persistPassport(next)
       return next
     })
-  }, [])
+  }, [player?.email])
 
   const stampCount = (passport.stamp1.unlocked ? 1 : 0) + (passport.stamp2.unlocked ? 1 : 0)
 
