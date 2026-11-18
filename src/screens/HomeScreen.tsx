@@ -14,7 +14,6 @@ import {
   Layers,
   Medal,
   Play,
-  QrCode,
   Scale,
   ShieldAlert,
   Sparkles,
@@ -24,13 +23,13 @@ import {
   X,
   Zap,
 } from 'lucide-react'
-import { NaiiLogo, NaiiStarMark, NaiiWatermark } from '../components/NaiiBrand'
+import { NaiiStarMark, NaiiWatermark } from '../components/NaiiBrand'
 import { BoothQrShowcase } from '../components/QrCodeModal'
 import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
 import { NAII_URL } from '../data/personas'
 import { getPromptMissions } from '../data/promptBattle'
-import { ROUTE_PATHS, type Route } from '../hooks/useHashRoute'
+import { ROUTE_PATHS } from '../hooks/useHashRoute'
 import { evaluatePrompt } from '../lib/evaluatePrompt'
 import { fetchTodayScores, sortScores, subscribeScores } from '../lib/storage'
 import {
@@ -158,7 +157,7 @@ const COPILOT_EXAMPLES = {
   ],
 } as const
 
-export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
+export function HomeScreen() {
   const { lang } = useLanguage()
   const { passport, stampCount, setPassportOpen, setQrModalOpen } = usePlayer()
   const en = lang === 'en'
@@ -217,81 +216,108 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
 
   return (
     <div className="relative space-y-6 animate-rise sm:space-y-8">
-      {/* 1. CLEAN INTRO BANNER: LOGO NAII + 1 OPENING SENTENCE + VISUAL BENEFIT PILLS */}
-      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/25 bg-[#3A0900] bg-diplomatic-grid p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.12)] sm:rounded-[1.75rem] sm:p-8">
+      {/* 1. CLEAN INTRO BANNER: ASYMMETRIC CATCHY TAGLINE + BLUE REWARD PILLS + ORBITAL EMBLEM */}
+      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/30 bg-[#3A0900] bg-diplomatic-grid p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.14)] sm:rounded-[1.75rem] sm:p-8">
+        <div
+          aria-hidden
+          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C89D54]/70 to-transparent"
+        />
         <div
           aria-hidden
           className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,157,84,0.22),transparent_58%)]"
         />
-        <NaiiWatermark className="absolute -bottom-24 -right-24 h-60 w-60 opacity-75 sm:h-80 sm:w-80" />
+        <NaiiWatermark className="absolute -bottom-24 -right-24 h-60 w-60 opacity-65 sm:h-80 sm:w-80 lg:hidden" />
 
-        <div className="relative z-10 flex flex-col justify-between gap-5 sm:flex-row sm:items-center">
-          <div className="space-y-3.5">
-            <div className="flex flex-wrap items-center gap-2.5">
-              <NaiiLogo variant="white" className="h-7 w-auto sm:h-9" />
-              <span className="h-4 w-px bg-white/25" />
-              <span className="rounded-full border border-[#C89D54]/40 bg-[#C89D54]/15 px-2.5 py-0.5 font-mono text-[10px] font-bold tracking-wider text-[#FFF4DE] sm:text-[11px]">
-                10TH CIFP 2026
-              </span>
+        <div className="relative z-10 grid items-center gap-6 lg:grid-cols-[1.6fr_0.4fr]">
+          <div className="space-y-3.5 sm:space-y-4">
+            <div className="space-y-2">
+              <h1 className="text-2xl font-extrabold tracking-tight leading-[1.1] text-white sm:text-[2.2rem] lg:text-[2.5rem]">
+                {en ? (
+                  <>
+                    Play Games, <span className="text-[#F3CA7A]">Win Prizes!</span>
+                  </>
+                ) : (
+                  <>
+                    Main Game, <span className="text-[#F3CA7A]">Menangkan Hadiah!</span>
+                  </>
+                )}
+              </h1>
+
+              <p className="max-w-[62ch] text-sm leading-relaxed text-white/85 sm:text-base lg:max-w-none">
+                {en
+                  ? 'Pick one short game below to earn your FPCI Stamp & Sticker, then unlock booth rewards:'
+                  : 'Pilih satu game singkat di bawah untuk mendapatkan Stamp FPCI & Stiker, lalu klaim hadiah booth:'}
+              </p>
             </div>
 
-            <h1 className="max-w-[52ch] text-base font-bold leading-snug text-white sm:text-xl">
-              {en
-                ? 'Pick one short game below to earn your FPCI Stamp & Sticker, then unlock booth rewards:'
-                : 'Pilih satu game singkat di bawah untuk mendapatkan Stamp FPCI & Stiker, lalu klaim hadiah booth:'}
-            </h1>
-
-            <div className="flex flex-wrap gap-2 font-mono text-[11px]">
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/30 px-2.5 py-1 text-white/95">
-                <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+            <div className="flex flex-wrap gap-2 pt-0.5 font-mono text-[11px]">
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#2F78B8]/60 bg-[#0B192C]/92 px-2.5 py-1.5 text-[#E8F3FF] shadow-[inset_0_1px_0_rgba(125,196,255,0.18)]">
+                <Stamp className="h-3.5 w-3.5 text-[#5BB3EC]" strokeWidth={1.75} />
                 {en ? '1 Game → FPCI Stamp & Sticker' : '1 Game → Stamp FPCI & Stiker'}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-white/15 bg-black/30 px-2.5 py-1 text-white/95">
-                <Ticket className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
-                {en ? 'naii.co Account → NAII Pin' : 'Akun naii.co → Pin NAII'}
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#2F78B8]/60 bg-[#0B192C]/92 px-2.5 py-1.5 text-[#E8F3FF] shadow-[inset_0_1px_0_rgba(125,196,255,0.18)]">
+                <Ticket className="h-3.5 w-3.5 text-[#5BB3EC]" strokeWidth={1.75} />
+                {en ? 'Open naii.co Account → NAII Pin' : 'Buka Akun naii.co → Pin NAII'}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#C89D54]/45 bg-[#C89D54]/15 px-2.5 py-1 font-bold text-[#FFF4DE]">
-                <Gift className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
-                {en ? 'Top 3 / Break → Totebag' : 'Top 3 / Sesi → Totebag'}
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#3D98E0]/80 bg-[#0E223A]/95 px-2.5 py-1.5 font-bold text-[#F0F7FF] shadow-[inset_0_1px_0_rgba(147,210,255,0.24)]">
+                <Gift className="h-3.5 w-3.5 text-[#6EC1F7]" strokeWidth={1.75} />
+                {en ? 'Top 3 per Break → Totebag' : 'Top 3 per Sesi → Totebag'}
               </span>
             </div>
           </div>
 
-          <button
-            type="button"
-            onClick={() => setQrModalOpen(true)}
-            className="inline-flex min-h-11 shrink-0 items-center justify-center gap-2 rounded-xl border border-[#C89D54]/60 bg-black/40 px-4 py-2.5 text-xs font-bold text-[#FFF4DE] shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] backdrop-blur-xs transition hover:border-[#C89D54] hover:bg-black/60 active:scale-[0.98]"
-          >
-            <QrCode className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
-            <span>Scan QR Code</span>
-          </button>
+          {/* DESKTOP ARCHITECTURAL ORBITAL EMBLEM */}
+          <div aria-hidden className="hidden lg:flex lg:justify-end">
+            <div className="relative grid h-40 w-40 place-items-center">
+              <div className="absolute inset-0 rounded-full border border-dashed border-[#C89D54]/35 animate-globe" />
+              <div className="absolute inset-3.5 rounded-full border border-white/12 bg-black/25 backdrop-blur-xs shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]" />
+              <div className="relative flex flex-col items-center gap-1.5 text-center">
+                <NaiiStarMark color="#F3CA7A" className="h-11 w-11 drop-shadow-[0_6px_16px_rgba(200,157,84,0.35)]" />
+                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#FFF4DE]/80">
+                  {en ? '~45 SEC PLAY' : 'MAIN ~45 DTK'}
+                </span>
+              </div>
+              <span className="absolute -top-1.5 rounded-full border border-[#3D98E0]/60 bg-[#0E223A] px-2 py-0.5 font-mono text-[9px] font-bold tracking-wider text-[#E8F3FF]">
+                {en ? '3 TIER PRIZES' : '3 HADIAH'}
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
-      {/* 2. ASYMMETRIC GAME STAGE (1 FEATURED LEAD CARD + 2 STACKED CARDS) */}
+      {/* 2. ASYMMETRIC GAME STAGE (1 FEATURED LEAD CARD + 2 DISTINCT STACKED CARDS) */}
       <section aria-label={en ? 'Choose a Game' : 'Pilih Permainan'} className="grid grid-cols-1 gap-4 lg:grid-cols-12">
         {/* LEFT FEATURE ANCHOR (6 COLS): SPEED TRIVIA */}
         <a
           href={ROUTE_PATHS.trivia}
-          className="glass group relative flex flex-col justify-between overflow-hidden border-[#AD2B17]/40 bg-gradient-to-br from-white via-white to-[#AD2B17]/[0.05] p-6 transition duration-300 hover:-translate-y-1 hover:border-[#AD2B17]/75 hover:shadow-[0_22px_44px_-16px_rgba(173,43,23,0.28)] dark:from-[#18100E] dark:via-[#140E0C] dark:to-[#240A06] sm:p-7 lg:col-span-6"
+          style={{ animationDelay: '60ms' }}
+          className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-[#AD2B17]/45 bg-gradient-to-br from-white via-[#FFF9F6] to-[#AD2B17]/[0.1] p-5 transition duration-300 hover:-translate-y-1 hover:border-[#AD2B17]/80 hover:shadow-[0_24px_48px_-16px_rgba(173,43,23,0.3)] dark:from-[#1B100E] dark:via-[#140E0C] dark:to-[#290B06] sm:p-7 lg:col-span-6"
         >
           <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#AD2B17] via-[#C89D54] to-[#AD2B17]" />
-          <div className="space-y-4 pt-1">
+          <span
+            aria-hidden
+            className="pointer-events-none absolute right-5 top-16 select-none font-mono text-[5.5rem] font-extrabold leading-none tracking-tighter text-[#AD2B17]/[0.06] dark:text-white/[0.04] sm:right-6 sm:top-20"
+          >
+            01
+          </span>
+
+          <div className="relative z-10 space-y-4 pt-1">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2.5">
-                <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#AD2B17] text-white shadow-[0_8px_20px_-6px_rgba(173,43,23,0.65)]">
+              <div className="flex items-center gap-3">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-[#AD2B17] to-[#75180A] text-white shadow-[0_10px_22px_-6px_rgba(173,43,23,0.65),inset_0_1px_0_rgba(255,255,255,0.28)]">
                   <Zap className="h-5 w-5" strokeWidth={1.75} />
                 </span>
                 <div>
-                  <span className="block font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#AD2B17] dark:bg-[#C89D54]" />
                     {en ? 'FASTEST TO STAMP' : 'JALUR TERCEPAT'}
                   </span>
-                  <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
+                  <span className="block font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
                     ~45–60 {en ? 'SEC' : 'DTK'} · {en ? '5 Questions' : '5 Soal Acak'}
                   </span>
                 </div>
               </div>
-              <span className="chip !border-[#AD2B17]/30 !bg-[#AD2B17]/10 !font-bold !text-[#AD2B17] dark:!text-[#FFF4DE]">
+              <span className="chip !border-[#AD2B17]/35 !bg-[#AD2B17]/10 !font-bold !text-[#AD2B17] dark:!text-[#FFF4DE]">
                 MAX 750 PTS
               </span>
             </div>
@@ -308,12 +334,12 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
             </div>
           </div>
 
-          <div className="mt-6 flex items-center justify-between border-t border-zinc-200/80 pt-4 dark:border-white/[0.08]">
+          <div className="relative z-10 mt-6 flex items-center justify-between gap-3 border-t border-zinc-200/80 pt-4 dark:border-white/[0.08]">
             <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
-              <Stamp className="h-3.5 w-3.5 text-[#AD2B17] dark:text-[#C89D54]" strokeWidth={1.75} />
+              <Stamp className="h-3.5 w-3.5 shrink-0 text-[#AD2B17] dark:text-[#C89D54]" strokeWidth={1.75} />
               {en ? 'Unlocks FPCI Stamp + Sticker' : 'Membuka Stamp FPCI + Stiker'}
             </span>
-            <span className="inline-flex items-center gap-1.5 rounded-xl bg-[#AD2B17] px-4 py-2 text-xs font-bold text-white shadow-xs transition group-hover:bg-[#be311b]">
+            <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-[#AD2B17] px-4 py-2 text-xs font-bold text-white shadow-[0_8px_18px_-6px_rgba(173,43,23,0.55),inset_0_1px_0_rgba(255,255,255,0.2)] transition group-hover:bg-[#be311b]">
               {en ? 'Play Trivia' : 'Main Trivia'}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
             </span>
@@ -322,24 +348,31 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
 
         {/* RIGHT STACKED PAIR (6 COLS): REAL VS AI + SIMULATOR */}
         <div className="grid grid-cols-1 gap-4 lg:col-span-6">
-          {/* GAME 2: REAL VS AI */}
+          {/* GAME 2: REAL VS AI (FORENSIC NAVY ACCENT) */}
           <a
             href={ROUTE_PATHS.realvsai}
-            className="glass group relative flex flex-col justify-between overflow-hidden p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#AD2B17]/60 hover:shadow-[0_18px_36px_-16px_rgba(173,43,23,0.22)] sm:p-6"
+            style={{ animationDelay: '130ms' }}
+            className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-l-[3.5px] border-l-[#2F78B8] bg-gradient-to-br from-[#0B192C]/[0.045] via-white to-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#2F78B8]/70 hover:shadow-[0_18px_36px_-16px_rgba(47,120,184,0.24)] dark:from-[#0B192C]/60 dark:via-[#140E0C] dark:to-[#140E0C] sm:p-6"
           >
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -bottom-4 right-5 select-none font-mono text-[4.5rem] font-extrabold leading-none tracking-tighter text-[#2F78B8]/[0.07] dark:text-[#5BB3EC]/[0.05]"
+            >
+              02
+            </span>
+            <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-zinc-200 bg-zinc-100 text-[#AD2B17] dark:border-white/15 dark:bg-white/10 dark:text-[#C89D54]">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#2F78B8]/40 bg-[#0B192C] text-[#6EC1F7] shadow-xs">
                     <ShieldAlert className="h-4 w-4" strokeWidth={1.75} />
                   </span>
-                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45]">
+                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#0E4A7B] dark:text-white dark:group-hover:text-[#6EC1F7]">
                     Real vs AI
                   </h2>
                   <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-bold text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-200">
                     ~45 {en ? 'SEC' : 'DTK'}
                   </span>
-                  <span className="font-mono text-[10px] font-bold text-[#AD2B17] dark:text-[#C89D54]">
+                  <span className="font-mono text-[10px] font-bold text-[#1D5E96] dark:text-[#6EC1F7]">
                     MAX 750 PTS
                   </span>
                 </div>
@@ -350,31 +383,38 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 </p>
               </div>
 
-              <span className="inline-flex shrink-0 items-center justify-center gap-1 rounded-xl bg-[#AD2B17]/10 px-3.5 py-2 text-xs font-bold text-[#AD2B17] transition group-hover:bg-[#AD2B17] group-hover:text-white dark:bg-[#AD2B17]/25 dark:text-[#FFF4DE]">
+              <span className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-[#2F78B8]/35 bg-[#0B192C]/10 px-4 py-2 text-xs font-bold text-[#0E4A7B] transition group-hover:bg-[#0B192C] group-hover:text-[#E8F3FF] dark:bg-[#0B192C]/80 dark:text-[#E8F3FF] dark:group-hover:bg-[#2F78B8] sm:self-center">
                 {en ? 'Play Now' : 'Mainkan'}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
               </span>
             </div>
           </a>
 
-          {/* GAME 3: CRISIS SIMULATOR */}
+          {/* GAME 3: CRISIS SIMULATOR (IMPERIAL BRASS GOLD ACCENT) */}
           <a
             href={ROUTE_PATHS.simulator}
-            className="glass group relative flex flex-col justify-between overflow-hidden p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#C89D54]/70 hover:shadow-[0_18px_36px_-16px_rgba(200,157,84,0.24)] sm:p-6"
+            style={{ animationDelay: '200ms' }}
+            className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-l-[3.5px] border-l-[#C89D54] bg-gradient-to-br from-[#C89D54]/[0.1] via-white to-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#C89D54]/80 hover:shadow-[0_18px_36px_-16px_rgba(200,157,84,0.26)] dark:from-[#C89D54]/[0.14] dark:via-[#140E0C] dark:to-[#140E0C] sm:p-6"
           >
-            <div className="flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
+            <span
+              aria-hidden
+              className="pointer-events-none absolute -bottom-4 right-5 select-none font-mono text-[4.5rem] font-extrabold leading-none tracking-tighter text-[#C89D54]/[0.1] dark:text-[#C89D54]/[0.06]"
+            >
+              03
+            </span>
+            <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#C89D54]/40 bg-[#C89D54]/15 text-[#9A6F22] dark:text-[#C89D54]">
-                    <Globe2 className="h-4 w-4" strokeWidth={1.75} />
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#C89D54]/50 bg-gradient-to-br from-[#C89D54] to-[#9A6F22] text-[#220600] shadow-xs">
+                    <Globe2 className="h-4 w-4" strokeWidth={1.85} />
                   </span>
-                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#C89D54]">
+                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#9A6F22] dark:text-white dark:group-hover:text-[#F3CA7A]">
                     Simulator
                   </h2>
                   <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-bold text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-200">
                     ~60 {en ? 'SEC' : 'DTK'}
                   </span>
-                  <span className="chip !border-[#C89D54]/45 !bg-[#C89D54]/10 !px-2 !py-0.5 !text-[10px] !text-[#9A6F22] dark:!text-[#C89D54]">
+                  <span className="chip !border-[#C89D54]/55 !bg-[#C89D54]/15 !px-2 !py-0.5 !text-[10px] !font-bold !text-[#8B621B] dark:!text-[#F3CA7A]">
                     IG STORY CARD
                   </span>
                 </div>
@@ -385,7 +425,7 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
                 </p>
               </div>
 
-              <span className="inline-flex shrink-0 items-center justify-center gap-1 rounded-xl bg-[#AD2B17]/10 px-3.5 py-2 text-xs font-bold text-[#AD2B17] transition group-hover:bg-[#AD2B17] group-hover:text-white dark:bg-[#AD2B17]/25 dark:text-[#FFF4DE]">
+              <span className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-[#C89D54]/50 bg-[#C89D54]/15 px-4 py-2 text-xs font-bold text-[#7C5616] transition group-hover:bg-[#9A6F22] group-hover:text-white dark:bg-[#C89D54]/20 dark:text-[#FFF4DE] dark:group-hover:bg-[#C89D54] dark:group-hover:text-[#220600] sm:self-center">
                 {en ? 'Play Now' : 'Mainkan'}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
               </span>
@@ -394,125 +434,65 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
         </div>
       </section>
 
-      {/* 3. ALUR CEPAT (2 LANGKAH) & COMPACT SHOWCASE LEADERBOARD CARD */}
-      <section
-        aria-label={en ? 'Booth Passport 2 Quick Steps' : 'Alur Cepat 2 Langkah'}
-        className="glass border-[#C89D54]/40 p-4 sm:p-6"
-      >
-        <div className="mb-4 flex flex-col justify-between gap-2.5 border-b border-zinc-200/80 pb-3.5 dark:border-white/10 sm:flex-row sm:items-center">
-          <div className="flex flex-wrap items-center gap-2">
-            <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[10px] font-bold tracking-wider uppercase text-white sm:text-[11px]">
-              <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
-              {en ? 'QUICK FLOW // 2 STEPS' : 'ALUR CEPAT // 2 LANGKAH'}
+      {/* 3. LIVE PASSPORT PROGRESS STRIP (ONLY WHEN PLAYER HAS UNLOCKED >= 1 STAMP) */}
+      {stampCount > 0 && (
+        <div className="flex flex-col justify-between gap-3 rounded-2xl border border-emerald-500/35 bg-emerald-500/[0.08] px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] dark:border-emerald-400/30 dark:bg-emerald-500/[0.1] sm:flex-row sm:items-center sm:px-6">
+          <div className="flex items-center gap-3">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white">
+              {stampCount === 2 ? <Ticket className="h-4 w-4" strokeWidth={2} /> : <Check className="h-4 w-4" strokeWidth={2.25} />}
             </span>
-            <span className="font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
-              {en
-                ? '1 Short Game (FPCI Stamp & Sticker) + naii.co Account (Pin)'
-                : '1 Game Singkat (Stamp FPCI & Stiker) + Akun naii.co (Pin)'}
-            </span>
+            <div>
+              <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+                {stampCount === 2
+                  ? en
+                    ? `CLAIM TICKET ACTIVE · ${passport.ticketCode}`
+                    : `TIKET KLAIM AKTIF · ${passport.ticketCode}`
+                  : en
+                    ? 'PASSPORT 1/2 UNLOCKED · FPCI STAMP & STICKER READY'
+                    : 'PASPOR 1/2 TERBUKA · STAMP FPCI & STIKER SIAP'}
+              </p>
+              <p className="text-xs font-bold text-zinc-900 dark:text-white sm:text-sm">
+                {stampCount === 2
+                  ? en
+                    ? 'Show your ticket to booth staff to redeem your Official NAII Pin.'
+                    : 'Tunjukkan tiket ke panitia booth untuk klaim Pin Resmi NAII.'
+                  : `${passport.stamp1.gameLabel} (${formatStampScore(passport.stamp1.gameLabel, passport.stamp1.score)}) · ${
+                      en ? 'Next: verify www.naii.co account → NAII Pin' : 'Lanjut: buka akun www.naii.co → Pin NAII'
+                    }`}
+              </p>
+            </div>
           </div>
 
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className={`inline-flex min-h-10 items-center justify-center gap-2 rounded-xl px-4 py-2 font-mono text-xs font-bold transition active:scale-95 ${
-              stampCount === 2
-                ? 'bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-md ring-1 ring-[#C89D54]'
-                : 'border border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
-            }`}
+            className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 font-mono text-xs font-bold text-white shadow-xs transition hover:bg-emerald-500 active:scale-[0.98]"
           >
-            {stampCount === 2 ? <Ticket className="h-4 w-4 text-[#C89D54]" /> : <Stamp className="h-4 w-4" />}
+            {stampCount === 2 ? <Ticket className="h-4 w-4" /> : <Stamp className="h-4 w-4" />}
             <span>
               {stampCount === 2
                 ? en
-                  ? 'Open Pin Claim Ticket (2/2)'
-                  : 'Buka Tiket Klaim Pin (2/2)'
+                  ? 'Open Claim Ticket'
+                  : 'Buka Tiket Klaim'
                 : en
-                  ? `Open Booth Passport (${stampCount}/2)`
-                  : `Buka Paspor & Tiket (${stampCount}/2)`}
+                  ? 'Open Passport (1/2)'
+                  : 'Buka Paspor (1/2)'}
             </span>
             <ArrowRight className="h-3.5 w-3.5" />
           </button>
         </div>
-
-        <div className="grid grid-cols-1 gap-3 divide-y divide-zinc-200/80 dark:divide-white/10 sm:grid-cols-2 sm:divide-x sm:divide-y-0">
-          <button
-            type="button"
-            onClick={() => (passport.stamp1.unlocked ? setPassportOpen(true) : navigate('trivia'))}
-            className="flex items-start gap-3 pt-1 text-left transition hover:opacity-85 first:pt-0 sm:px-3 sm:pt-0 first:sm:pl-0"
-          >
-            <span
-              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
-                passport.stamp1.unlocked ? 'bg-emerald-600 text-white' : 'bg-[#AD2B17] text-white'
-              }`}
-            >
-              {passport.stamp1.unlocked ? '✓' : '01'}
-            </span>
-            <div>
-              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Step 01: Play 1 Short Game (FPCI Stamp & Sticker)' : 'Langkah 01: Main 1 Game Singkat (Stamp FPCI & Stiker)'}
-              </p>
-              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {passport.stamp1.unlocked ? (
-                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-                    ✓ {passport.stamp1.gameLabel} ({formatStampScore(passport.stamp1.gameLabel, passport.stamp1.score)}) ·{' '}
-                    {en ? 'FPCI Stamp & Tier 1 Sticker Ready!' : 'Stamp FPCI & Stiker Tier 1 Siap!'}
-                  </span>
-                ) : en ? (
-                  'Finish Speed Trivia, Real vs AI, or Simulator above (~45–60s).'
-                ) : (
-                  'Selesaikan Speed Trivia, Real vs AI, atau Simulator di atas (~45–60 dtk).'
-                )}
-              </p>
-            </div>
-          </button>
-
-          <button
-            type="button"
-            onClick={() => setPassportOpen(true)}
-            className="flex items-start gap-3 pt-3 text-left transition hover:opacity-85 sm:px-4 sm:pt-0 last:sm:pr-0"
-          >
-            <span
-              className={`grid h-7 w-7 shrink-0 place-items-center rounded-lg font-mono text-xs font-bold ${
-                passport.stamp2.unlocked
-                  ? 'bg-emerald-600 text-white'
-                  : 'bg-[#C89D54]/25 text-[#9A6F22] dark:text-[#C89D54]'
-              }`}
-            >
-              {passport.stamp2.unlocked ? '✓' : '02'}
-            </span>
-            <div>
-              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en ? 'Step 02: Create naii.co Account (Official Pin)' : 'Langkah 02: Buat Akun www.naii.co (Pin Resmi NAII)'}
-              </p>
-              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                {passport.stamp2.unlocked ? (
-                  <span className="font-semibold text-emerald-700 dark:text-emerald-300">
-                    ✓{' '}
-                    {stampCount === 2
-                      ? `${en ? 'Pin Ticket Active:' : 'Tiket Pin Aktif:'} ${passport.ticketCode}`
-                      : `${en ? 'Account Verified (Finish Step 01)' : 'Akun Terverifikasi (Lengkapi Langkah 01)'}`}
-                  </span>
-                ) : en ? (
-                  <>
-                    Sign up free at <b>www.naii.co</b> and show your account screenshot to booth staff to claim your <b>NAII Pin</b>!
-                  </>
-                ) : (
-                  <>
-                    Daftar gratis di <b>www.naii.co</b>, lalu tunjukkan screenshot akun ke panitia untuk klaim <b>Pin Resmi NAII</b>!
-                  </>
-                )}
-              </p>
-            </div>
-          </button>
-        </div>
-      </section>
+      )}
 
       {/* SHOWCASE LIVE LEADERBOARD CARD (ASYMMETRIC OBSIDIAN-CRIMSON PODIUM) */}
-      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/40 bg-gradient-to-br from-[#230602] via-[#140A08] to-[#1D0C08] p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.12)] sm:rounded-[1.75rem] sm:p-7">
+      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/40 bg-gradient-to-br from-[#260702] via-[#140A08] to-[#1D0C08] p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.14)] sm:rounded-[1.75rem] sm:p-7">
+        <div aria-hidden className="pointer-events-none absolute inset-0 bg-diplomatic-grid opacity-55" />
         <div
           aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(200,157,84,0.18),transparent_70%)]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C89D54]/60 to-transparent"
+        />
+        <div
+          aria-hidden
+          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(200,157,84,0.22),transparent_70%)]"
         />
 
         <div className="relative z-10 grid items-center gap-6 lg:grid-cols-[0.95fr_1.25fr] lg:gap-8">
@@ -680,15 +660,20 @@ export function HomeScreen({ navigate }: { navigate: (to: Route) => void }) {
           className="glass flex w-full items-center justify-between gap-3 p-4 text-left transition hover:border-[#AD2B17]/45 sm:px-6 sm:py-4"
         >
           <div className="flex items-center gap-3">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/25 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-[#C89D54]">
-              <FileTerminal className="h-4 w-4" strokeWidth={1.75} />
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-gradient-to-br from-[#AD2B17]/15 to-[#C89D54]/10 text-[#AD2B17] dark:text-[#C89D54]">
+              <FileTerminal className="h-4.5 w-4.5" strokeWidth={1.75} />
             </div>
-            <div>
-              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                {en
-                  ? 'Mini Live Demo AI, Dual QR & Free Curriculum (www.naii.co)'
-                  : 'Mini Live Demo AI, QR Code & Kurikulum Gratis www.naii.co'}
-              </p>
+            <div className="min-w-0">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
+                  {en
+                    ? 'Mini Live Demo AI, Dual QR & Free Curriculum (www.naii.co)'
+                    : 'Mini Live Demo AI, QR Code & Kurikulum Gratis www.naii.co'}
+                </p>
+                <span className="hidden rounded-md border border-[#AD2B17]/25 bg-[#AD2B17]/10 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[#AD2B17] dark:border-[#C89D54]/35 dark:bg-[#C89D54]/15 dark:text-[#C89D54] sm:inline-block">
+                  {en ? 'INTERACTIVE' : 'INTERAKTIF'}
+                </span>
+              </div>
               <p className="text-[11px] text-zinc-500 dark:text-zinc-400">
                 {showBoothExtras
                   ? en

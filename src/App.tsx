@@ -41,7 +41,7 @@ function BoothRouter() {
 
   return (
     <Shell currentRoute={route}>
-      {route === 'home' && <HomeScreen navigate={navigate} />}
+      {route === 'home' && <HomeScreen />}
       {route === 'simulator' && <SimulatorScreen />}
       {route === 'trivia' && <TriviaScreen />}
       {route === 'realvsai' && <RealVsAiScreen />}

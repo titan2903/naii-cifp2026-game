@@ -47,20 +47,32 @@
   }
 
   body {
-    @apply min-h-[100dvh] overflow-x-hidden bg-[#F6F4F0] font-sans text-zinc-900 antialiased selection:bg-[#AD2B17] selection:text-white transition-colors duration-300;
+    @apply min-h-[100dvh] overflow-x-hidden bg-[#F5F2EC] font-sans text-zinc-900 antialiased selection:bg-[#AD2B17] selection:text-white transition-colors duration-300;
     background-image:
-      radial-gradient(1100px 580px at 8% -8%, rgb(173 43 23 / 0.08), transparent 60%),
-      radial-gradient(900px 500px at 96% 10%, rgb(58 9 0 / 0.05), transparent 65%),
-      radial-gradient(800px 800px at 50% 100%, rgb(200 157 84 / 0.04), transparent 70%);
+      radial-gradient(circle at 1px 1px, rgb(58 9 0 / 0.055) 1px, transparent 0),
+      radial-gradient(1100px 580px at 8% -8%, rgb(173 43 23 / 0.11), transparent 60%),
+      radial-gradient(900px 500px at 96% 10%, rgb(47 120 184 / 0.06), transparent 65%),
+      radial-gradient(800px 800px at 50% 100%, rgb(200 157 84 / 0.07), transparent 70%);
+    background-size:
+      24px 24px,
+      100% 100%,
+      100% 100%,
+      100% 100%;
     background-attachment: fixed;
   }
 
   .dark body {
     @apply bg-[#0B0908] text-zinc-100;
     background-image:
-      radial-gradient(1200px 600px at 10% -10%, rgb(173 43 23 / 0.28), transparent 65%),
-      radial-gradient(1000px 580px at 98% 12%, rgb(58 9 0 / 0.65), transparent 68%),
-      radial-gradient(900px 700px at 50% 100%, rgb(200 157 84 / 0.08), transparent 75%);
+      radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.045) 1px, transparent 0),
+      radial-gradient(1200px 600px at 10% -10%, rgb(173 43 23 / 0.3), transparent 65%),
+      radial-gradient(1000px 580px at 98% 12%, rgb(11 25 44 / 0.72), transparent 68%),
+      radial-gradient(900px 700px at 50% 100%, rgb(200 157 84 / 0.1), transparent 75%);
+    background-size:
+      24px 24px,
+      100% 100%,
+      100% 100%,
+      100% 100%;
   }
 
   /* Custom high-craft diplomatic scrollbar */
