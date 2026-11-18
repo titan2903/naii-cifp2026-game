@@ -1,4 +1,4 @@
-import { useState, type FormEvent, type ReactNode } from 'react'
+import { useRef, useState, type FormEvent, type ReactNode } from 'react'
 import { ArrowRight, BadgeCheck, ShieldCheck } from 'lucide-react'
 import { useLanguage } from '../context/LanguageContext'
 import { usePlayer } from '../context/PlayerContext'
@@ -36,18 +36,28 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
   const [consent, setConsent] = useState(false)
   const [errorKey, setErrorKey] = useState<ErrorKey>(null)
 
+  const nameInputRef = useRef<HTMLInputElement>(null)
+  const emailInputRef = useRef<HTMLInputElement>(null)
+  const consentInputRef = useRef<HTMLInputElement>(null)
+
   const submit = (e: FormEvent) => {
     e.preventDefault()
     const n = name.trim()
     const em = email.trim()
     if (n.length < 2 || !NAME_LETTER_RE.test(n)) {
-      return setErrorKey('name')
+      setErrorKey('name')
+      nameInputRef.current?.focus()
+      return
     }
     if (!em || !isValidEmail(em)) {
-      return setErrorKey('email')
+      setErrorKey('email')
+      emailInputRef.current?.focus()
+      return
     }
     if (!consent) {
-      return setErrorKey('consent')
+      setErrorKey('consent')
+      consentInputRef.current?.focus()
+      return
     }
     setPlayer({
       name: n.slice(0, 40),
@@ -77,7 +87,11 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
             {en ? 'Full Name / Delegate Callsign *' : 'Nama Lengkap / Panggilan Delegasi *'}
           </label>
           <input
+            ref={nameInputRef}
             id="delegate-name"
+            name="name"
+            type="text"
+            autoComplete="name"
             className="field"
             value={name}
             onChange={(e) => {
@@ -89,9 +103,10 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
             required
             aria-required="true"
             aria-invalid={errorKey === 'name'}
+            aria-describedby={errorKey === 'name' ? 'delegate-name-hint delegate-form-error' : 'delegate-name-hint'}
             autoFocus
           />
-          <span className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
+          <span id="delegate-name-hint" className="font-mono text-[11px] text-zinc-500 dark:text-zinc-400">
             {en
               ? 'Displayed on your Persona Card & break-session leaderboard.'
               : 'Ditampilkan pada Kartu Persona & papan peringkat sesi break.'}
@@ -104,6 +119,9 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
           </label>
           <input
             id="delegate-inst"
+            name="institution"
+            type="text"
+            autoComplete="organization"
             className="field"
             value={institution}
             onChange={(e) => setInstitution(e.target.value)}
@@ -121,15 +139,21 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
             {en ? 'Email * (Free Program & Course Access)' : 'Email * (Info Program & Kursus Gratis)'}
           </label>
           <input
+            ref={emailInputRef}
             id="delegate-email"
+            name="email"
             className="field"
             type="email"
             inputMode="email"
             autoComplete="email"
+            autoCapitalize="none"
+            autoCorrect="off"
+            spellCheck={false}
             maxLength={120}
             required
             aria-required="true"
             aria-invalid={errorKey === 'email'}
+            aria-describedby={errorKey === 'email' ? 'delegate-form-error' : undefined}
             value={email}
             onChange={(e) => {
               setEmail(e.target.value)
@@ -141,11 +165,15 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
 
         <label className="flex cursor-pointer items-start gap-3 rounded-xl border border-zinc-300 bg-zinc-50 p-3.5 text-xs leading-relaxed text-zinc-700 dark:border-white/10 dark:bg-white/[0.04] dark:text-zinc-300">
           <input
+            ref={consentInputRef}
+            id="delegate-consent"
+            name="consent"
             type="checkbox"
             checked={consent}
             required
             aria-required="true"
             aria-invalid={errorKey === 'consent'}
+            aria-describedby={errorKey === 'consent' ? 'delegate-form-error' : undefined}
             onChange={(e) => {
               setConsent(e.target.checked)
               if (errorKey) setErrorKey(null)
@@ -160,7 +188,11 @@ function PlayerForm({ title, subtitle }: { title: string; subtitle: string }) {
         </label>
 
         {errorKey && (
-          <p role="alert" className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2.5 text-xs font-semibold text-rose-700 dark:text-rose-300">
+          <p
+            id="delegate-form-error"
+            role="alert"
+            className="rounded-xl border border-rose-500/30 bg-rose-500/10 px-3.5 py-2.5 text-xs font-semibold text-rose-700 dark:text-rose-300"
+          >
             {errorKey === 'name'
               ? en
                 ? 'Delegate name must be at least 2 characters.'

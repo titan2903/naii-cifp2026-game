@@ -83,12 +83,13 @@ export function Logo() {
 }
 
 export function Shell({ children, currentRoute = 'home' }: { children: ReactNode; currentRoute?: Route }) {
-  const { player, clearPlayer, stampCount, setPassportOpen, qrModalOpen, setQrModalOpen } = usePlayer()
+  const { player, clearPlayer, stampCount, passportOpen, setPassportOpen, qrModalOpen, setQrModalOpen } = usePlayer()
   const { theme, toggleTheme } = useTheme()
   const { lang, toggleLang } = useLanguage()
   const [confirmClear, setConfirmClear] = useState(false)
   const en = lang === 'en'
   const sessionTag = formatSessionTag(currentSessionTag(), lang)
+  const anyModalOpen = passportOpen || qrModalOpen
 
   useEffect(() => {
     if (!confirmClear) return
@@ -108,7 +109,11 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
   return (
     <div className="relative flex min-h-[100dvh] flex-col pb-20 text-zinc-900 transition-colors duration-300 dark:text-zinc-100 xl:pb-0">
       {/* TOP DIPLOMATIC TELEMETRY STRIP */}
-      <div className="border-b border-zinc-200/80 bg-zinc-900 text-zinc-300 dark:border-white/[0.07] dark:bg-[#070505]">
+      <div
+        inert={anyModalOpen || undefined}
+        aria-hidden={anyModalOpen || undefined}
+        className="border-b border-zinc-200/80 bg-zinc-900 text-zinc-300 dark:border-white/[0.07] dark:bg-[#070505]"
+      >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3.5 py-1.5 font-mono text-[10px] sm:px-6 sm:text-[11px]">
           <div className="flex min-w-0 items-center gap-2">
             <span className="inline-block h-2 w-2 shrink-0 rounded-full bg-[#AD2B17] animate-pulse-slow" />
@@ -146,7 +151,11 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
       </div>
 
       {/* MAIN NAVIGATION HEADER */}
-      <header className="sticky top-0 z-20 border-b border-zinc-200/80 bg-[#F6F4F0]/90 backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-[#000000]/90">
+      <header
+        inert={anyModalOpen || undefined}
+        aria-hidden={anyModalOpen || undefined}
+        className="sticky top-0 z-20 border-b border-zinc-200/80 bg-[#F6F4F0]/90 backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-[#000000]/90"
+      >
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-1.5 px-2.5 py-2 sm:gap-2 sm:px-6 sm:py-3">
           <Logo />
 
@@ -311,10 +320,20 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
       </header>
 
       {/* MAIN CONTENT CONTAINER */}
-      <main className="mx-auto w-full max-w-7xl flex-1 px-3.5 py-5 sm:px-6 sm:py-10">{children}</main>
+      <main
+        inert={anyModalOpen || undefined}
+        aria-hidden={anyModalOpen || undefined}
+        className="mx-auto w-full max-w-7xl flex-1 px-3.5 py-5 sm:px-6 sm:py-10"
+      >
+        {children}
+      </main>
 
       {/* ARCHITECTURAL DIPLOMATIC FOOTER */}
-      <footer className="border-t border-zinc-200/80 bg-white/70 py-6 text-xs text-zinc-600 transition-colors dark:border-white/[0.08] dark:bg-[#070505]/90 dark:text-zinc-400">
+      <footer
+        inert={anyModalOpen || undefined}
+        aria-hidden={anyModalOpen || undefined}
+        className="border-t border-zinc-200/80 bg-white/70 py-6 text-xs text-zinc-600 transition-colors dark:border-white/[0.08] dark:bg-[#070505]/90 dark:text-zinc-400"
+      >
         <div className="mx-auto flex max-w-7xl flex-col items-center justify-between gap-4 px-4 text-center sm:flex-row sm:px-6 sm:text-left">
           <div className="flex flex-col items-center gap-2.5 sm:flex-row sm:gap-3">
             <NaiiStarMark color="#AD2B17" className="h-5 w-5 shrink-0" />
@@ -350,6 +369,8 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
 
       {/* SMARTPHONE BOTTOM NAVIGATION BAR (Thumb-Friendly, Zero Confusion on Mobile) */}
       <nav
+        inert={anyModalOpen || undefined}
+        aria-hidden={anyModalOpen || undefined}
         aria-label={en ? 'Smartphone Navigation' : 'Navigasi Smartphone'}
         className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 px-2 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-white/[0.1] dark:bg-[#121212]/95 xl:hidden"
       >

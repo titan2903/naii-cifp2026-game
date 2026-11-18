@@ -39,19 +39,43 @@ export function ThemeProvider({ children }: { children: ReactNode }) {
       root.classList.add('light')
       root.style.colorScheme = 'light'
     }
-    try {
-      localStorage.setItem(STORAGE_KEY, theme)
-    } catch {
-      /* ignore storage errors */
-    }
   }, [theme])
+
+  useEffect(() => {
+    if (typeof window === 'undefined' || typeof window.matchMedia !== 'function') return
+    const mediaQuery = window.matchMedia('(prefers-color-scheme: light)')
+    const handleChange = (e: MediaQueryListEvent) => {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY)
+        if (saved === 'dark' || saved === 'light') return
+      } catch {
+        /* ignore storage errors */
+      }
+      setState(e.matches ? 'light' : 'dark')
+    }
+    mediaQuery.addEventListener('change', handleChange)
+    return () => mediaQuery.removeEventListener('change', handleChange)
+  }, [])
 
   const setTheme = useCallback((t: Theme) => {
     setState(t)
+    try {
+      localStorage.setItem(STORAGE_KEY, t)
+    } catch {
+      /* ignore storage errors */
+    }
   }, [])
 
   const toggleTheme = useCallback(() => {
-    setState((prev) => (prev === 'dark' ? 'light' : 'dark'))
+    setState((prev) => {
+      const next = prev === 'dark' ? 'light' : 'dark'
+      try {
+        localStorage.setItem(STORAGE_KEY, next)
+      } catch {
+        /* ignore storage errors */
+      }
+      return next
+    })
   }, [])
 
   const value = useMemo(() => ({ theme, toggleTheme, setTheme }), [theme, toggleTheme, setTheme])

@@ -43,8 +43,17 @@
 
 @layer base {
   html {
+    color-scheme: light dark;
     -webkit-tap-highlight-color: transparent;
     scroll-behavior: smooth;
+  }
+
+  html.dark {
+    color-scheme: dark;
+  }
+
+  html.light {
+    color-scheme: light;
   }
 
   body {

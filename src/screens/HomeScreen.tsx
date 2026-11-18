@@ -648,6 +648,7 @@ export function HomeScreen() {
         <button
           type="button"
           aria-expanded={showBoothExtras}
+          aria-controls="booth-extras-panel"
           onClick={() => setShowBoothExtras((v) => !v)}
           className="glass flex w-full items-center justify-between gap-3 p-4 text-left transition hover:border-[#AD2B17]/45 sm:px-6 sm:py-4"
         >
@@ -687,7 +688,7 @@ export function HomeScreen() {
         </button>
 
         {showBoothExtras && (
-          <div className="space-y-6 animate-rise">
+          <div id="booth-extras-panel" className="space-y-6 animate-rise">
             {/* AI DIPLOMATIC CO-PILOT & MINI LIVE DEMO WORKBENCH */}
             <section className="glass overflow-hidden">
         <div className="border-b border-zinc-200/80 p-5 dark:border-white/[0.08] sm:p-8">

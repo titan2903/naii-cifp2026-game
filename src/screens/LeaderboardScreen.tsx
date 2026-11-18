@@ -74,7 +74,12 @@ export function LeaderboardScreen() {
     let active = true
     void fetchTodayScores().then((data) => {
       if (active) {
-        setScores(data)
+        setScores((prev) => {
+          if (data.length === 0 && prev.some((e) => e.id.startsWith('demo-'))) return prev
+          const map = new Map(prev.filter((e) => !e.id.startsWith('demo-')).map((e) => [e.id, e]))
+          for (const item of data) map.set(item.id, item)
+          return [...map.values()]
+        })
         setLoading(false)
       }
     })
@@ -226,7 +231,10 @@ export function LeaderboardScreen() {
 
       {/* 2. FILTER CONTROLS — NAII Brand Guidelines p.10 & p.11:
           White ground (#FFFFFF), Black text (#000000), NAII Red (#AD2B17) active state & outline pills */}
-      <div className="flex flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3">
+      <search
+        aria-label={en ? 'Filter Leaderboard by Instrument and Session' : 'Filter Peringkat Berdasarkan Instrumen dan Sesi'}
+        className="flex flex-col justify-between gap-2.5 sm:flex-row sm:items-center sm:gap-3"
+      >
         <div className="grid grid-cols-3 gap-1 rounded-xl border border-black/15 bg-white p-1 dark:border-white/15 dark:bg-[#121212] sm:flex sm:flex-wrap sm:gap-1.5 sm:p-1.5">
           {(
             [
@@ -238,6 +246,7 @@ export function LeaderboardScreen() {
             <button
               key={id}
               type="button"
+              aria-pressed={gameFilter === id}
               onClick={() => setGameFilter(id)}
               className={`inline-flex items-center justify-center gap-1.5 rounded-lg px-2.5 py-2 text-xs font-bold tracking-tight transition sm:px-3.5 ${
                 gameFilter === id
@@ -276,6 +285,7 @@ export function LeaderboardScreen() {
               <button
                 key={tag}
                 type="button"
+                aria-pressed={active}
                 onClick={() => setSessionFilter(tag)}
                 className={`rounded-lg px-1.5 py-2 text-center font-mono text-[11px] font-bold transition sm:px-3.5 sm:text-xs ${
                   active
@@ -292,7 +302,7 @@ export function LeaderboardScreen() {
             )
           })}
         </div>
-      </div>
+      </search>
 
       {/* 3. SKELETAL LOADING STATE */}
       {loading && scores.length === 0 ? (

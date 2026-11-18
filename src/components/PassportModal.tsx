@@ -25,7 +25,7 @@ import { formatStampScore } from '../lib/utils'
 import { NaiiLogo, NaiiWatermark } from './NaiiBrand'
 import { QrCodeSvg } from './QrCodeModal'
 
-const EMAIL_RE = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/
+const EMAIL_RE = /^[^\s@]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z]{2,}$/
 
 export function PassportModal() {
   const { passport, passportOpen } = usePlayer()
@@ -103,6 +103,176 @@ function PassportModalContent() {
     window.location.hash = href
   }
 
+  const ticketSection = (
+    <div ref={ticketRef} className={allUnlocked ? 'scroll-mt-24 sm:mt-5' : 'mt-6 scroll-mt-24'}>
+      {allUnlocked ? (
+        /* FULL 2/2 OFFICIAL MERCHANDISE REDEMPTION TICKET */
+        <div className="relative overflow-hidden rounded-2xl bg-[#3A0900] p-5 text-white sm:p-7">
+          <NaiiWatermark className="absolute -bottom-16 -right-16 h-64 w-64" />
+
+          <div className="relative z-10 space-y-5">
+            {/* Top Ticket Bar */}
+            <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3.5">
+              <div className="flex items-center gap-2.5">
+                <NaiiLogo variant="white" className="h-6 w-auto sm:h-7" />
+                <span className="h-4 w-px bg-white/25" />
+                <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-white sm:text-xs">
+                  {en ? 'OFFICIAL MERCHANDISE CLAIM TICKET' : 'TIKET KLAIM MERCHANDISE RESMI NAII'}
+                </span>
+              </div>
+
+              <span
+                className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-extrabold tracking-wider uppercase ${
+                  passport.claimedByStaff
+                    ? 'border border-zinc-400/40 bg-zinc-800 text-zinc-300'
+                    : 'bg-[#AD2B17] text-white animate-pulse'
+                }`}
+              >
+                <Ticket className="h-3.5 w-3.5" />
+                {passport.claimedByStaff
+                  ? en
+                    ? 'REDEEMED AT BOOTH'
+                    : 'SUDAH DIKLAIM DI BOOTH'
+                  : en
+                    ? 'VALID · SHOW TO BOOTH STAFF'
+                    : 'AKTIF · TUNJUKKAN KE PANITIA BOOTH'}
+              </span>
+            </div>
+
+            {/* Main Ticket Body */}
+            <div className="grid items-center gap-5 sm:grid-cols-[1fr_auto]">
+              <div className="space-y-2">
+                <p className="font-mono text-[11px] uppercase tracking-wider text-white/70">
+                  {en ? 'DELEGATE CREDENTIAL' : 'IDENTITAS DELEGASI PENERIMA'}
+                </p>
+                <h3 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
+                  {player?.name ?? (en ? 'CIFP 2026 Delegate' : 'Delegasi CIFP 2026')}
+                </h3>
+                <p className="text-xs font-medium text-white sm:text-sm">
+                  {player?.institution || '10th CIFP 2026 Participant'}
+                  {player?.email ? ` · ${player.email}` : ''}
+                </p>
+
+                <div className="flex flex-wrap gap-1.5 pt-1 font-mono text-[10px]">
+                  <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
+                    ✓ {passport.stamp1.gameLabel} ({formatStampScore(passport.stamp1.gameLabel, passport.stamp1.score)})
+                  </span>
+                  <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
+                    ✓ {en ? 'www.naii.co Verified' : 'Akun naii.co Terverifikasi'}
+                  </span>
+                </div>
+              </div>
+
+              {/* Ticket Code Box */}
+              <div className="rounded-2xl border-2 border-dashed border-white/40 bg-black/45 px-5 py-4 text-center">
+                <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-white">
+                  {en ? 'VOUCHER CODE' : 'KODE TIKET KLAIM'}
+                </p>
+                <p className="mt-1 font-mono text-2xl font-extrabold tracking-wider text-white sm:text-3xl">
+                  {passport.ticketCode}
+                </p>
+                <p className="mt-1 font-mono text-[10px] text-white/70">
+                  {en ? '2/2 STEPS VERIFIED' : '2/2 LANGKAH LENGKAP'}
+                </p>
+              </div>
+            </div>
+
+            {/* Reward Items & Staff Verification */}
+            <div className="flex flex-col justify-between gap-3 rounded-xl border border-white/15 bg-black/35 p-3.5 sm:flex-row sm:items-center sm:p-4">
+              <div className="flex items-start gap-2.5 text-xs text-white/90">
+                <Gift className="mt-0.5 h-4 w-4 shrink-0 text-white" strokeWidth={2} />
+                <div>
+                  <p className="font-bold text-white">
+                    {en
+                      ? 'Tier 1 Sticker + FPCI Stamp & Tier 2 Official NAII Pin'
+                      : 'Tier 1 Stiker + Stamp FPCI & Tier 2 Pin Resmi NAII'}
+                  </p>
+                  <p className="mt-0.5 text-[11px] text-white/75">
+                    {en
+                      ? 'Top 3 on the Break Leaderboard earn an Official NAII Totebag (Tier 3), plus Exclusive NAII Calendar for VIPs.'
+                      : 'Top 3 Leaderboard tiap sesi break berhak atas Totebag Resmi NAII (Tier 3), serta Kalender NAII untuk tamu VIP.'}
+                  </p>
+                </div>
+              </div>
+
+              {/* Staff Verification Action */}
+              <div className="shrink-0">
+                {passport.claimedByStaff ? (
+                  <div className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-3.5 py-2 font-mono text-xs font-bold text-emerald-200">
+                    <ShieldCheck className="h-4 w-4" />
+                    {en ? 'Verified by Booth Staff' : 'Telah Diverifikasi Panitia'}
+                  </div>
+                ) : confirmStaffClaim ? (
+                  <div className="flex items-center gap-2">
+                    <button
+                      type="button"
+                      onClick={() => {
+                        markTicketClaimed()
+                        setConfirmStaffClaim(false)
+                      }}
+                      className="rounded-xl bg-emerald-600 px-3 py-2 font-mono text-xs font-bold text-white hover:bg-emerald-500"
+                    >
+                      {en ? 'Confirm Pin Handover' : 'Ya, Pin Sudah Diserahkan'}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => setConfirmStaffClaim(false)}
+                      className="rounded-xl border border-white/20 bg-white/10 px-2.5 py-2 font-mono text-xs text-white"
+                    >
+                      {en ? 'Cancel' : 'Batal'}
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={() => setConfirmStaffClaim(true)}
+                    className="rounded-xl border border-white/40 px-3.5 py-2 font-mono text-[11px] font-bold text-white transition hover:bg-white hover:text-[#3A0900]"
+                  >
+                    <ShieldCheck className="mr-1.5 inline h-3.5 w-3.5" />
+                    {en ? 'Booth Staff: Mark Claimed' : 'Verifikasi Panitia Meja Booth'}
+                  </button>
+                )}
+              </div>
+            </div>
+          </div>
+        </div>
+      ) : (
+        /* PROGRESS BANNER WHEN < 2 STAMPS */
+        <div className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200/90 bg-zinc-50/90 p-4 dark:border-white/10 dark:bg-black/40 sm:flex-row sm:items-center sm:p-5">
+          <div className="flex items-start gap-3">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-white">
+              {passport.stamp1.unlocked ? <Award className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
+            </div>
+            <div>
+              <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
+                {passport.stamp1.unlocked
+                  ? en
+                    ? 'Tier 1 Unlocked! Show this screen to booth staff now for your FPCI Stamp + Sticker, or complete Step #02 for the NAII Pin.'
+                    : 'Tier 1 Terbuka! Tunjukkan layar ini ke panitia sekarang untuk Stamp FPCI + Stiker, atau selesaikan Langkah #02 untuk Pin Resmi NAII.'
+                  : passport.stamp2.unlocked
+                    ? en
+                      ? 'www.naii.co Account Verified! Complete 1 short game (Step #01) to claim your Tier 1 Sticker & Tier 2 Pin.'
+                      : 'Akun www.naii.co Terverifikasi! Selesaikan 1 game singkat (Langkah #01) untuk klaim Stiker Tier 1 & Tiket Pin Tier 2.'
+                    : en
+                      ? 'Complete 1 short game + verify your www.naii.co account to unlock your Merchandise Ticket!'
+                      : 'Selesaikan 1 game singkat + verifikasi akun www.naii.co untuk menerbitkan Tiket Klaim Merchandise!'}
+              </p>
+              <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
+                {en
+                  ? 'Ticket Code activates automatically once both steps are verified (Tier 1: Sticker · Tier 2: Pin · Tier 3 Top 3: Totebag).'
+                  : 'Kode Tiket aktif otomatis setelah 2 langkah terverifikasi (Tier 1: Stiker · Tier 2: Pin · Tier 3 Top 3: Totebag).'}
+              </p>
+            </div>
+          </div>
+
+          <div className="shrink-0 font-mono text-xs font-bold text-[#AD2B17] dark:text-white">
+            {stampCount}/2 {en ? 'DONE' : 'SELESAI'}
+          </div>
+        </div>
+      )}
+    </div>
+  )
+
   return (
     <div
       className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 p-3 backdrop-blur-md animate-rise sm:p-6"
@@ -148,8 +318,10 @@ function PassportModalContent() {
           </button>
         </div>
 
-        {/* CONTENT FLOW: PROMOTES UNLOCKED TICKET TO TOP VIA FLEX ORDER */}
+        {/* CONTENT FLOW: TICKET PROMOTED IN NATURAL DOM ORDER WHEN 2/2 UNLOCKED */}
         <div className="flex flex-col">
+        {allUnlocked && ticketSection}
+
         {/* 2 STAMPS GRID */}
         <div className={`grid grid-cols-1 gap-4 sm:grid-cols-2 ${allUnlocked ? 'mt-5' : 'sm:mt-5'}`}>
           {/* STAMP 01: 1 SHORT GAME */}
@@ -346,8 +518,15 @@ function PassportModalContent() {
                     {showOptionalEmail && (
                       <div className="mt-2 space-y-2">
                         <input
+                          name="naii-email"
                           type="email"
+                          inputMode="email"
+                          autoComplete="email"
+                          autoCapitalize="none"
+                          autoCorrect="off"
+                          spellCheck={false}
                           maxLength={120}
+                          aria-invalid={formError === 'email'}
                           aria-label={en ? 'Registered www.naii.co email (optional)' : 'Email akun www.naii.co (opsional)'}
                           value={emailInput}
                           onChange={(e) => {
@@ -457,174 +636,8 @@ function PassportModalContent() {
           </div>
         </div>
 
-        {/* OFFICIAL MERCHANDISE CLAIM TICKET SECTION */}
-        <div ref={ticketRef} className={allUnlocked ? 'order-first scroll-mt-24 sm:mt-5' : 'mt-6 scroll-mt-24'}>
-          {allUnlocked ? (
-            /* FULL 2/2 OFFICIAL MERCHANDISE REDEMPTION TICKET */
-            <div className="relative overflow-hidden rounded-2xl bg-[#3A0900] p-5 text-white sm:p-7">
-              <NaiiWatermark className="absolute -bottom-16 -right-16 h-64 w-64" />
-
-              <div className="relative z-10 space-y-5">
-                {/* Top Ticket Bar */}
-                <div className="flex flex-wrap items-center justify-between gap-2 border-b border-white/15 pb-3.5">
-                  <div className="flex items-center gap-2.5">
-                    <NaiiLogo variant="white" className="h-6 w-auto sm:h-7" />
-                    <span className="h-4 w-px bg-white/25" />
-                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-white sm:text-xs">
-                      {en ? 'OFFICIAL MERCHANDISE CLAIM TICKET' : 'TIKET KLAIM MERCHANDISE RESMI NAII'}
-                    </span>
-                  </div>
-
-                  <span
-                    className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-extrabold tracking-wider uppercase ${
-                      passport.claimedByStaff
-                        ? 'border border-zinc-400/40 bg-zinc-800 text-zinc-300'
-                        : 'bg-[#AD2B17] text-white animate-pulse'
-                    }`}
-                  >
-                    <Ticket className="h-3.5 w-3.5" />
-                    {passport.claimedByStaff
-                      ? en
-                        ? 'REDEEMED AT BOOTH'
-                        : 'SUDAH DIKLAIM DI BOOTH'
-                      : en
-                        ? 'VALID · SHOW TO BOOTH STAFF'
-                        : 'AKTIF · TUNJUKKAN KE PANITIA BOOTH'}
-                  </span>
-                </div>
-
-                {/* Main Ticket Body */}
-                <div className="grid items-center gap-5 sm:grid-cols-[1fr_auto]">
-                  <div className="space-y-2">
-                    <p className="font-mono text-[11px] uppercase tracking-wider text-white/70">
-                      {en ? 'DELEGATE CREDENTIAL' : 'IDENTITAS DELEGASI PENERIMA'}
-                    </p>
-                    <h3 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
-                      {player?.name ?? (en ? 'CIFP 2026 Delegate' : 'Delegasi CIFP 2026')}
-                    </h3>
-                    <p className="text-xs font-medium text-white sm:text-sm">
-                      {player?.institution || '10th CIFP 2026 Participant'}
-                      {player?.email ? ` · ${player.email}` : ''}
-                    </p>
-
-                    <div className="flex flex-wrap gap-1.5 pt-1 font-mono text-[10px]">
-                      <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
-                        ✓ {passport.stamp1.gameLabel} ({formatStampScore(passport.stamp1.gameLabel, passport.stamp1.score)})
-                      </span>
-                      <span className="rounded-md border border-white/15 bg-white/10 px-2 py-1 text-white">
-                        ✓ {en ? 'www.naii.co Verified' : 'Akun naii.co Terverifikasi'}
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Ticket Code Box */}
-                  <div className="rounded-2xl border-2 border-dashed border-white/40 bg-black/45 px-5 py-4 text-center">
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-white">
-                      {en ? 'VOUCHER CODE' : 'KODE TIKET KLAIM'}
-                    </p>
-                    <p className="mt-1 font-mono text-2xl font-extrabold tracking-wider text-white sm:text-3xl">
-                      {passport.ticketCode}
-                    </p>
-                    <p className="mt-1 font-mono text-[10px] text-white/70">
-                      {en ? '2/2 STEPS VERIFIED' : '2/2 LANGKAH LENGKAP'}
-                    </p>
-                  </div>
-                </div>
-
-                {/* Reward Items & Staff Verification */}
-                <div className="flex flex-col justify-between gap-3 rounded-xl border border-white/15 bg-black/35 p-3.5 sm:flex-row sm:items-center sm:p-4">
-                  <div className="flex items-start gap-2.5 text-xs text-white/90">
-                    <Gift className="mt-0.5 h-4 w-4 shrink-0 text-white" strokeWidth={2} />
-                    <div>
-                      <p className="font-bold text-white">
-                        {en
-                          ? 'Tier 1 Sticker + FPCI Stamp & Tier 2 Official NAII Pin'
-                          : 'Tier 1 Stiker + Stamp FPCI & Tier 2 Pin Resmi NAII'}
-                      </p>
-                      <p className="mt-0.5 text-[11px] text-white/75">
-                        {en
-                          ? 'Top 3 on the Break Leaderboard earn an Official NAII Totebag (Tier 3), plus Exclusive NAII Calendar for VIPs.'
-                          : 'Top 3 Leaderboard tiap sesi break berhak atas Totebag Resmi NAII (Tier 3), serta Kalender NAII untuk tamu VIP.'}
-                      </p>
-                    </div>
-                  </div>
-
-                  {/* Staff Verification Action */}
-                  <div className="shrink-0">
-                    {passport.claimedByStaff ? (
-                      <div className="inline-flex items-center gap-1.5 rounded-xl border border-emerald-400/30 bg-emerald-500/15 px-3.5 py-2 font-mono text-xs font-bold text-emerald-200">
-                        <ShieldCheck className="h-4 w-4" />
-                        {en ? 'Verified by Booth Staff' : 'Telah Diverifikasi Panitia'}
-                      </div>
-                    ) : confirmStaffClaim ? (
-                      <div className="flex items-center gap-2">
-                        <button
-                          type="button"
-                          onClick={() => {
-                            markTicketClaimed()
-                            setConfirmStaffClaim(false)
-                          }}
-                          className="rounded-xl bg-emerald-600 px-3 py-2 font-mono text-xs font-bold text-white hover:bg-emerald-500"
-                        >
-                          {en ? 'Confirm Pin Handover' : 'Ya, Pin Sudah Diserahkan'}
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => setConfirmStaffClaim(false)}
-                          className="rounded-xl border border-white/20 bg-white/10 px-2.5 py-2 font-mono text-xs text-white"
-                        >
-                          {en ? 'Cancel' : 'Batal'}
-                        </button>
-                      </div>
-                    ) : (
-                      <button
-                        type="button"
-                        onClick={() => setConfirmStaffClaim(true)}
-                        className="rounded-xl border border-white/40 px-3.5 py-2 font-mono text-[11px] font-bold text-white transition hover:bg-white hover:text-[#3A0900]"
-                      >
-                        <ShieldCheck className="mr-1.5 inline h-3.5 w-3.5" />
-                        {en ? 'Booth Staff: Mark Claimed' : 'Verifikasi Panitia Meja Booth'}
-                      </button>
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            /* PROGRESS BANNER WHEN < 2 STAMPS */
-            <div className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200/90 bg-zinc-50/90 p-4 dark:border-white/10 dark:bg-black/40 sm:flex-row sm:items-center sm:p-5">
-              <div className="flex items-start gap-3">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-white">
-                  {passport.stamp1.unlocked ? <Award className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
-                </div>
-                <div>
-                  <p className="text-xs font-extrabold text-zinc-900 dark:text-white sm:text-sm">
-                    {passport.stamp1.unlocked
-                      ? en
-                        ? 'Tier 1 Unlocked! Show this screen to booth staff now for your FPCI Stamp + Sticker, or complete Step #02 for the NAII Pin.'
-                        : 'Tier 1 Terbuka! Tunjukkan layar ini ke panitia sekarang untuk Stamp FPCI + Stiker, atau selesaikan Langkah #02 untuk Pin Resmi NAII.'
-                      : passport.stamp2.unlocked
-                        ? en
-                          ? 'www.naii.co Account Verified! Complete 1 short game (Step #01) to claim your Tier 1 Sticker & Tier 2 Pin.'
-                          : 'Akun www.naii.co Terverifikasi! Selesaikan 1 game singkat (Langkah #01) untuk klaim Stiker Tier 1 & Tiket Pin Tier 2.'
-                        : en
-                          ? 'Complete 1 short game + verify your www.naii.co account to unlock your Merchandise Ticket!'
-                          : 'Selesaikan 1 game singkat + verifikasi akun www.naii.co untuk menerbitkan Tiket Klaim Merchandise!'}
-                  </p>
-                  <p className="mt-0.5 text-xs text-zinc-600 dark:text-zinc-400">
-                    {en
-                      ? 'Ticket Code activates automatically once both steps are verified (Tier 1: Sticker · Tier 2: Pin · Tier 3 Top 3: Totebag).'
-                      : 'Kode Tiket aktif otomatis setelah 2 langkah terverifikasi (Tier 1: Stiker · Tier 2: Pin · Tier 3 Top 3: Totebag).'}
-                  </p>
-                </div>
-              </div>
-
-              <div className="shrink-0 font-mono text-xs font-bold text-[#AD2B17] dark:text-white">
-                {stampCount}/2 {en ? 'DONE' : 'SELESAI'}
-              </div>
-            </div>
-          )}
-        </div>
+        {/* OFFICIAL MERCHANDISE CLAIM TICKET SECTION (WHEN < 2 STAMPS) */}
+        {!allUnlocked && ticketSection}
         </div>
       </div>
     </div>

@@ -98,15 +98,22 @@ function isValidPassport(raw: unknown): raw is PassportState {
   if (typeof p.ticketCode !== 'string' || !TICKET_RE.test(p.ticketCode)) return false
   if (!p.stamp1 || typeof p.stamp1 !== 'object' || typeof p.stamp1.unlocked !== 'boolean') return false
   if (p.stamp1.unlocked) {
-    if (p.stamp1.gameLabel !== undefined && typeof p.stamp1.gameLabel !== 'string') return false
+    if (typeof p.stamp1.gameLabel !== 'string' || p.stamp1.gameLabel.trim().length < 2) return false
     if (
-      p.stamp1.score !== undefined &&
-      (typeof p.stamp1.score !== 'number' || !Number.isFinite(p.stamp1.score) || p.stamp1.score < 0 || p.stamp1.score > 750)
+      typeof p.stamp1.score !== 'number' ||
+      !Number.isFinite(p.stamp1.score) ||
+      p.stamp1.score < 0 ||
+      p.stamp1.score > 750
     ) {
       return false
     }
+    if (typeof p.stamp1.stampedAt !== 'string' || Number.isNaN(Date.parse(p.stamp1.stampedAt))) return false
   }
   if (!p.stamp2 || typeof p.stamp2 !== 'object' || typeof p.stamp2.unlocked !== 'boolean') return false
+  if (p.stamp2.unlocked) {
+    if (p.stamp2.verifiedByStaff !== true) return false
+    if (typeof p.stamp2.stampedAt !== 'string' || Number.isNaN(Date.parse(p.stamp2.stampedAt))) return false
+  }
   if (typeof p.claimedByStaff !== 'boolean') return false
   return true
 }
