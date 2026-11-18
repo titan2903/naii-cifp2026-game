@@ -145,7 +145,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           particleCount: 130,
           spread: 85,
           origin: { y: 0.6 },
-          colors: ['#AD2B17', '#C89D54', '#ffffff'],
+          colors: ['#AD2B17', '#3A0900', '#ffffff'],
         })
       }
     },
@@ -249,12 +249,12 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           {entry && (
             <div className="mt-4 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs text-zinc-700 dark:border-white/10 dark:bg-black/40 dark:text-zinc-300 sm:mt-5">
               {en ? 'Score recorded on the ' : 'Skor tercatat pada Leaderboard '}
-              <b className="font-mono text-[#AD2B17] dark:text-[#C89D54]">
+              <b className="font-mono text-[#AD2B17] dark:text-white">
                 {formatSessionTag(entry.session_tag, lang)}
               </b>
               {en ? ' Leaderboard.' : '.'}{' '}
               {rank !== null && rank <= 3 && (
-                <span className="mt-1.5 flex items-center justify-center gap-1.5 font-bold text-[#AD2B17] dark:text-[#C89D54]">
+                <span className="mt-1.5 flex items-center justify-center gap-1.5 font-bold text-[#AD2B17] dark:text-white">
                   <Award className="h-4 w-4 shrink-0" strokeWidth={1.75} />
                   {en
                     ? 'You made the Top 3 Podium — claim your Official NAII Totebag at the break announcement!'
@@ -267,13 +267,13 @@ export function QuizGame({ config }: { config: QuizConfig }) {
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className="mt-6 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:mt-7 sm:text-sm"
+            className="mt-6 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#AD2B17]/60 bg-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:mt-7 sm:text-sm"
           >
             <span className="flex items-center gap-2">
               {stampCount === 2 ? (
-                <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                <Ticket className="h-4 w-4 shrink-0 text-white" strokeWidth={2} />
               ) : (
-                <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                <Stamp className="h-4 w-4 shrink-0 text-white" strokeWidth={2} />
               )}
               <span>
                 {stampCount === 2
@@ -285,7 +285,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
                     : `Stempel #01 Terbuka (Stamp FPCI + Stiker)! Verifikasi Akun naii.co (${stampCount}/2)`}
               </span>
             </span>
-            <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+            <ArrowRight className="h-4 w-4 shrink-0 text-white" strokeWidth={2} />
           </button>
 
           <div className="mt-2.5 grid grid-cols-2 gap-2.5 sm:mt-3 sm:flex sm:flex-row sm:gap-3">
@@ -342,7 +342,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
 
       <div className="glass p-5 sm:p-8">
         {current.category && (
-          <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54] sm:text-[11px]">
+          <p className="mb-2 font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white sm:text-[11px]">
             {en ? 'CATEGORY' : 'KATEGORI'} // {current.category}
           </p>
         )}
@@ -378,12 +378,6 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             const isPicked = lastAnswer?.picked === i
             let style =
               'border-zinc-200/90 dark:border-white/10 bg-zinc-50/80 dark:bg-white/[0.03] hover:border-[#AD2B17] dark:hover:border-[#AD2B17] hover:bg-white dark:hover:bg-white/[0.07] text-zinc-900 dark:text-zinc-100'
-            if (config.layout === 'binary' && !revealed) {
-              style =
-                i === 0
-                  ? 'border-emerald-600/35 dark:border-emerald-400/35 bg-emerald-500/[0.08] hover:bg-emerald-500/15 text-emerald-950 dark:text-emerald-200'
-                  : 'border-rose-600/35 dark:border-rose-400/35 bg-rose-500/[0.08] hover:bg-rose-500/15 text-rose-950 dark:text-rose-200'
-            }
             if (revealed) {
               style = isAnswer
                 ? 'border-emerald-500 dark:border-emerald-400 bg-emerald-500/15 text-emerald-950 dark:text-emerald-200'
@@ -462,7 +456,7 @@ export function QuizGame({ config }: { config: QuizConfig }) {
             <div className="flex gap-2.5 rounded-xl border border-zinc-200 bg-zinc-50 p-3.5 text-xs text-zinc-800 dark:border-white/10 dark:bg-black/40 dark:text-zinc-200 sm:gap-3 sm:p-4 sm:text-sm">
               <Lightbulb className="mt-0.5 h-4 w-4 shrink-0 text-[#AD2B17] sm:h-5 sm:w-5" strokeWidth={1.75} />
               <p className="leading-relaxed">
-                <b className="font-mono text-[11px] uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                <b className="font-mono text-[11px] uppercase tracking-wider text-[#AD2B17] dark:text-white">
                   {en ? 'DIPLOMATIC FACT: ' : 'FAKTA DIPLOMATIK: '}
                 </b>
                 {current.info}

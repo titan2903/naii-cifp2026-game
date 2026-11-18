@@ -4,10 +4,11 @@
 
 @theme {
   --font-sans: "Plus Jakarta Sans", -apple-system, BlinkMacSystemFont, sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  /* Brand: Plus Jakarta Sans only. `font-mono` keeps tabular figures for scores/timers. */
+  --font-mono: "Plus Jakarta Sans", Arial, Helvetica, sans-serif;
+  --font-mono--font-feature-settings: "tnum";
   --color-naii-red: #ad2b17;
   --color-naii-dark: #3a0900;
-  --color-cifp-gold: #c89d54;
 
   --animate-globe: globe-spin 90s linear infinite;
   --animate-radar: radar-sweep 8s linear infinite;
@@ -47,32 +48,12 @@
   }
 
   body {
-    @apply min-h-[100dvh] overflow-x-hidden bg-[#F5F2EC] font-sans text-zinc-900 antialiased selection:bg-[#AD2B17] selection:text-white transition-colors duration-300;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgb(58 9 0 / 0.055) 1px, transparent 0),
-      radial-gradient(1100px 580px at 8% -8%, rgb(173 43 23 / 0.11), transparent 60%),
-      radial-gradient(900px 500px at 96% 10%, rgb(47 120 184 / 0.06), transparent 65%),
-      radial-gradient(800px 800px at 50% 100%, rgb(200 157 84 / 0.07), transparent 70%);
-    background-size:
-      24px 24px,
-      100% 100%,
-      100% 100%,
-      100% 100%;
-    background-attachment: fixed;
+    /* Brand guidelines page ground: flat warm neutral, black body text */
+    @apply min-h-[100dvh] overflow-x-hidden bg-[#F5F4F2] font-sans text-black antialiased selection:bg-[#AD2B17] selection:text-white transition-colors duration-300;
   }
 
   .dark body {
-    @apply bg-[#0B0908] text-zinc-100;
-    background-image:
-      radial-gradient(circle at 1px 1px, rgb(255 255 255 / 0.045) 1px, transparent 0),
-      radial-gradient(1200px 600px at 10% -10%, rgb(173 43 23 / 0.3), transparent 65%),
-      radial-gradient(1000px 580px at 98% 12%, rgb(11 25 44 / 0.72), transparent 68%),
-      radial-gradient(900px 700px at 50% 100%, rgb(200 157 84 / 0.1), transparent 75%);
-    background-size:
-      24px 24px,
-      100% 100%,
-      100% 100%,
-      100% 100%;
+    @apply bg-black text-white;
   }
 
   /* Custom high-craft diplomatic scrollbar */
@@ -102,13 +83,9 @@
 }
 
 @layer components {
-  /* Liquid-glass & Bento architectural surface with tactile specular rim */
+  /* Flat brand surface: white card, hairline border (as in the guideline panels) */
   .glass {
-    @apply rounded-[1.5rem] border border-zinc-200/90 bg-white/95 backdrop-blur-md;
-    box-shadow:
-      0 20px 40px -15px rgba(24, 12, 8, 0.07),
-      inset 0 1px 0 rgba(255, 255, 255, 0.95),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.02);
+    @apply rounded-xl border border-zinc-200 bg-white;
     transition:
       transform 0.3s cubic-bezier(0.16, 1, 0.3, 1),
       border-color 0.3s cubic-bezier(0.16, 1, 0.3, 1),
@@ -117,41 +94,44 @@
   }
 
   .dark .glass {
-    @apply border-white/[0.09] bg-[#140E0C]/90;
-    box-shadow:
-      0 24px 48px -16px rgba(0, 0, 0, 0.75),
-      inset 0 1px 0 rgba(255, 255, 255, 0.12),
-      inset 0 -1px 0 rgba(0, 0, 0, 0.5);
+    @apply border-white/10 bg-[#121212];
   }
 
+  /* White on NAII Red: 6.7:1, valid at all sizes (brand p.11) */
   .btn-primary {
-    @apply inline-flex items-center justify-center gap-2.5 rounded-xl bg-[#AD2B17] px-5 py-3 text-sm font-bold tracking-tight text-white shadow-[0_10px_24px_-6px_rgba(173,43,23,0.45),inset_0_1px_0_rgba(255,255,255,0.22)] hover:-translate-y-[1px] hover:bg-[#be311b] hover:shadow-[0_14px_28px_-6px_rgba(173,43,23,0.55),inset_0_1px_0_rgba(255,255,255,0.3)] active:translate-y-0 active:scale-[0.98] disabled:opacity-50;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    @apply inline-flex items-center justify-center gap-2.5 rounded-lg bg-[#AD2B17] px-5 py-3 text-sm font-bold tracking-tight text-white hover:bg-[#3A0900] active:scale-[0.98] disabled:opacity-50;
+    transition: background-color 0.2s ease, transform 0.1s ease;
+  }
+
+  .dark .btn-primary {
+    @apply hover:bg-[#8C2312];
   }
 
   .btn-secondary {
-    @apply inline-flex items-center justify-center gap-2 rounded-xl border border-zinc-300/90 bg-white px-4 py-2.5 text-sm font-semibold tracking-tight text-zinc-800 shadow-[0_2px_8px_rgba(0,0,0,0.03),inset_0_1px_0_rgba(255,255,255,0.95)] hover:-translate-y-[1px] hover:border-zinc-400 hover:bg-zinc-50 active:translate-y-0 active:scale-[0.98] disabled:opacity-50;
-    transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    @apply inline-flex items-center justify-center gap-2 rounded-lg border border-black/20 bg-white px-4 py-2.5 text-sm font-semibold tracking-tight text-black hover:border-[#AD2B17] hover:text-[#AD2B17] active:scale-[0.98] disabled:opacity-50;
+    transition: color 0.2s ease, border-color 0.2s ease, transform 0.1s ease;
   }
 
   .dark .btn-secondary {
-    @apply border-white/[0.12] bg-white/[0.04] text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.09)] hover:border-white/25 hover:bg-white/[0.08];
+    @apply border-white/20 bg-transparent text-white hover:border-white hover:text-white;
   }
 
+  /* Brand "Subtitle" style: red outline pill */
   .chip {
-    @apply inline-flex items-center gap-1.5 rounded-full border border-zinc-300/80 bg-zinc-100/90 px-3 py-1 font-mono text-[11px] font-medium tracking-wider uppercase text-zinc-700 transition-colors;
+    @apply inline-flex items-center gap-1.5 rounded-full border border-[#AD2B17]/60 bg-transparent px-3 py-1 text-[11px] font-bold tracking-[0.12em] uppercase text-[#AD2B17] transition-colors;
   }
 
+  /* Small red text on black fails contrast (brand p.11) -> white outline pill */
   .dark .chip {
-    @apply border-white/[0.12] bg-white/[0.05] text-zinc-300;
+    @apply border-white/30 text-white;
   }
 
   .field {
-    @apply w-full rounded-xl border border-zinc-300 bg-white px-4 py-3 text-base text-zinc-900 placeholder:text-zinc-400 outline-none transition focus:border-[#AD2B17] focus:ring-2 focus:ring-[#AD2B17]/15 sm:text-sm;
+    @apply w-full rounded-lg border border-zinc-300 bg-white px-4 py-3 text-base text-black placeholder:text-zinc-500 outline-none transition focus:border-[#AD2B17] focus:ring-2 focus:ring-[#AD2B17]/15 sm:text-sm;
   }
 
   .dark .field {
-    @apply border-white/[0.14] bg-[#0B0908]/90 text-zinc-100 placeholder:text-zinc-500 focus:border-[#AD2B17] focus:ring-[#AD2B17]/25;
+    @apply border-white/20 bg-black text-white placeholder:text-zinc-400 focus:border-white focus:ring-white/20;
   }
 
   /* Diplomatic fine crosshair grid */
@@ -164,15 +144,15 @@
 
   /* Diplomatic metallic seal & grade badges */
   .seal-grade-s {
-    @apply border-[#C89D54] bg-gradient-to-br from-[#AD2B17] via-[#851E0D] to-[#3A0900] text-[#FFF4DE] shadow-[0_0_24px_rgba(200,157,84,0.45),inset_0_1px_0_rgba(255,255,255,0.35)];
+    @apply border-white bg-[#AD2B17] text-white;
   }
 
   .seal-grade-a {
-    @apply border-[#C89D54]/70 bg-gradient-to-br from-zinc-900 via-[#3A0900] to-zinc-950 text-white shadow-[0_0_20px_rgba(173,43,23,0.35),inset_0_1px_0_rgba(255,255,255,0.2)];
+    @apply border-white/40 bg-[#3A0900] text-white;
   }
 
   .seal-grade-b {
-    @apply border-zinc-400 bg-zinc-800 text-zinc-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.15)];
+    @apply border-zinc-400 bg-zinc-800 text-zinc-100;
   }
 
   .seal-grade-c {

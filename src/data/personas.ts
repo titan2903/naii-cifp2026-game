@@ -23,7 +23,7 @@ export const PERSONAS: Record<PersonaId, Persona> = {
     description:
       'Tegas menjaga kepentingan nasional, regulasi data, dan kemandirian bangsa di tengah tekanan global. Kekuatan Anda: prinsip yang kokoh.',
     courses: ['Etika AI dari Perspektif Indonesia', 'AI dalam Akademik untuk Pelajar dan Mahasiswa'],
-    accent: '#B47B2A',
+    accent: '#AD2B17',
   },
   'pragmatic-negotiator': {
     id: 'pragmatic-negotiator',
@@ -33,7 +33,7 @@ export const PERSONAS: Record<PersonaId, Persona> = {
     description:
       'Mengutamakan stabilitas jangka pendek dan hasil yang realistis. Perkuat strategi pemanfaatan teknologi jangka panjang untuk jadi diplomat masa depan.',
     courses: ['Pengenalan AI untuk Pelajar dan Generasi Muda', 'Storytelling dan Visualisasi Data dengan AI'],
-    accent: '#0F766E',
+    accent: '#AD2B17',
   },
 }
 
@@ -56,7 +56,7 @@ export const PERSONAS_EN: Record<PersonaId, Persona> = {
     description:
       'Resolute in defending national interests, data governance, and technological autonomy amid geopolitical rivalry. Your core strength is unwavering principle.',
     courses: ['AI Ethics from an Indonesian Perspective', 'AI in Academia for Students & Researchers'],
-    accent: '#B47B2A',
+    accent: '#AD2B17',
   },
   'pragmatic-negotiator': {
     id: 'pragmatic-negotiator',
@@ -66,7 +66,7 @@ export const PERSONAS_EN: Record<PersonaId, Persona> = {
     description:
       'Prioritizes near-term stability and realistic outcomes. Sharpen your long-term technological strategy to become a future-ready diplomat.',
     courses: ['Introduction to AI for Students & Youth', 'Data Storytelling and Visualization with AI'],
-    accent: '#0F766E',
+    accent: '#AD2B17',
   },
 }
 

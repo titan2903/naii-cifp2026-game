@@ -94,7 +94,7 @@ function PassportModalContent() {
       particleCount: 110,
       spread: 80,
       origin: { y: 0.6 },
-      colors: ['#AD2B17', '#C89D54', '#ffffff'],
+      colors: ['#AD2B17', '#3A0900', '#ffffff'],
     })
   }
 
@@ -113,16 +113,16 @@ function PassportModalContent() {
         if (e.target === e.currentTarget) setPassportOpen(false)
       }}
     >
-      <div className="glass relative max-h-[92dvh] w-full max-w-3xl overflow-y-auto border-[#C89D54]/40 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:p-8">
+      <div className="glass relative max-h-[92dvh] w-full max-w-3xl overflow-y-auto border-[#AD2B17]/40 p-5 pb-[calc(1.25rem+env(safe-area-inset-bottom))] shadow-2xl sm:p-8">
         {/* STICKY TOP HEADER ON MOBILE */}
-        <div className="sticky top-0 z-20 -mx-5 -mt-5 mb-4 flex items-start justify-between gap-3 border-b border-zinc-200 bg-white/95 px-5 pb-3.5 pt-4 backdrop-blur-md dark:border-white/10 dark:bg-[#140E0C]/95 sm:static sm:mx-0 sm:mb-0 sm:mt-0 sm:bg-transparent sm:p-0 sm:pb-4 sm:backdrop-blur-none dark:sm:bg-transparent">
+        <div className="sticky top-0 z-20 -mx-5 -mt-5 mb-4 flex items-start justify-between gap-3 border-b border-zinc-200 bg-white/95 px-5 pb-3.5 pt-4 backdrop-blur-md dark:border-white/10 dark:bg-[#121212]/95 sm:static sm:mx-0 sm:mb-0 sm:mt-0 sm:bg-transparent sm:p-0 sm:pb-4 sm:backdrop-blur-none dark:sm:bg-transparent">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white">
-                <Stamp className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
+                <Stamp className="h-3.5 w-3.5 text-white" strokeWidth={2} />
                 {en ? 'BOOTH PASSPORT // 2 QUICK STEPS' : 'PASPOR BOOTH // 2 LANGKAH CEPAT'}
               </span>
-              <span className="chip !border-[#C89D54]/50 !bg-[#C89D54]/15 !text-[#9A6F22] dark:!text-[#C89D54]">
+              <span className="chip !border-[#AD2B17]/50 !bg-[#AD2B17]/15 !text-[#AD2B17] dark:!text-white">
                 {stampCount}/2 {en ? 'STEPS COMPLETED' : 'MISI SELESAI'}
               </span>
             </div>
@@ -162,7 +162,7 @@ function PassportModalContent() {
           >
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
                   {en ? 'STEP 01 // 1 SHORT GAME' : 'STEMPEL 01 // 1 GAME SINGKAT'}
                 </span>
                 {passport.stamp1.unlocked ? (
@@ -244,12 +244,12 @@ function PassportModalContent() {
             className={`relative flex flex-col justify-between rounded-2xl border p-4 transition sm:p-5 ${
               passport.stamp2.unlocked
                 ? 'border-emerald-500/45 bg-emerald-500/[0.06] dark:border-emerald-400/35 dark:bg-emerald-500/[0.08]'
-                : 'border-[#C89D54]/55 bg-[#C89D54]/[0.06] dark:border-[#C89D54]/40 dark:bg-[#C89D54]/[0.06]'
+                : 'border-[#AD2B17]/55 bg-[#AD2B17]/[0.06] dark:border-[#AD2B17]/40 dark:bg-[#AD2B17]/[0.06]'
             }`}
           >
             <div className="space-y-2.5">
               <div className="flex items-center justify-between">
-                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                <span className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
                   {en ? 'STEP 02 // WWW.NAII.CO ACCOUNT' : 'STEMPEL 02 // AKUN WWW.NAII.CO'}
                 </span>
                 {passport.stamp2.unlocked ? (
@@ -257,7 +257,7 @@ function PassportModalContent() {
                     <CheckCircle2 className="h-3 w-3" /> {en ? 'VERIFIED' : 'TERVERIFIKASI'}
                   </span>
                 ) : (
-                  <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#9A6F22] dark:text-[#C89D54]">
+                  <span className="inline-flex items-center gap-1 font-mono text-[10px] font-bold text-[#AD2B17] dark:text-white">
                     <UserCheck className="h-3 w-3" /> {en ? 'STAFF VERIFY' : 'CEK PANITIA'}
                   </span>
                 )}
@@ -280,7 +280,7 @@ function PassportModalContent() {
                       href={NAII_URL}
                       target="_blank"
                       rel="noreferrer"
-                      className="inline-flex flex-1 items-center justify-between rounded-lg border border-[#AD2B17]/30 bg-white px-3 py-2 font-mono text-xs font-bold text-[#AD2B17] hover:bg-zinc-50 dark:bg-black/50 dark:text-[#C89D54]"
+                      className="inline-flex flex-1 items-center justify-between rounded-lg border border-[#AD2B17]/30 bg-white px-3 py-2 font-mono text-xs font-bold text-[#AD2B17] hover:bg-zinc-50 dark:bg-black/50 dark:text-white"
                     >
                       <span>1. {en ? 'Sign Up Free at www.naii.co' : 'Daftar Gratis di www.naii.co'}</span>
                       <ArrowUpRight className="h-3.5 w-3.5" />
@@ -291,7 +291,7 @@ function PassportModalContent() {
                       className={`inline-flex items-center gap-1 rounded-lg border px-2.5 py-2 font-mono text-xs font-bold transition ${
                         showNaiiQr
                           ? 'border-[#AD2B17] bg-[#AD2B17] text-white'
-                          : 'border-[#C89D54]/50 bg-[#C89D54]/15 text-[#9A6F22] hover:bg-[#C89D54]/25 dark:text-[#C89D54]'
+                          : 'border-[#AD2B17]/50 bg-[#AD2B17]/15 text-[#AD2B17] hover:bg-[#AD2B17]/25 dark:text-white'
                       }`}
                       title={en ? 'Toggle www.naii.co QR Code' : 'Tampilkan QR Code www.naii.co'}
                     >
@@ -301,12 +301,12 @@ function PassportModalContent() {
                   </div>
 
                   {showNaiiQr && (
-                    <div className="flex items-center gap-3 rounded-xl border border-[#C89D54]/40 bg-white p-2.5 dark:bg-black/45">
+                    <div className="flex items-center gap-3 rounded-xl border border-[#AD2B17]/40 bg-white p-2.5 dark:bg-black/45">
                       <div className="shrink-0 rounded-lg border border-zinc-200 bg-white p-1.5">
                         <QrCodeSvg value={NAII_URL} className="h-20 w-20" />
                       </div>
                       <div className="min-w-0 space-y-0.5">
-                        <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                        <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
                           SCAN WWW.NAII.CO
                         </p>
                         <p className="text-[11px] leading-snug text-zinc-600 dark:text-zinc-300">
@@ -461,7 +461,7 @@ function PassportModalContent() {
         <div ref={ticketRef} className={allUnlocked ? 'order-first scroll-mt-24 sm:mt-5' : 'mt-6 scroll-mt-24'}>
           {allUnlocked ? (
             /* FULL 2/2 OFFICIAL MERCHANDISE REDEMPTION TICKET */
-            <div className="relative overflow-hidden rounded-2xl border-2 border-[#C89D54] bg-gradient-to-br from-[#3A0900] via-[#240600] to-[#0B0908] p-5 text-white shadow-[0_20px_50px_-12px_rgba(173,43,23,0.55)] sm:p-7">
+            <div className="relative overflow-hidden rounded-2xl bg-[#3A0900] p-5 text-white sm:p-7">
               <NaiiWatermark className="absolute -bottom-16 -right-16 h-64 w-64" />
 
               <div className="relative z-10 space-y-5">
@@ -470,7 +470,7 @@ function PassportModalContent() {
                   <div className="flex items-center gap-2.5">
                     <NaiiLogo variant="white" className="h-6 w-auto sm:h-7" />
                     <span className="h-4 w-px bg-white/25" />
-                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-[#C89D54] sm:text-xs">
+                    <span className="font-mono text-[10px] font-bold tracking-widest uppercase text-white sm:text-xs">
                       {en ? 'OFFICIAL MERCHANDISE CLAIM TICKET' : 'TIKET KLAIM MERCHANDISE RESMI NAII'}
                     </span>
                   </div>
@@ -479,7 +479,7 @@ function PassportModalContent() {
                     className={`inline-flex items-center gap-1.5 rounded-full px-3 py-1 font-mono text-[10px] font-extrabold tracking-wider uppercase ${
                       passport.claimedByStaff
                         ? 'border border-zinc-400/40 bg-zinc-800 text-zinc-300'
-                        : 'border border-emerald-400/50 bg-emerald-500/20 text-emerald-200 animate-pulse'
+                        : 'bg-[#AD2B17] text-white animate-pulse'
                     }`}
                   >
                     <Ticket className="h-3.5 w-3.5" />
@@ -502,7 +502,7 @@ function PassportModalContent() {
                     <h3 className="text-2xl font-extrabold tracking-tight text-white sm:text-3xl">
                       {player?.name ?? (en ? 'CIFP 2026 Delegate' : 'Delegasi CIFP 2026')}
                     </h3>
-                    <p className="text-xs font-medium text-[#C89D54] sm:text-sm">
+                    <p className="text-xs font-medium text-white sm:text-sm">
                       {player?.institution || '10th CIFP 2026 Participant'}
                       {player?.email ? ` · ${player.email}` : ''}
                     </p>
@@ -518,14 +518,14 @@ function PassportModalContent() {
                   </div>
 
                   {/* Ticket Code Box */}
-                  <div className="rounded-2xl border-2 border-dashed border-[#C89D54]/70 bg-black/45 px-5 py-4 text-center backdrop-blur-xs">
-                    <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-[#C89D54]">
+                  <div className="rounded-2xl border-2 border-dashed border-white/40 bg-black/45 px-5 py-4 text-center">
+                    <p className="font-mono text-[10px] font-semibold uppercase tracking-widest text-white">
                       {en ? 'VOUCHER CODE' : 'KODE TIKET KLAIM'}
                     </p>
                     <p className="mt-1 font-mono text-2xl font-extrabold tracking-wider text-white sm:text-3xl">
                       {passport.ticketCode}
                     </p>
-                    <p className="mt-1 font-mono text-[10px] text-emerald-300">
+                    <p className="mt-1 font-mono text-[10px] text-white/70">
                       {en ? '2/2 STEPS VERIFIED' : '2/2 LANGKAH LENGKAP'}
                     </p>
                   </div>
@@ -534,7 +534,7 @@ function PassportModalContent() {
                 {/* Reward Items & Staff Verification */}
                 <div className="flex flex-col justify-between gap-3 rounded-xl border border-white/15 bg-black/35 p-3.5 sm:flex-row sm:items-center sm:p-4">
                   <div className="flex items-start gap-2.5 text-xs text-white/90">
-                    <Gift className="mt-0.5 h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                    <Gift className="mt-0.5 h-4 w-4 shrink-0 text-white" strokeWidth={2} />
                     <div>
                       <p className="font-bold text-white">
                         {en
@@ -580,7 +580,7 @@ function PassportModalContent() {
                       <button
                         type="button"
                         onClick={() => setConfirmStaffClaim(true)}
-                        className="rounded-xl border border-[#C89D54]/50 bg-[#C89D54]/20 px-3.5 py-2 font-mono text-[11px] font-bold text-[#FFF4DE] transition hover:bg-[#C89D54]/35"
+                        className="rounded-xl border border-white/40 px-3.5 py-2 font-mono text-[11px] font-bold text-white transition hover:bg-white hover:text-[#3A0900]"
                       >
                         <ShieldCheck className="mr-1.5 inline h-3.5 w-3.5" />
                         {en ? 'Booth Staff: Mark Claimed' : 'Verifikasi Panitia Meja Booth'}
@@ -594,7 +594,7 @@ function PassportModalContent() {
             /* PROGRESS BANNER WHEN < 2 STAMPS */
             <div className="flex flex-col justify-between gap-4 rounded-2xl border border-zinc-200/90 bg-zinc-50/90 p-4 dark:border-white/10 dark:bg-black/40 sm:flex-row sm:items-center sm:p-5">
               <div className="flex items-start gap-3">
-                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-[#C89D54]">
+                <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-white">
                   {passport.stamp1.unlocked ? <Award className="h-5 w-5" /> : <Sparkles className="h-5 w-5" />}
                 </div>
                 <div>
@@ -619,7 +619,7 @@ function PassportModalContent() {
                 </div>
               </div>
 
-              <div className="shrink-0 font-mono text-xs font-bold text-[#AD2B17] dark:text-[#C89D54]">
+              <div className="shrink-0 font-mono text-xs font-bold text-[#AD2B17] dark:text-white">
                 {stampCount}/2 {en ? 'DONE' : 'SELESAI'}
               </div>
             </div>

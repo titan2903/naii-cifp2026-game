@@ -182,7 +182,7 @@ export function LeaderboardScreen() {
             onClick={() => setQrModalOpen(true)}
             className="btn-primary !px-3.5 !py-2 text-xs"
           >
-            <QrCode className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
+            <QrCode className="h-4 w-4 text-white" strokeWidth={2} />
             {en ? 'Show QR Codes' : 'Tampilkan QR Code'}
           </button>
           <button onClick={() => void reload()} className="btn-secondary !px-3.5 !py-2 text-xs">
@@ -315,7 +315,7 @@ export function LeaderboardScreen() {
               >
                 <div className="flex items-center justify-between gap-2">
                   <span className="inline-flex items-center gap-2 rounded-full bg-[#AD2B17] px-3.5 py-1 font-mono text-xs font-bold tracking-wider text-white">
-                    <Crown className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
+                    <Crown className="h-4 w-4 text-white" strokeWidth={2} />
                     {en ? 'RANK #01 // SESSION LEADER' : 'PERINGKAT #01 // PEMIMPIN SESI'}
                   </span>
                   <span className="font-mono text-xs font-semibold text-zinc-500 dark:text-zinc-400">
@@ -325,7 +325,7 @@ export function LeaderboardScreen() {
 
                 <div className="my-6 flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-[#AD2B17] dark:text-[#C89D54]">
+                    <p className="font-mono text-[11px] font-semibold uppercase tracking-widest text-[#AD2B17] dark:text-white">
                       TIER 3 TOTEBAG CANDIDATE
                     </p>
                     <h2 className="mt-1 truncate text-2xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
@@ -340,7 +340,7 @@ export function LeaderboardScreen() {
 
                 <div className="grid grid-cols-3 divide-x divide-zinc-200 rounded-2xl border border-zinc-200/90 bg-zinc-50/90 py-3.5 text-center dark:divide-white/10 dark:border-white/10 dark:bg-black/40">
                   <div className="px-2">
-                    <p className="font-mono text-2xl font-extrabold tabular-nums text-[#AD2B17] dark:text-[#C89D54] sm:text-3xl">
+                    <p className="font-mono text-2xl font-extrabold tabular-nums text-[#AD2B17] dark:text-white sm:text-3xl">
                       {champion.score}
                     </p>
                     <p className="font-mono text-[10px] uppercase tracking-wider text-zinc-500 dark:text-zinc-400">
@@ -409,7 +409,7 @@ export function LeaderboardScreen() {
                           · {formatSeconds(entry.time_seconds, lang)}
                         </div>
                         <div>
-                          <span className="text-2xl font-extrabold tabular-nums text-[#AD2B17] dark:text-[#C89D54]">
+                          <span className="text-2xl font-extrabold tabular-nums text-[#AD2B17] dark:text-white">
                             {entry.score}
                           </span>
                           <span className="ml-1 text-[10px] text-zinc-500">PTS</span>
@@ -470,7 +470,7 @@ export function LeaderboardScreen() {
                           </span>{' '}
                           · {formatSeconds(entry.time_seconds, lang)}
                         </div>
-                        <span className="w-16 text-lg font-extrabold tabular-nums text-[#AD2B17] dark:text-[#C89D54]">
+                        <span className="w-16 text-lg font-extrabold tabular-nums text-[#AD2B17] dark:text-white">
                           {entry.score}
                         </span>
                       </div>

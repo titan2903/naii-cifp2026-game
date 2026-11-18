@@ -40,10 +40,10 @@ export function TimerBar({
           <div
             className={`h-full rounded-full transition-[width] duration-100 ease-linear ${
               ratio > 0.5
-                ? 'bg-gradient-to-r from-emerald-600 to-emerald-400 shadow-[0_0_10px_rgba(16,185,129,0.35)]'
+                ? 'bg-emerald-600'
                 : ratio > 0.25
-                  ? 'bg-gradient-to-r from-amber-600 via-[#C89D54] to-yellow-400 shadow-[0_0_10px_rgba(200,157,84,0.4)]'
-                  : 'bg-gradient-to-r from-red-600 via-[#AD2B17] to-rose-500 shadow-[0_0_14px_rgba(173,43,23,0.7)] animate-pulse'
+                  ? 'bg-[#AD2B17]/70'
+                  : 'bg-[#AD2B17] animate-pulse'
             }`}
             style={{ width: `${ratio * 100}%` }}
           />
@@ -52,7 +52,7 @@ export function TimerBar({
         <div
           className={`flex shrink-0 items-center justify-center rounded-lg border px-2.5 py-0.5 font-mono text-xs font-extrabold tabular-nums transition-colors shadow-xs ${
             isCritical
-              ? 'border-red-500/60 bg-red-500/10 text-[#AD2B17] dark:border-red-400/50 dark:bg-red-500/20 dark:text-[#ff7866] animate-pulse'
+              ? 'border-red-500/60 bg-red-500/10 text-[#AD2B17] dark:border-red-400/50 dark:bg-red-500/20 dark:text-white animate-pulse'
               : 'border-zinc-300/80 bg-zinc-100 text-zinc-900 dark:border-white/15 dark:bg-white/5 dark:text-white'
           }`}
         >

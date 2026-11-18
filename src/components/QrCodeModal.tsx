@@ -12,7 +12,7 @@ import { NaiiStarMark } from './NaiiBrand'
 export const QrCodeSvg = memo(function QrCodeSvg({
   value,
   className = 'h-44 w-44',
-  accentColor = '#110B09',
+  accentColor = '#121212',
 }: {
   value: string
   className?: string
@@ -94,16 +94,16 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
         if (e.target === e.currentTarget) onClose()
       }}
     >
-      <div className="glass relative max-h-[92dvh] w-full max-w-4xl overflow-y-auto border-[#C89D54]/45 p-5 shadow-2xl sm:p-8">
+      <div className="glass relative max-h-[92dvh] w-full max-w-4xl overflow-y-auto border-[#AD2B17]/45 p-5 shadow-2xl sm:p-8">
         {/* HEADER */}
         <div className="flex items-start justify-between gap-3 border-b border-zinc-200 pb-4 dark:border-white/10">
           <div className="space-y-1">
             <div className="flex flex-wrap items-center gap-2">
               <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[11px] font-bold tracking-wider text-white">
-                <QrCode className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
+                <QrCode className="h-3.5 w-3.5 text-white" strokeWidth={2} />
                 {en ? 'ZERO-TYPING SMARTPHONE ACCESS' : 'AKSES INSTAN TANPA KETIK URL'}
               </span>
-              <span className="chip !border-[#C89D54]/45 !bg-[#C89D54]/10 !text-[#9A6F22] dark:!text-[#C89D54]">
+              <span className="chip !border-[#AD2B17]/45 !bg-[#AD2B17]/10 !text-[#AD2B17] dark:!text-white">
                 {en ? '2 STEPS TO CLAIM PIN' : '2 LANGKAH KLAIM PIN'}
               </span>
             </div>
@@ -139,7 +139,7 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
                   <Smartphone className="h-3.5 w-3.5" />
                   {en ? 'QR 01 // PLAY ON YOUR PHONE' : 'QR 01 // MAIN DI HP ANDA'}
                 </span>
-                <span className="font-mono text-[10px] font-bold text-[#AD2B17] dark:text-[#C89D54]">
+                <span className="font-mono text-[10px] font-bold text-[#AD2B17] dark:text-white">
                   VERCEL LIVE APP
                 </span>
               </div>
@@ -170,7 +170,7 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
                 <QrCodeSvg value={fullGameUrl} className="h-52 w-52 sm:h-56 sm:w-56" accentColor="#3A0900" />
               </div>
 
-              <p className="break-all rounded-xl border border-zinc-200 bg-white px-3 py-2 font-mono text-xs font-bold text-[#AD2B17] dark:border-white/10 dark:bg-black/50 dark:text-[#C89D54]">
+              <p className="break-all rounded-xl border border-zinc-200 bg-white px-3 py-2 font-mono text-xs font-bold text-[#AD2B17] dark:border-white/10 dark:bg-black/50 dark:text-white">
                 {fullGameUrl}
               </p>
             </div>
@@ -206,14 +206,14 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
           </div>
 
           {/* QR 02: WWW.NAII.CO */}
-          <div className="flex flex-col justify-between rounded-2xl border-2 border-[#C89D54]/50 bg-[#C89D54]/[0.05] p-5 text-center dark:border-[#C89D54]/50 dark:bg-[#C89D54]/[0.07]">
+          <div className="flex flex-col justify-between rounded-2xl border-2 border-[#AD2B17]/50 bg-[#AD2B17]/[0.05] p-5 text-center dark:border-[#AD2B17]/50 dark:bg-[#AD2B17]/[0.07]">
             <div className="space-y-3">
               <div className="flex items-center justify-between gap-2">
-                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#3A0900] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-[#C89D54]">
+                <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#3A0900] px-2.5 py-1 font-mono text-[10px] font-bold uppercase tracking-wider text-white">
                   <Sparkles className="h-3.5 w-3.5" />
                   {en ? 'QR 02 // 20+ FREE AI COURSES' : 'QR 02 // 20+ KURSUS AI GRATIS'}
                 </span>
-                <span className="font-mono text-[10px] font-bold text-[#9A6F22] dark:text-[#C89D54]">
+                <span className="font-mono text-[10px] font-bold text-[#AD2B17] dark:text-white">
                   STEP #02 · TIER 2 PIN
                 </span>
               </div>
@@ -237,7 +237,7 @@ export function QrCodeModal({ open, onClose }: { open: boolean; onClose: () => v
               </p>
 
               <div className="flex justify-center py-2">
-                <QrCodeSvg value={NAII_URL} className="h-52 w-52 sm:h-56 sm:w-56" accentColor="#110B09" />
+                <QrCodeSvg value={NAII_URL} className="h-52 w-52 sm:h-56 sm:w-56" accentColor="#121212" />
               </div>
 
               <p className="break-all rounded-xl border border-zinc-200 bg-white px-3 py-2 font-mono text-xs font-bold text-zinc-900 dark:border-white/10 dark:bg-black/50 dark:text-white">
@@ -291,16 +291,16 @@ export function BoothQrShowcase({ onExpand }: { onExpand?: () => void }) {
   return (
     <section
       aria-label={en ? 'Smartphone QR Code Quick Access' : 'Akses Cepat QR Code Smartphone'}
-      className="glass relative overflow-hidden border-[#C89D54]/40 p-5 sm:p-8"
+      className="glass relative overflow-hidden border-[#AD2B17]/40 p-5 sm:p-8"
     >
       <div className="flex flex-col justify-between gap-4 border-b border-zinc-200/80 pb-4 dark:border-white/10 sm:flex-row sm:items-center">
         <div className="space-y-1">
           <div className="flex flex-wrap items-center gap-2">
             <span className="inline-flex items-center gap-1.5 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[10px] font-bold tracking-wider uppercase text-white sm:text-xs">
-              <QrCode className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={2} />
+              <QrCode className="h-3.5 w-3.5 text-white" strokeWidth={2} />
               {en ? 'SCAN & PLAY // ZERO TYPING' : 'SCAN & MAINKAN // TANPA KETIK URL'}
             </span>
-            <span className="chip !border-[#C89D54]/45 !bg-[#C89D54]/10 !text-[#9A6F22] dark:!text-[#C89D54]">
+            <span className="chip !border-[#AD2B17]/45 !bg-[#AD2B17]/10 !text-[#AD2B17] dark:!text-white">
               {en ? 'STAMP FPCI · STICKER · PIN · TOTEBAG' : 'STAMP FPCI · STIKER · PIN · TOTEBAG'}
             </span>
           </div>
@@ -353,26 +353,26 @@ export function BoothQrShowcase({ onExpand }: { onExpand?: () => void }) {
                 ? 'Play Speed Trivia, Real vs AI Hallucination, or AI Crisis Simulator directly from your phone (~45 sec).'
                 : 'Mainkan Speed Trivia, Real vs AI Hallucination, atau AI Crisis Simulator langsung dari browser HP Anda (~45 detik).'}
             </p>
-            <p className="font-mono text-[11px] font-bold text-[#AD2B17] dark:text-[#C89D54]">
+            <p className="font-mono text-[11px] font-bold text-[#AD2B17] dark:text-white">
               naii-cifp2026-game.vercel.app
             </p>
           </div>
         </div>
 
         {/* CARD 2: WWW.NAII.CO QR */}
-        <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#C89D54]/45 bg-[#C89D54]/[0.04] p-4 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/[0.06] sm:flex-row sm:p-5">
+        <div className="flex flex-col items-center gap-4 rounded-2xl border border-[#AD2B17]/45 bg-[#AD2B17]/[0.04] p-4 dark:border-[#AD2B17]/40 dark:bg-[#AD2B17]/[0.06] sm:flex-row sm:p-5">
           <button
             type="button"
             onClick={onExpand}
             className="group relative shrink-0 transition hover:scale-[1.02]"
             title={en ? 'Click to enlarge QR code' : 'Klik untuk memperbesar QR code'}
           >
-            <QrCodeSvg value={NAII_URL} className="h-36 w-36 sm:h-40 sm:w-40" accentColor="#110B09" />
+            <QrCodeSvg value={NAII_URL} className="h-36 w-36 sm:h-40 sm:w-40" accentColor="#121212" />
           </button>
 
           <div className="space-y-2 text-center sm:text-left">
-            <span className="inline-flex items-center gap-1 rounded-md bg-[#3A0900] px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-[#C89D54]">
-              <NaiiStarMark color="#C89D54" className="h-3 w-3" />
+            <span className="inline-flex items-center gap-1 rounded-md bg-[#3A0900] px-2 py-0.5 font-mono text-[10px] font-bold uppercase text-white">
+              <NaiiStarMark color="#FFFFFF" className="h-3 w-3" />
               {en ? 'SCAN #02 // 20+ FREE COURSES' : 'SCAN #02 // 20+ KURSUS GRATIS'}
             </span>
             <h3 className="text-base font-extrabold text-zinc-900 dark:text-white sm:text-lg">

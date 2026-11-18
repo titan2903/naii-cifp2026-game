@@ -69,26 +69,15 @@ const NAV_ITEMS: Array<{
   },
 ]
 
-export function Logo({ compact = false }: { compact?: boolean }) {
+export function Logo() {
   const { theme } = useTheme()
   return (
-    <a href={ROUTE_PATHS.home} className="group flex items-center gap-3 py-1">
+    <a href={ROUTE_PATHS.home} aria-label="Nusantara AI Institute (NAII)" className="group flex shrink-0 items-center py-1">
       {/* Sesuai NAII Brand Guidelines hal. 6:
           - Reverse (Red mark + White wordmark) di latar gelap
-          - Full-color (Red mark + Black wordmark) di latar terang */}
+          - Full-color (Red mark + Black wordmark) di latar terang
+          Tagline CIFP dihapus dari header: tidak muat di max-w-7xl & sudah ada di top bar. */}
       <NaiiLogo variant={theme === 'dark' ? 'reverse' : 'full-color'} className="h-7 w-auto sm:h-9" />
-      {!compact && (
-        <div className="hidden items-center gap-3 border-l border-zinc-300 pl-3.5 dark:border-white/15 md:flex">
-          <div className="leading-tight">
-            <p className="font-mono text-[10px] font-semibold tracking-[0.2em] uppercase text-[#AD2B17]">
-              CIFP 2026 · 10TH EDITION
-            </p>
-            <p className="text-[11px] font-medium tracking-tight text-zinc-600 dark:text-zinc-400">
-              Indonesian Foreign Policy × AI
-            </p>
-          </div>
-        </div>
-      )}
     </a>
   )
 }
@@ -117,7 +106,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
   }
 
   return (
-    <div className="relative flex min-h-[100dvh] flex-col pb-20 text-zinc-900 transition-colors duration-300 dark:text-zinc-100 lg:pb-0">
+    <div className="relative flex min-h-[100dvh] flex-col pb-20 text-zinc-900 transition-colors duration-300 dark:text-zinc-100 xl:pb-0">
       {/* TOP DIPLOMATIC TELEMETRY STRIP */}
       <div className="border-b border-zinc-200/80 bg-zinc-900 text-zinc-300 dark:border-white/[0.07] dark:bg-[#070505]">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3.5 py-1.5 font-mono text-[10px] sm:px-6 sm:text-[11px]">
@@ -148,7 +137,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
               href="https://www.naii.co"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-0.5 font-semibold text-[#e25a45] transition hover:text-white"
+              className="inline-flex items-center gap-0.5 font-semibold text-white underline underline-offset-2 transition hover:text-white/80"
             >
               naii.co <ArrowUpRight className="h-3 w-3" strokeWidth={1.75} />
             </a>
@@ -157,14 +146,14 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
       </div>
 
       {/* MAIN NAVIGATION HEADER */}
-      <header className="sticky top-0 z-20 border-b border-zinc-200/80 bg-[#F6F4F0]/90 backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-[#0B0908]/90">
+      <header className="sticky top-0 z-20 border-b border-zinc-200/80 bg-[#F6F4F0]/90 backdrop-blur-xl transition-colors dark:border-white/[0.08] dark:bg-[#000000]/90">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-3.5 py-2.5 sm:px-6 sm:py-3">
           <Logo />
 
           {/* DESKTOP SEGMENTED NAVIGATION */}
           <nav
             aria-label={en ? 'Desktop Main Navigation' : 'Navigasi Utama Desktop'}
-            className="hidden items-center gap-1 rounded-2xl border border-zinc-200/90 bg-white/80 p-1 shadow-xs dark:border-white/[0.08] dark:bg-white/[0.03] lg:flex"
+            className="hidden items-center gap-1 rounded-2xl border border-zinc-200/90 bg-white/80 p-1 shadow-xs dark:border-white/[0.08] dark:bg-white/[0.03] xl:flex"
           >
             {NAV_ITEMS.map((item) => {
               const Icon = item.icon
@@ -174,13 +163,13 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
                   key={item.route}
                   href={item.href}
                   aria-current={active ? 'page' : undefined}
-                  className={`inline-flex items-center gap-2 rounded-xl px-3.5 py-2 text-xs font-semibold tracking-tight transition ${
+                  className={`inline-flex items-center gap-2 whitespace-nowrap rounded-xl px-3.5 py-2 text-xs font-semibold tracking-tight transition ${
                     active
                       ? 'bg-[#AD2B17] text-white shadow-xs'
                       : 'text-zinc-600 hover:bg-zinc-100 hover:text-zinc-900 dark:text-zinc-400 dark:hover:bg-white/[0.06] dark:hover:text-white'
                   }`}
                 >
-                  <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
+                  <Icon className="hidden h-3.5 w-3.5 2xl:block" strokeWidth={1.75} />
                   <span>{item.label[lang]}</span>
                 </a>
               )
@@ -200,7 +189,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
               }
               aria-label={en ? 'Show QR Codes' : 'Tampilkan QR Code'}
             >
-              <QrCode className="h-4 w-4 text-[#AD2B17] dark:text-[#C89D54]" strokeWidth={2} />
+              <QrCode className="h-4 w-4 text-[#AD2B17] dark:text-white" strokeWidth={2} />
               <span className="hidden sm:inline">QR</span>
             </button>
 
@@ -209,8 +198,8 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
               onClick={() => setPassportOpen(true)}
               className={`inline-flex min-h-9 items-center gap-1 rounded-xl border px-2 py-1.5 font-mono text-xs font-bold transition active:scale-95 sm:min-h-10 sm:gap-1.5 sm:px-3 sm:py-2 ${
                 stampCount === 2
-                  ? 'border-[#C89D54] bg-gradient-to-r from-[#AD2B17] to-[#3A0900] text-white shadow-[0_0_16px_rgba(200,157,84,0.4)]'
-                  : 'border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#C89D54]/40 dark:bg-[#C89D54]/15 dark:text-[#C89D54]'
+                  ? 'border-[#AD2B17] bg-[#AD2B17] text-white'
+                  : 'border-[#AD2B17]/35 bg-[#AD2B17]/10 text-[#AD2B17] hover:bg-[#AD2B17]/20 dark:border-[#AD2B17]/40 dark:bg-[#AD2B17]/15 dark:text-white'
               }`}
               title={
                 en
@@ -224,7 +213,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
               }
             >
               {stampCount === 2 ? (
-                <Ticket className="h-3.5 w-3.5 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                <Ticket className="h-3.5 w-3.5 shrink-0 text-white" strokeWidth={2} />
               ) : (
                 <Stamp className="h-3.5 w-3.5 shrink-0" strokeWidth={2} />
               )}
@@ -281,11 +270,11 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
             >
               <Languages className="hidden h-4 w-4 text-[#AD2B17] sm:inline" strokeWidth={1.75} />
               <span className="inline-flex items-center gap-1">
-                <span className={lang === 'id' ? 'font-extrabold text-[#AD2B17] dark:text-[#C89D54]' : 'opacity-60'}>
+                <span className={lang === 'id' ? 'font-extrabold text-[#AD2B17] dark:text-white' : 'opacity-60'}>
                   ID
                 </span>
                 <span className="opacity-40">/</span>
-                <span className={lang === 'en' ? 'font-extrabold text-[#AD2B17] dark:text-[#C89D54]' : 'opacity-60'}>
+                <span className={lang === 'en' ? 'font-extrabold text-[#AD2B17] dark:text-white' : 'opacity-60'}>
                   EN
                 </span>
               </span>
@@ -307,7 +296,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
             >
               {theme === 'dark' ? (
                 <>
-                  <Sun className="h-4 w-4 text-[#C89D54]" strokeWidth={1.75} />
+                  <Sun className="h-4 w-4 text-white" strokeWidth={1.75} />
                   <span className="hidden sm:inline">{en ? 'Light' : 'Terang'}</span>
                 </>
               ) : (
@@ -351,7 +340,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
               href="https://www.naii.co"
               target="_blank"
               rel="noreferrer"
-              className="font-semibold text-[#AD2B17] hover:underline"
+              className="font-semibold text-[#AD2B17] dark:text-white hover:underline"
             >
               www.naii.co
             </a>
@@ -362,7 +351,7 @@ export function Shell({ children, currentRoute = 'home' }: { children: ReactNode
       {/* SMARTPHONE BOTTOM NAVIGATION BAR (Thumb-Friendly, Zero Confusion on Mobile) */}
       <nav
         aria-label={en ? 'Smartphone Navigation' : 'Navigasi Smartphone'}
-        className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 px-2 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-white/[0.1] dark:bg-[#110B09]/95 lg:hidden"
+        className="fixed inset-x-0 bottom-0 z-30 border-t border-zinc-200/90 bg-white/95 px-2 pb-[calc(0.35rem+env(safe-area-inset-bottom))] pt-1.5 shadow-[0_-8px_24px_rgba(0,0,0,0.08)] backdrop-blur-xl dark:border-white/[0.1] dark:bg-[#121212]/95 xl:hidden"
       >
         <div className="mx-auto grid max-w-md grid-cols-5 gap-1">
           {NAV_ITEMS.map((item) => {

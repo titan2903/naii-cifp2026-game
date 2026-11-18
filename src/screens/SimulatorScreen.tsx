@@ -73,7 +73,7 @@ function StepIndicator({ currentStep, lang }: { currentStep: 1 | 2 | 3; lang: La
   return (
     <div
       aria-label={en ? 'Simulation Steps' : 'Tahapan Simulasi'}
-      className="grid grid-cols-3 gap-1.5 rounded-2xl border border-zinc-200/90 bg-white/90 p-1.5 dark:border-white/10 dark:bg-[#140E0C]/90"
+      className="grid grid-cols-3 gap-1.5 rounded-2xl border border-zinc-200/90 bg-white/90 p-1.5 dark:border-white/10 dark:bg-[#121212]/90"
     >
       {steps.map((s) => {
         const active = currentStep === s.num
@@ -85,7 +85,7 @@ function StepIndicator({ currentStep, lang }: { currentStep: 1 | 2 | 3; lang: La
               active
                 ? 'bg-[#AD2B17] text-white shadow-xs'
                 : done
-                  ? 'bg-emerald-500/10 text-emerald-800 dark:text-emerald-300'
+                  ? 'bg-[#AD2B17]/10 text-[#AD2B17] dark:bg-white/10 dark:text-white'
                   : 'text-zinc-500 dark:text-zinc-400'
             }`}
           >
@@ -201,7 +201,7 @@ function SimulatorFlow() {
         particleCount: 120,
         spread: 80,
         origin: { y: 0.6 },
-        colors: ['#AD2B17', '#C89D54', '#ffffff'],
+        colors: ['#AD2B17', '#3A0900', '#ffffff'],
       })
     }
   }
@@ -279,10 +279,10 @@ function SimulatorFlow() {
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-3xl">
+                  <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-white sm:text-3xl">
                     {first.title}
                   </h2>
-                  <p className="mt-1 font-mono text-xs font-semibold text-[#AD2B17] dark:text-[#C89D54]">
+                  <p className="mt-1 font-mono text-xs font-semibold text-[#AD2B17] dark:text-white">
                     {first.subtitle}
                   </p>
                   <p className="mt-2.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-3 sm:text-sm">
@@ -318,10 +318,10 @@ function SimulatorFlow() {
                 </div>
 
                 <div>
-                  <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-2xl">
+                  <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-white sm:text-2xl">
                     {second.title}
                   </h2>
-                  <p className="mt-1 font-mono text-xs font-semibold text-[#AD2B17] dark:text-[#C89D54]">
+                  <p className="mt-1 font-mono text-xs font-semibold text-[#AD2B17] dark:text-white">
                     {second.subtitle}
                   </p>
                   <p className="mt-2.5 text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:mt-3 sm:text-sm">
@@ -355,10 +355,10 @@ function SimulatorFlow() {
                     {en ? 'ASEAN REGION · CYBERSECURITY & UU PDP' : 'KAWASAN ASEAN · KEAMANAN SIBER & UU PDP'}
                   </span>
                 </div>
-                <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-2xl">
+                <h2 className="text-xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-white sm:text-2xl">
                   {third.title}
                 </h2>
-                <p className="font-mono text-xs font-semibold text-[#AD2B17] dark:text-[#C89D54]">
+                <p className="font-mono text-xs font-semibold text-[#AD2B17] dark:text-white">
                   {third.subtitle}
                 </p>
                 <p className="text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">{third.context}</p>
@@ -422,7 +422,7 @@ function SimulatorFlow() {
               <h1 className="text-xl font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-3xl">
                 {scenario.title}
               </h1>
-              <p className="font-mono text-xs font-semibold text-[#AD2B17] dark:text-[#C89D54]">
+              <p className="font-mono text-xs font-semibold text-[#AD2B17] dark:text-white">
                 {scenario.subtitle}
               </p>
             </div>
@@ -438,7 +438,7 @@ function SimulatorFlow() {
           {/* RIGHT COLUMN: DECISION OPTIONS & ONE-TAP BONUS KEYWORDS */}
           <div className="glass space-y-5 p-5 sm:p-8">
             <div className="space-y-1">
-              <p className="font-mono text-[11px] font-semibold tracking-wider uppercase text-[#AD2B17] sm:text-xs">
+              <p className="font-mono text-[11px] font-semibold tracking-wider uppercase text-[#AD2B17] dark:text-white sm:text-xs">
                 {en ? 'SELECT INDONESIA’S OFFICIAL DIPLOMATIC POSITION' : 'PILIH SIKAP RESMI DELEGASI INDONESIA'}
               </p>
               <h2 className="text-base font-extrabold tracking-tight text-zinc-900 dark:text-white sm:text-xl">
@@ -472,7 +472,7 @@ function SimulatorFlow() {
                     <span className="text-xs font-medium leading-relaxed sm:text-sm">{opt.text}</span>
                     {active && (
                       <CheckCircle2
-                        className="ml-auto h-5 w-5 shrink-0 text-[#AD2B17] dark:text-[#e25a45]"
+                        className="ml-auto h-5 w-5 shrink-0 text-[#AD2B17] dark:text-white"
                         strokeWidth={1.75}
                       />
                     )}
@@ -488,7 +488,7 @@ function SimulatorFlow() {
                   <Terminal className="h-3.5 w-3.5 text-[#AD2B17]" strokeWidth={1.75} />
                   {en ? 'Additional Clause (Optional · Bonus Points)' : 'Klausul Tambahan (Opsional · Bonus Poin)'}
                 </span>
-                <span className="font-mono text-[11px] font-semibold text-[#AD2B17]">
+                <span className="font-mono text-[11px] font-semibold text-[#AD2B17] dark:text-white">
                   +{matchedPairs.length} {en ? 'Keywords' : 'Kata Kunci'}
                 </span>
               </div>
@@ -598,7 +598,7 @@ function SimulatorFlow() {
             <div className="flex items-center gap-2.5">
               <NaiiStarMark color="#AD2B17" className="h-6 w-6" />
               <div>
-                <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#AD2B17]">
+                <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#AD2B17] dark:text-white">
                   NAII × CIFP 2026
                 </p>
                 <p className="font-mono text-[10px] text-zinc-500 dark:text-zinc-400">
@@ -606,7 +606,7 @@ function SimulatorFlow() {
                 </p>
               </div>
             </div>
-            <span className="chip !border-[#C89D54]/40 !text-zinc-800 dark:!text-zinc-200">
+            <span className="chip !border-[#AD2B17]/40 !text-zinc-800 dark:!text-zinc-200">
               {result.scenario.code}
             </span>
           </div>
@@ -635,7 +635,7 @@ function SimulatorFlow() {
                 <strong className="text-zinc-900 dark:text-white">{player?.name}</strong>{' '}
                 {player?.institution ? `· ${player.institution}` : ''}
               </p>
-              <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#AD2B17] dark:text-[#C89D54] sm:text-3xl">
+              <h2 className="mt-1 text-2xl font-extrabold tracking-tight text-[#AD2B17] dark:text-white sm:text-3xl">
                 {result.persona.title}
               </h2>
               <p className="mt-1 text-xs italic text-zinc-700 dark:text-zinc-200 sm:text-sm">
@@ -691,13 +691,13 @@ function SimulatorFlow() {
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className="mt-2.5 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#C89D54]/60 bg-gradient-to-r from-[#3A0900] via-[#AD2B17] to-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:text-sm"
+            className="mt-2.5 flex min-h-12 w-full items-center justify-between rounded-xl border border-[#AD2B17]/60 bg-[#3A0900] px-4 py-3 text-left text-xs font-bold text-white shadow-md transition hover:-translate-y-[1px] sm:text-sm"
           >
             <span className="flex items-center gap-2">
               {stampCount === 2 ? (
-                <Ticket className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                <Ticket className="h-4 w-4 shrink-0 text-white" strokeWidth={2} />
               ) : (
-                <Stamp className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+                <Stamp className="h-4 w-4 shrink-0 text-white" strokeWidth={2} />
               )}
               <span>
                 {stampCount === 2
@@ -709,10 +709,10 @@ function SimulatorFlow() {
                     : `Stempel #01 Terbuka (Stamp FPCI + Stiker)! Verifikasi Akun naii.co (${stampCount}/2)`}
               </span>
             </span>
-            <ArrowRight className="h-4 w-4 shrink-0 text-[#C89D54]" strokeWidth={2} />
+            <ArrowRight className="h-4 w-4 shrink-0 text-white" strokeWidth={2} />
           </button>
           {shareStatusKey && (
-            <p className="mt-2.5 text-center font-mono text-xs font-semibold text-[#AD2B17] dark:text-[#C89D54]">
+            <p className="mt-2.5 text-center font-mono text-xs font-semibold text-[#AD2B17] dark:text-white">
               {shareStatusKey === 'downloaded'
                 ? en
                   ? 'Persona Card downloaded (1080×1920 IG Story PNG).'
@@ -741,7 +741,7 @@ function SimulatorFlow() {
             </div>
 
             <div className="rounded-xl border border-[#AD2B17]/25 bg-[#AD2B17]/[0.05] p-3.5 text-xs leading-relaxed text-zinc-800 dark:text-zinc-200 sm:p-4">
-              <strong className="font-mono uppercase tracking-wider text-[#AD2B17] dark:text-[#e25a45]">
+              <strong className="font-mono uppercase tracking-wider text-[#AD2B17] dark:text-white">
                 {en ? 'Policy Council Assessment:' : 'Catatan Dewan Kebijakan:'}
               </strong>{' '}
               {result.option.insight}

@@ -18,7 +18,7 @@ export function CourseCta({
   return (
     <div className="glass space-y-4 border-[#AD2B17]/30 p-6">
       <div className="flex items-center justify-between gap-2">
-        <p className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+        <p className="flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
           <BookOpen className="h-4 w-4" strokeWidth={1.75} />
           {resolvedHeading}
         </p>
@@ -28,7 +28,7 @@ export function CourseCta({
       <ul className="space-y-2 border-y border-zinc-200/80 py-3.5 dark:border-white/10">
         {courses.map((c, idx) => (
           <li key={c} className="flex items-start gap-2.5 text-sm text-zinc-800 dark:text-zinc-200">
-            <span className="mt-0.5 font-mono text-xs font-bold text-[#AD2B17]">0{idx + 1}</span>
+            <span className="mt-0.5 font-mono text-xs font-bold text-[#AD2B17] dark:text-white">0{idx + 1}</span>
             <span className="font-medium leading-snug">{c}</span>
           </li>
         ))}

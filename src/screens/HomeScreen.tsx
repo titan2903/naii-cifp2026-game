@@ -217,14 +217,10 @@ export function HomeScreen() {
   return (
     <div className="relative space-y-6 animate-rise sm:space-y-8">
       {/* 1. CLEAN INTRO BANNER: ASYMMETRIC CATCHY TAGLINE + BLUE REWARD PILLS + ORBITAL EMBLEM */}
-      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/30 bg-[#3A0900] bg-diplomatic-grid p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.14)] sm:rounded-[1.75rem] sm:p-8">
+      <section className="relative overflow-hidden rounded-xl border border-[#AD2B17]/30 bg-[#3A0900] bg-diplomatic-grid p-5 text-white sm:p-8">
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C89D54]/70 to-transparent"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_at_top_right,rgba(200,157,84,0.22),transparent_58%)]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-white/15"
         />
         <NaiiWatermark className="absolute -bottom-24 -right-24 h-60 w-60 opacity-65 sm:h-80 sm:w-80 lg:hidden" />
 
@@ -234,11 +230,11 @@ export function HomeScreen() {
               <h1 className="text-2xl font-extrabold tracking-tight leading-[1.1] text-white sm:text-[2.2rem] lg:text-[2.5rem]">
                 {en ? (
                   <>
-                    Play Games, <span className="text-[#F3CA7A]">Win Prizes!</span>
+                    Play Games, <span className="text-white">Win Prizes!</span>
                   </>
                 ) : (
                   <>
-                    Main Game, <span className="text-[#F3CA7A]">Menangkan Hadiah!</span>
+                    Main Game, <span className="text-white">Menangkan Hadiah!</span>
                   </>
                 )}
               </h1>
@@ -251,16 +247,16 @@ export function HomeScreen() {
             </div>
 
             <div className="flex flex-wrap gap-2 pt-0.5 font-mono text-[11px]">
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#2F78B8]/60 bg-[#0B192C]/92 px-2.5 py-1.5 text-[#E8F3FF] shadow-[inset_0_1px_0_rgba(125,196,255,0.18)]">
-                <Stamp className="h-3.5 w-3.5 text-[#5BB3EC]" strokeWidth={1.75} />
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#AD2B17]/60 bg-[#3A0900]/92 px-2.5 py-1.5 text-white">
+                <Stamp className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
                 {en ? '1 Game → FPCI Stamp & Sticker' : '1 Game → Stamp FPCI & Stiker'}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#2F78B8]/60 bg-[#0B192C]/92 px-2.5 py-1.5 text-[#E8F3FF] shadow-[inset_0_1px_0_rgba(125,196,255,0.18)]">
-                <Ticket className="h-3.5 w-3.5 text-[#5BB3EC]" strokeWidth={1.75} />
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#AD2B17]/60 bg-[#3A0900]/92 px-2.5 py-1.5 text-white">
+                <Ticket className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
                 {en ? 'Open naii.co Account → NAII Pin' : 'Buka Akun naii.co → Pin NAII'}
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#3D98E0]/80 bg-[#0E223A]/95 px-2.5 py-1.5 font-bold text-[#F0F7FF] shadow-[inset_0_1px_0_rgba(147,210,255,0.24)]">
-                <Gift className="h-3.5 w-3.5 text-[#6EC1F7]" strokeWidth={1.75} />
+              <span className="inline-flex items-center gap-1.5 rounded-lg border border-[#AD2B17]/80 bg-[#3A0900]/95 px-2.5 py-1.5 font-bold text-white">
+                <Gift className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
                 {en ? 'Top 3 per Break → Totebag' : 'Top 3 per Sesi → Totebag'}
               </span>
             </div>
@@ -269,15 +265,15 @@ export function HomeScreen() {
           {/* DESKTOP ARCHITECTURAL ORBITAL EMBLEM */}
           <div aria-hidden className="hidden lg:flex lg:justify-end">
             <div className="relative grid h-40 w-40 place-items-center">
-              <div className="absolute inset-0 rounded-full border border-dashed border-[#C89D54]/35 animate-globe" />
+              <div className="absolute inset-0 rounded-full border border-dashed border-[#AD2B17]/35 animate-globe" />
               <div className="absolute inset-3.5 rounded-full border border-white/12 bg-black/25 backdrop-blur-xs shadow-[inset_0_1px_0_rgba(255,255,255,0.12)]" />
               <div className="relative flex flex-col items-center gap-1.5 text-center">
-                <NaiiStarMark color="#F3CA7A" className="h-11 w-11 drop-shadow-[0_6px_16px_rgba(200,157,84,0.35)]" />
-                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-[#FFF4DE]/80">
+                <NaiiStarMark color="#FFFFFF" className="h-11 w-11" />
+                <span className="font-mono text-[9px] font-bold uppercase tracking-[0.2em] text-white/80">
                   {en ? '~45 SEC PLAY' : 'MAIN ~45 DTK'}
                 </span>
               </div>
-              <span className="absolute -top-1.5 rounded-full border border-[#3D98E0]/60 bg-[#0E223A] px-2 py-0.5 font-mono text-[9px] font-bold tracking-wider text-[#E8F3FF]">
+              <span className="absolute -top-1.5 rounded-full border border-[#AD2B17]/60 bg-[#3A0900] px-2 py-0.5 font-mono text-[9px] font-bold tracking-wider text-white">
                 {en ? '3 TIER PRIZES' : '3 HADIAH'}
               </span>
             </div>
@@ -291,9 +287,9 @@ export function HomeScreen() {
         <a
           href={ROUTE_PATHS.trivia}
           style={{ animationDelay: '60ms' }}
-          className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-[#AD2B17]/45 bg-gradient-to-br from-white via-[#FFF9F6] to-[#AD2B17]/[0.1] p-5 transition duration-300 hover:-translate-y-1 hover:border-[#AD2B17]/80 hover:shadow-[0_24px_48px_-16px_rgba(173,43,23,0.3)] dark:from-[#1B100E] dark:via-[#140E0C] dark:to-[#290B06] sm:p-7 lg:col-span-6"
+          className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-[#AD2B17]/45 bg-white dark:bg-[#121212] p-5 transition duration-300 hover:-translate-y-1 hover:border-[#AD2B17]/80  sm:p-7 lg:col-span-6"
         >
-          <div className="absolute inset-x-0 top-0 h-1 bg-gradient-to-r from-[#AD2B17] via-[#C89D54] to-[#AD2B17]" />
+          <div className="absolute inset-x-0 top-0 h-1 bg-[#AD2B17]" />
           <span
             aria-hidden
             className="pointer-events-none absolute right-5 top-16 select-none font-mono text-[5.5rem] font-extrabold leading-none tracking-tighter text-[#AD2B17]/[0.06] dark:text-white/[0.04] sm:right-6 sm:top-20"
@@ -304,12 +300,12 @@ export function HomeScreen() {
           <div className="relative z-10 space-y-4 pt-1">
             <div className="flex flex-wrap items-center justify-between gap-2">
               <div className="flex items-center gap-3">
-                <span className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-[#AD2B17] to-[#75180A] text-white shadow-[0_10px_22px_-6px_rgba(173,43,23,0.65),inset_0_1px_0_rgba(255,255,255,0.28)]">
+                <span className="grid h-11 w-11 place-items-center rounded-xl bg-[#AD2B17] text-white">
                   <Zap className="h-5 w-5" strokeWidth={1.75} />
                 </span>
                 <div>
-                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
-                    <span className="h-1.5 w-1.5 rounded-full bg-[#AD2B17] dark:bg-[#C89D54]" />
+                  <span className="inline-flex items-center gap-1.5 font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
+                    <span className="h-1.5 w-1.5 rounded-full bg-[#AD2B17] dark:bg-[#AD2B17]" />
                     {en ? 'FASTEST TO STAMP' : 'JALUR TERCEPAT'}
                   </span>
                   <span className="block font-mono text-xs font-bold text-zinc-700 dark:text-zinc-200">
@@ -317,13 +313,13 @@ export function HomeScreen() {
                   </span>
                 </div>
               </div>
-              <span className="chip !border-[#AD2B17]/35 !bg-[#AD2B17]/10 !font-bold !text-[#AD2B17] dark:!text-[#FFF4DE]">
+              <span className="chip !border-[#AD2B17]/35 !bg-[#AD2B17]/10 !font-bold !text-[#AD2B17] dark:!text-white">
                 MAX 750 PTS
               </span>
             </div>
 
             <div className="space-y-2 pt-1">
-              <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-[#e25a45] sm:text-3xl">
+              <h2 className="text-2xl font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-white sm:text-3xl">
                 Speed Trivia
               </h2>
               <p className="max-w-[46ch] text-xs leading-relaxed text-zinc-600 dark:text-zinc-300 sm:text-sm">
@@ -336,10 +332,10 @@ export function HomeScreen() {
 
           <div className="relative z-10 mt-6 flex items-center justify-between gap-3 border-t border-zinc-200/80 pt-4 dark:border-white/[0.08]">
             <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-semibold text-zinc-600 dark:text-zinc-400">
-              <Stamp className="h-3.5 w-3.5 shrink-0 text-[#AD2B17] dark:text-[#C89D54]" strokeWidth={1.75} />
+              <Stamp className="h-3.5 w-3.5 shrink-0 text-[#AD2B17] dark:text-white" strokeWidth={1.75} />
               {en ? 'Unlocks FPCI Stamp + Sticker' : 'Membuka Stamp FPCI + Stiker'}
             </span>
-            <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-[#AD2B17] px-4 py-2 text-xs font-bold text-white shadow-[0_8px_18px_-6px_rgba(173,43,23,0.55),inset_0_1px_0_rgba(255,255,255,0.2)] transition group-hover:bg-[#be311b]">
+            <span className="inline-flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-xl bg-[#AD2B17] px-4 py-2 text-xs font-bold text-white transition group-hover:bg-[#be311b]">
               {en ? 'Play Trivia' : 'Main Trivia'}
               <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
             </span>
@@ -352,27 +348,27 @@ export function HomeScreen() {
           <a
             href={ROUTE_PATHS.realvsai}
             style={{ animationDelay: '130ms' }}
-            className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-l-[3.5px] border-l-[#2F78B8] bg-gradient-to-br from-[#0B192C]/[0.045] via-white to-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#2F78B8]/70 hover:shadow-[0_18px_36px_-16px_rgba(47,120,184,0.24)] dark:from-[#0B192C]/60 dark:via-[#140E0C] dark:to-[#140E0C] sm:p-6"
+            className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-l-[3.5px] border-l-[#AD2B17] bg-white dark:bg-[#121212] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#AD2B17]/70  sm:p-6"
           >
             <span
               aria-hidden
-              className="pointer-events-none absolute -bottom-4 right-5 select-none font-mono text-[4.5rem] font-extrabold leading-none tracking-tighter text-[#2F78B8]/[0.07] dark:text-[#5BB3EC]/[0.05]"
+              className="pointer-events-none absolute -bottom-4 right-5 select-none font-mono text-[4.5rem] font-extrabold leading-none tracking-tighter text-[#AD2B17]/[0.07] dark:text-white/[0.05]"
             >
               02
             </span>
             <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#2F78B8]/40 bg-[#0B192C] text-[#6EC1F7] shadow-xs">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#AD2B17]/40 bg-[#3A0900] text-white shadow-xs">
                     <ShieldAlert className="h-4 w-4" strokeWidth={1.75} />
                   </span>
-                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#0E4A7B] dark:text-white dark:group-hover:text-[#6EC1F7]">
+                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-white">
                     Real vs AI
                   </h2>
                   <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-bold text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-200">
                     ~45 {en ? 'SEC' : 'DTK'}
                   </span>
-                  <span className="font-mono text-[10px] font-bold text-[#1D5E96] dark:text-[#6EC1F7]">
+                  <span className="font-mono text-[10px] font-bold text-[#AD2B17] dark:text-white">
                     MAX 750 PTS
                   </span>
                 </div>
@@ -383,7 +379,7 @@ export function HomeScreen() {
                 </p>
               </div>
 
-              <span className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-[#2F78B8]/35 bg-[#0B192C]/10 px-4 py-2 text-xs font-bold text-[#0E4A7B] transition group-hover:bg-[#0B192C] group-hover:text-[#E8F3FF] dark:bg-[#0B192C]/80 dark:text-[#E8F3FF] dark:group-hover:bg-[#2F78B8] sm:self-center">
+              <span className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-[#AD2B17]/35 bg-[#3A0900]/10 px-4 py-2 text-xs font-bold text-[#AD2B17] transition group-hover:bg-[#3A0900] group-hover:text-white dark:bg-[#3A0900]/80 dark:text-white dark:group-hover:bg-[#AD2B17] sm:self-center">
                 {en ? 'Play Now' : 'Mainkan'}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
               </span>
@@ -394,27 +390,27 @@ export function HomeScreen() {
           <a
             href={ROUTE_PATHS.simulator}
             style={{ animationDelay: '200ms' }}
-            className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-l-[3.5px] border-l-[#C89D54] bg-gradient-to-br from-[#C89D54]/[0.1] via-white to-white p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#C89D54]/80 hover:shadow-[0_18px_36px_-16px_rgba(200,157,84,0.26)] dark:from-[#C89D54]/[0.14] dark:via-[#140E0C] dark:to-[#140E0C] sm:p-6"
+            className="glass group relative flex animate-rise flex-col justify-between overflow-hidden border-l-[3.5px] border-l-[#AD2B17] bg-white dark:bg-[#121212] p-5 transition duration-300 hover:-translate-y-0.5 hover:border-[#AD2B17]/80  sm:p-6"
           >
             <span
               aria-hidden
-              className="pointer-events-none absolute -bottom-4 right-5 select-none font-mono text-[4.5rem] font-extrabold leading-none tracking-tighter text-[#C89D54]/[0.1] dark:text-[#C89D54]/[0.06]"
+              className="pointer-events-none absolute -bottom-4 right-5 select-none font-mono text-[4.5rem] font-extrabold leading-none tracking-tighter text-[#AD2B17]/[0.07] dark:text-white/[0.05]"
             >
               03
             </span>
             <div className="relative z-10 flex flex-col justify-between gap-4 sm:flex-row sm:items-center">
               <div className="space-y-1.5">
                 <div className="flex flex-wrap items-center gap-2">
-                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#C89D54]/50 bg-gradient-to-br from-[#C89D54] to-[#9A6F22] text-[#220600] shadow-xs">
+                  <span className="grid h-8 w-8 place-items-center rounded-lg border border-[#AD2B17]/50 bg-[#AD2B17] text-white shadow-xs">
                     <Globe2 className="h-4 w-4" strokeWidth={1.85} />
                   </span>
-                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#9A6F22] dark:text-white dark:group-hover:text-[#F3CA7A]">
+                  <h2 className="text-lg font-extrabold tracking-tight text-zinc-900 transition-colors group-hover:text-[#AD2B17] dark:text-white dark:group-hover:text-white">
                     Simulator
                   </h2>
                   <span className="rounded-md border border-zinc-200 bg-zinc-100 px-2 py-0.5 font-mono text-[10px] font-bold text-zinc-700 dark:border-white/15 dark:bg-white/10 dark:text-zinc-200">
                     ~60 {en ? 'SEC' : 'DTK'}
                   </span>
-                  <span className="chip !border-[#C89D54]/55 !bg-[#C89D54]/15 !px-2 !py-0.5 !text-[10px] !font-bold !text-[#8B621B] dark:!text-[#F3CA7A]">
+                  <span className="chip !border-[#AD2B17]/55 !bg-[#AD2B17]/15 !px-2 !py-0.5 !text-[10px] !font-bold !text-[#AD2B17] dark:!text-white">
                     IG STORY CARD
                   </span>
                 </div>
@@ -425,7 +421,7 @@ export function HomeScreen() {
                 </p>
               </div>
 
-              <span className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-[#C89D54]/50 bg-[#C89D54]/15 px-4 py-2 text-xs font-bold text-[#7C5616] transition group-hover:bg-[#9A6F22] group-hover:text-white dark:bg-[#C89D54]/20 dark:text-[#FFF4DE] dark:group-hover:bg-[#C89D54] dark:group-hover:text-[#220600] sm:self-center">
+              <span className="inline-flex shrink-0 items-center justify-center gap-1.5 self-start rounded-xl border border-[#AD2B17]/50 bg-[#AD2B17]/15 px-4 py-2 text-xs font-bold text-[#AD2B17] transition group-hover:bg-[#AD2B17] group-hover:text-white dark:bg-[#AD2B17]/20 dark:text-white dark:group-hover:bg-[#AD2B17] dark:group-hover:text-white sm:self-center">
                 {en ? 'Play Now' : 'Mainkan'}
                 <ArrowRight className="h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" strokeWidth={1.75} />
               </span>
@@ -436,13 +432,13 @@ export function HomeScreen() {
 
       {/* 3. LIVE PASSPORT PROGRESS STRIP (ONLY WHEN PLAYER HAS UNLOCKED >= 1 STAMP) */}
       {stampCount > 0 && (
-        <div className="flex flex-col justify-between gap-3 rounded-2xl border border-emerald-500/35 bg-emerald-500/[0.08] px-4 py-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.12)] dark:border-emerald-400/30 dark:bg-emerald-500/[0.1] sm:flex-row sm:items-center sm:px-6">
+        <div className="glass flex flex-col justify-between gap-3 border-l-[3.5px] border-l-[#AD2B17] px-4 py-3.5 sm:flex-row sm:items-center sm:px-6">
           <div className="flex items-center gap-3">
-            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-emerald-600 text-white">
+            <span className="grid h-9 w-9 shrink-0 place-items-center rounded-xl bg-[#AD2B17] text-white">
               {stampCount === 2 ? <Ticket className="h-4 w-4" strokeWidth={2} /> : <Check className="h-4 w-4" strokeWidth={2.25} />}
             </span>
             <div>
-              <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-300">
+              <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
                 {stampCount === 2
                   ? en
                     ? `CLAIM TICKET ACTIVE · ${passport.ticketCode}`
@@ -466,7 +462,7 @@ export function HomeScreen() {
           <button
             type="button"
             onClick={() => setPassportOpen(true)}
-            className="inline-flex min-h-10 shrink-0 items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2 font-mono text-xs font-bold text-white shadow-xs transition hover:bg-emerald-500 active:scale-[0.98]"
+            className="btn-primary min-h-10 shrink-0 !px-4 !py-2 text-xs"
           >
             {stampCount === 2 ? <Ticket className="h-4 w-4" /> : <Stamp className="h-4 w-4" />}
             <span>
@@ -484,15 +480,11 @@ export function HomeScreen() {
       )}
 
       {/* SHOWCASE LIVE LEADERBOARD CARD (ASYMMETRIC OBSIDIAN-CRIMSON PODIUM) */}
-      <section className="relative overflow-hidden rounded-[1.5rem] border border-[#C89D54]/40 bg-gradient-to-br from-[#260702] via-[#140A08] to-[#1D0C08] p-5 text-white shadow-[0_24px_56px_-18px_rgba(58,9,0,0.55),inset_0_1px_0_rgba(255,255,255,0.14)] sm:rounded-[1.75rem] sm:p-7">
+      <section className="relative overflow-hidden rounded-xl border border-[#AD2B17]/40 bg-[#3A0900] p-5 text-white sm:p-7">
         <div aria-hidden className="pointer-events-none absolute inset-0 bg-diplomatic-grid opacity-55" />
         <div
           aria-hidden
-          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-gradient-to-r from-transparent via-[#C89D54]/60 to-transparent"
-        />
-        <div
-          aria-hidden
-          className="pointer-events-none absolute -right-24 -top-24 h-64 w-64 rounded-full bg-[radial-gradient(circle,rgba(200,157,84,0.22),transparent_70%)]"
+          className="pointer-events-none absolute inset-x-0 top-0 h-[2px] bg-white/15"
         />
 
         <div className="relative z-10 grid items-center gap-6 lg:grid-cols-[0.95fr_1.25fr] lg:gap-8">
@@ -506,8 +498,8 @@ export function HomeScreen() {
                 </span>
                 LIVE LEADERBOARD
               </span>
-              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#C89D54]/40 bg-black/40 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-[#FFF4DE]">
-                <Activity className="h-3 w-3 text-[#C89D54]" strokeWidth={2} />
+              <span className="inline-flex items-center gap-1.5 rounded-full border border-[#AD2B17]/40 bg-black/40 px-2.5 py-0.5 font-mono text-[10px] font-semibold text-white">
+                <Activity className="h-3 w-3 text-white" strokeWidth={2} />
                 {sessionTagLabel} · {formatSessionWindow(activeSession)}
               </span>
             </div>
@@ -520,13 +512,13 @@ export function HomeScreen() {
                 {en ? (
                   <>
                     Speed Trivia &amp; Real vs AI points compete here in real time. Finish in the{' '}
-                    <b className="text-[#C89D54]">Top 3</b> this break to win an{' '}
+                    <b className="text-white">Top 3</b> this break to win an{' '}
                     <b className="text-white">Official NAII Totebag (Tier 3)</b>!
                   </>
                 ) : (
                   <>
                     Skor Speed Trivia &amp; Real vs AI bersaing di sini secara <i>real-time</i>. Tembus{' '}
-                    <b className="text-[#C89D54]">Top 3</b> sesi ini untuk membawa pulang{' '}
+                    <b className="text-white">Top 3</b> sesi ini untuk membawa pulang{' '}
                     <b className="text-white">Totebag Resmi NAII (Tier 3)</b>!
                   </>
                 )}
@@ -536,14 +528,14 @@ export function HomeScreen() {
             <div className="flex flex-wrap items-center gap-2.5 pt-1">
               <a
                 href={ROUTE_PATHS.leaderboard}
-                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#AD2B17] px-4 py-2.5 text-xs font-bold text-white shadow-[0_10px_24px_-8px_rgba(173,43,23,0.7),inset_0_1px_0_rgba(255,255,255,0.22)] transition hover:-translate-y-[1px] hover:bg-[#be311b] active:scale-[0.98]"
+                className="inline-flex min-h-11 items-center justify-center gap-2 rounded-xl bg-[#AD2B17] px-4 py-2.5 text-xs font-bold text-white transition hover:-translate-y-[1px] hover:bg-[#be311b] active:scale-[0.98]"
               >
-                <Trophy className="h-4 w-4 text-[#C89D54]" strokeWidth={2} />
+                <Trophy className="h-4 w-4 text-white" strokeWidth={2} />
                 <span>{en ? 'Open Full Leaderboard' : 'Buka Papan Peringkat'}</span>
                 <ArrowRight className="h-3.5 w-3.5" strokeWidth={2} />
               </a>
-              <span className="inline-flex items-center gap-1.5 rounded-xl border border-[#C89D54]/35 bg-[#C89D54]/10 px-3 py-2 font-mono text-[11px] font-semibold text-[#FFF4DE]">
-                <Gift className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+              <span className="inline-flex items-center gap-1.5 rounded-xl border border-[#AD2B17]/35 bg-[#AD2B17]/10 px-3 py-2 font-mono text-[11px] font-semibold text-white">
+                <Gift className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
                 {en ? 'Tier 3 Reward' : 'Hadiah Tier 3'}
               </span>
             </div>
@@ -565,10 +557,10 @@ export function HomeScreen() {
                 {topLeaders.map((item, i) => {
                   const isFirst = i === 0
                   const badgeStyle = isFirst
-                    ? 'bg-[#C89D54] text-[#220600]'
+                    ? 'bg-[#AD2B17] text-white'
                     : i === 1
                       ? 'border border-zinc-300/40 bg-zinc-200/15 text-zinc-100'
-                      : 'border border-[#B47B56]/45 bg-[#B47B56]/20 text-[#F3D5BE]'
+                      : 'border border-zinc-300/40 bg-zinc-200/15 text-zinc-100'
                   return (
                     <a
                       key={item.id}
@@ -576,7 +568,7 @@ export function HomeScreen() {
                       style={{ animationDelay: `${i * 75}ms` }}
                       className={`flex items-center justify-between gap-3 rounded-xl border px-3.5 py-2.5 transition animate-rise hover:bg-white/[0.08] ${
                         isFirst
-                          ? 'border-[#C89D54]/60 bg-gradient-to-r from-[#AD2B17]/30 via-[#3A0900]/60 to-black/40'
+                          ? 'border-[#AD2B17]/60 bg-[#AD2B17]/30'
                           : 'border-white/10 bg-white/[0.03]'
                       }`}
                     >
@@ -593,7 +585,7 @@ export function HomeScreen() {
                       </div>
 
                       <div className="shrink-0 text-right font-mono">
-                        <p className={`text-sm font-extrabold tabular-nums ${isFirst ? 'text-[#C89D54]' : 'text-white'}`}>
+                        <p className={`text-sm font-extrabold tabular-nums ${isFirst ? 'text-white' : 'text-white'}`}>
                           {item.score} <span className="text-[10px] font-semibold opacity-75">PTS</span>
                         </p>
                         <p className="text-[10px] text-white/55">{formatSeconds(item.time_seconds, lang)}</p>
@@ -606,22 +598,22 @@ export function HomeScreen() {
               <div className="space-y-2.5">
                 <a
                   href={ROUTE_PATHS.trivia}
-                  className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-[#C89D54]/65 bg-gradient-to-r from-[#AD2B17]/25 to-black/30 px-3.5 py-3 transition hover:border-[#C89D54] hover:bg-[#AD2B17]/35"
+                  className="flex items-center justify-between gap-3 rounded-xl border border-dashed border-[#AD2B17]/65 bg-[#AD2B17]/20 px-3.5 py-3 transition hover:border-[#AD2B17] hover:bg-[#AD2B17]/35"
                 >
                   <div className="flex min-w-0 items-center gap-3">
-                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#C89D54] text-[#220600]">
+                    <span className="grid h-8 w-8 shrink-0 place-items-center rounded-lg bg-[#AD2B17] text-white">
                       <Crown className="h-4 w-4" strokeWidth={2.2} />
                     </span>
                     <div className="min-w-0">
                       <p className="text-xs font-extrabold text-white sm:text-sm">
                         {en ? 'Podium #01 — Open to Claim!' : 'Podium #01 — Masih Kosong!'}
                       </p>
-                      <p className="truncate font-mono text-[10px] text-[#FFF4DE]/75">
+                      <p className="truncate font-mono text-[10px] text-white/75">
                         {en ? 'Play 45s Speed Trivia to take #1' : 'Main Speed Trivia 45 dtk untuk posisi #1'}
                       </p>
                     </div>
                   </div>
-                  <span className="shrink-0 rounded-lg bg-[#C89D54] px-2.5 py-1 font-mono text-[10px] font-extrabold text-[#220600]">
+                  <span className="shrink-0 rounded-lg bg-[#AD2B17] px-2.5 py-1 font-mono text-[10px] font-extrabold text-white">
                     {en ? 'CLAIM #1' : 'KLAIM #1'}
                   </span>
                 </a>
@@ -634,7 +626,7 @@ export function HomeScreen() {
                       className="flex items-center gap-2.5 rounded-xl border border-white/10 bg-white/[0.03] px-3 py-2.5 transition hover:border-white/25 hover:bg-white/[0.07]"
                     >
                       <span className="grid h-7 w-7 shrink-0 place-items-center rounded-lg border border-white/15 bg-white/10 text-white/80">
-                        <Medal className="h-3.5 w-3.5 text-[#C89D54]" strokeWidth={1.75} />
+                        <Medal className="h-3.5 w-3.5 text-white" strokeWidth={1.75} />
                       </span>
                       <div className="min-w-0">
                         <p className="font-mono text-[10px] font-bold text-white/90">RANK #0{rank}</p>
@@ -660,7 +652,7 @@ export function HomeScreen() {
           className="glass flex w-full items-center justify-between gap-3 p-4 text-left transition hover:border-[#AD2B17]/45 sm:px-6 sm:py-4"
         >
           <div className="flex items-center gap-3">
-            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-gradient-to-br from-[#AD2B17]/15 to-[#C89D54]/10 text-[#AD2B17] dark:text-[#C89D54]">
+            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-xl border border-[#AD2B17]/30 bg-[#AD2B17]/10 text-[#AD2B17] dark:text-white">
               <FileTerminal className="h-4.5 w-4.5" strokeWidth={1.75} />
             </div>
             <div className="min-w-0">
@@ -670,7 +662,7 @@ export function HomeScreen() {
                     ? 'Mini Live Demo AI, Dual QR & Free Curriculum (www.naii.co)'
                     : 'Mini Live Demo AI, QR Code & Kurikulum Gratis www.naii.co'}
                 </p>
-                <span className="hidden rounded-md border border-[#AD2B17]/25 bg-[#AD2B17]/10 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[#AD2B17] dark:border-[#C89D54]/35 dark:bg-[#C89D54]/15 dark:text-[#C89D54] sm:inline-block">
+                <span className="hidden rounded-md border border-[#AD2B17]/25 bg-[#AD2B17]/10 px-1.5 py-0.5 font-mono text-[9px] font-bold uppercase tracking-wider text-[#AD2B17] dark:border-[#AD2B17]/35 dark:bg-[#AD2B17]/15 dark:text-white sm:inline-block">
                   {en ? 'INTERACTIVE' : 'INTERAKTIF'}
                 </span>
               </div>
@@ -703,7 +695,7 @@ export function HomeScreen() {
             <div className="space-y-1.5 sm:space-y-2">
               <div className="flex flex-wrap items-center gap-2">
                 <FileTerminal className="h-4 w-4 text-[#AD2B17]" strokeWidth={1.75} />
-                <span className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-[#AD2B17] sm:text-xs">
+                <span className="font-mono text-[11px] font-semibold tracking-[0.16em] uppercase text-[#AD2B17] dark:text-white sm:text-xs">
                   {en
                     ? 'MINI LIVE DEMO AI // POLICY & DIPLOMACY CO-PILOT'
                     : 'MINI LIVE DEMO AI // CO-PILOT KEBIJAKAN & DIPLOMASI'}
@@ -789,7 +781,7 @@ export function HomeScreen() {
                 <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400">
                   {en ? 'SIMULATED AI RESPONSE (UNSTRUCTURED):' : 'SIMULASI RESPONS AI (TANPA KERANGKA):'}
                 </p>
-                <p className="mt-1 font-serif text-xs italic leading-relaxed text-zinc-700 dark:text-zinc-300">
+                <p className="mt-1 text-xs italic leading-relaxed text-zinc-700 dark:text-zinc-300">
                   {example.naiveOutput}
                 </p>
               </div>
@@ -799,7 +791,7 @@ export function HomeScreen() {
           {/* RIGHT: STRUCTURED NAII DOCTRINE */}
           <div className="space-y-3.5 bg-[#AD2B17]/[0.03] p-5 dark:bg-[#AD2B17]/[0.05] sm:space-y-4 sm:p-8">
             <div className="flex items-center justify-between gap-2">
-              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#e25a45] sm:text-xs">
+              <span className="inline-flex items-center gap-1.5 font-mono text-[11px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white sm:text-xs">
                 <Check className="h-4 w-4 shrink-0 text-emerald-600 dark:text-emerald-400" strokeWidth={2} />
                 {en ? 'NAII STRUCTURED POLICY PROMPT' : 'PROMPT TERSTRUKTUR METODE NAII'}
               </span>
@@ -808,12 +800,12 @@ export function HomeScreen() {
               </span>
             </div>
 
-            <div className="rounded-xl border border-[#AD2B17]/30 bg-white p-3.5 font-mono text-xs leading-relaxed text-zinc-900 shadow-xs dark:border-[#AD2B17]/40 dark:bg-[#0B0908] dark:text-zinc-100 sm:p-4 sm:text-sm">
+            <div className="rounded-xl border border-[#AD2B17]/30 bg-white p-3.5 font-mono text-xs leading-relaxed text-zinc-900 shadow-xs dark:border-[#AD2B17]/40 dark:bg-[#000000] dark:text-zinc-100 sm:p-4 sm:text-sm">
               {example.structured}
             </div>
 
             <div className="space-y-2.5 pt-0.5">
-              <p className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+              <p className="font-mono text-[10px] font-semibold uppercase tracking-wider text-[#AD2B17] dark:text-white">
                 {en ? 'STRATEGIC ADVANTAGE:' : 'KEUNGGULAN STRATEGIS:'}
               </p>
               <p className="text-xs leading-relaxed text-zinc-700 dark:text-zinc-200 sm:text-sm">
@@ -833,7 +825,7 @@ export function HomeScreen() {
                 <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-emerald-700 dark:text-emerald-400">
                   {en ? 'SIMULATED AI RESPONSE (NAII METHOD):' : 'SIMULASI RESPONS AI (METODE NAII):'}
                 </p>
-                <p className="mt-1 font-serif text-xs italic leading-relaxed text-zinc-900 dark:text-zinc-100">
+                <p className="mt-1 text-xs italic leading-relaxed text-zinc-900 dark:text-zinc-100">
                   {example.structuredOutput}
                 </p>
               </div>
@@ -884,12 +876,12 @@ export function HomeScreen() {
           </div>
 
           {sandboxOpen && (
-            <div className="mt-4 grid gap-4 rounded-2xl border border-[#AD2B17]/30 bg-white p-4 dark:border-white/15 dark:bg-[#0B0908] sm:p-6 lg:grid-cols-[1.15fr_0.85fr]">
+            <div className="mt-4 grid gap-4 rounded-2xl border border-[#AD2B17]/30 bg-white p-4 dark:border-white/15 dark:bg-[#000000] sm:p-6 lg:grid-cols-[1.15fr_0.85fr]">
               <div className="space-y-2.5">
                 <div className="flex flex-wrap items-center justify-between gap-2">
                   <label
                     htmlFor="home-live-sandbox"
-                    className="font-mono text-xs font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]"
+                    className="font-mono text-xs font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white"
                   >
                     {en
                       ? 'LIVE PROMPT SANDBOX (EDIT OR TYPE YOUR OWN):'
@@ -899,7 +891,7 @@ export function HomeScreen() {
                     <button
                       type="button"
                       onClick={() => setSandboxPrompt(example.naive.replace(/^[“"]|[”"]$/g, ''))}
-                      className="text-rose-600 underline hover:opacity-80 dark:text-rose-400"
+                      className="text-zinc-600 underline hover:opacity-80 dark:text-zinc-300"
                     >
                       {en ? 'Load Naive (Grade C)' : 'Uji Prompt Biasa'}
                     </button>
@@ -907,7 +899,7 @@ export function HomeScreen() {
                     <button
                       type="button"
                       onClick={() => setSandboxPrompt('')}
-                      className="text-[#AD2B17] underline hover:opacity-80 dark:text-[#C89D54]"
+                      className="text-[#AD2B17] underline hover:opacity-80 dark:text-white"
                     >
                       {en ? 'Load NAII (Grade S)' : 'Muat Metode NAII'}
                     </button>
@@ -923,10 +915,10 @@ export function HomeScreen() {
                 />
 
                 <div className="rounded-xl border border-zinc-200 bg-zinc-50 p-3 dark:border-white/10 dark:bg-black/40">
-                  <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-[#C89D54]">
+                  <p className="font-mono text-[10px] font-bold uppercase tracking-wider text-[#AD2B17] dark:text-white">
                     {en ? 'LIVE GENERATED AI PREVIEW:' : 'PRATINJAU RESPONS AI DARI PROMPT DI ATAS:'}
                   </p>
-                  <p className="mt-1 font-serif text-xs italic leading-relaxed text-zinc-800 dark:text-zinc-200">
+                  <p className="mt-1 text-xs italic leading-relaxed text-zinc-800 dark:text-zinc-200">
                     {sandboxEval.grade === 'S' || sandboxEval.grade === 'A'
                       ? example.structuredOutput
                       : sandboxEval.grade === 'B'
@@ -953,18 +945,18 @@ export function HomeScreen() {
                 <div className="grid grid-cols-2 gap-2.5">
                   {(
                     [
-                      ['role', sandboxEval.pillars.role, '#AD2B17'],
-                      ['context', sandboxEval.pillars.context, '#C89D54'],
-                      ['constraint', sandboxEval.pillars.constraint, '#0284C7'],
-                      ['objective', sandboxEval.pillars.objective, '#059669'],
+                      ['role', sandboxEval.pillars.role],
+                      ['context', sandboxEval.pillars.context],
+                      ['constraint', sandboxEval.pillars.constraint],
+                      ['objective', sandboxEval.pillars.objective],
                     ] as const
-                  ).map(([key, p, colorHex]) => (
+                  ).map(([key, p]) => (
                     <div
                       key={key}
                       className="rounded-xl border border-zinc-200 bg-white p-2.5 dark:border-white/10 dark:bg-black/40"
                     >
                       <div className="flex items-center justify-between font-mono text-[11px] font-bold">
-                        <span style={{ color: colorHex }}>{p.name}</span>
+                        <span className="text-[#AD2B17] dark:text-white">{p.name}</span>
                         <span className="text-zinc-900 dark:text-white">{p.score}/25</span>
                       </div>
                       <p className="mt-1 text-[10px] text-zinc-500 dark:text-zinc-400">{p.feedback}</p>
@@ -993,7 +985,7 @@ export function HomeScreen() {
             </div>
 
             <div className="space-y-1.5">
-              <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] font-semibold tracking-wider uppercase text-[#AD2B17]">
+              <div className="flex flex-wrap items-center gap-2 font-mono text-[11px] font-semibold tracking-wider uppercase text-[#AD2B17] dark:text-white">
                 <span>NUSANTARA AI INSTITUTE</span>
                 <span>·</span>
                 <span>{en ? '20+ FREE COURSES' : '20+ KURSUS GRATIS'}</span>
